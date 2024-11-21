@@ -5,9 +5,9 @@ app = Flask(__name__)
 
 import os
 
-NOTION_API_KEY = os.getenv("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")
-DATABASE_ID = os.getenv("122a00a01f2280f0bb48ff47ff03a9b9")
-NOTION_URL = f"https://api.notion.com/v1/databases/122a00a01f2280f0bb48ff47ff03a9b9/query"
+NOTION_API_KEY = os.getenv("NOTION_API_KEY")
+DATABASE_ID = os.getenv("DATABASE_ID")
+NOTION_URL = f"NOTION_URL"
 
 def fetch_image_urls():
     headers = {
@@ -34,7 +34,7 @@ def fetch_image_urls():
 
 @app.route("/")
 def home():
-    return "Hello, Flask is running on Render!"
+    return "Hello, Flask is running"
 
 @app.route("/images")
 def get_images():
