@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 NOTION_API_KEY = "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"
 DATABASE_ID = "122a00a01f2280f0bb48ff47ff03a9b9"
-NOTION_URL = "https://api.notion.com/v1/databases/122a00a01f2280f0bb48ff47ff03a9b9/query".format(DATABASE_ID)
+NOTION_URL = f"https://api.notion.com/v1/databases/122a00a01f2280f0bb48ff47ff03a9b9/query"
 
 def fetch_image_urls():
     headers = {
@@ -36,8 +36,7 @@ def home():
 
 @app.route("/images")
 def get_images():
-    # Remplace par ton code pour récupérer des URLs d'images depuis Notion
-    return jsonify(["https://example.com/image1.jpg", "https://example.com/image2.jpg"])
+    return jsonify(fetch_image_urls())
 
 if __name__ == "__main__":
     app.run(debug=True)
