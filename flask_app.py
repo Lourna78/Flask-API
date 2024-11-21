@@ -3,8 +3,10 @@ import requests
 
 app = Flask(__name__)
 
-NOTION_API_KEY = "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"
-DATABASE_ID = "122a00a01f2280f0bb48ff47ff03a9b9"
+import os
+
+NOTION_API_KEY = os.getenv("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")
+DATABASE_ID = os.getenv("122a00a01f2280f0bb48ff47ff03a9b9")
 NOTION_URL = f"https://api.notion.com/v1/databases/122a00a01f2280f0bb48ff47ff03a9b9/query"
 
 def fetch_image_urls():
