@@ -48,9 +48,9 @@ def fetch_image_urls():
 
 @app.route("/")
 def home():
-    return "Hello, Flask is running"
+    return "Hello, Flask est en ligne !"
 
-@@app.route('/images', methods=['GET'])
+@app.route('/images', methods=['GET'])
 def get_images():
     return jsonify(["image1_url", "image2_url"])  # Exemple de réponse JSON
 
