@@ -1,23 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram Feed Preview</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Feed Preview</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="widget-container">
-        <div class="filter">
-            <label><input type="checkbox" id="publications" checked> PUBLICATIONS</label>
-            <label><input type="checkbox" id="reels"> REELS</label>
-            <label><input type="checkbox" id="identified"> IDENTIFIÉ(E)</label>
+        <!-- Titre du widget -->
+        <h2 class="widget-title">Aperçu du feed Instagram</h2>
+        
+        <!-- Conteneur de la grille -->
+        <div class="grid-container" id="grid">
+          <!-- Les images et cases grises seront insérées dynamiquement ici -->
         </div>
-        <div class="grid" id="image-grid">
-            <!-- Les carrés de la grille seront remplis dynamiquement -->
-        </div>
-    </div>
-
-    <script src="app.js"></script>
+      </div>      
+  <script src="app.js"></script>
 </body>
 </html>
