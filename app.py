@@ -50,14 +50,9 @@ def fetch_image_urls():
 def home():
     return "Hello, Flask is running"
 
-@app.route('/images', methods=['GET'])
+@@app.route('/images', methods=['GET'])
 def get_images():
-    images = [
-        # Liste de tes URL d'images
-        "https://example.com/image1.jpg",
-        "https://example.com/image2.jpg"
-    ]
-    return jsonify(images)
+    return jsonify(["image1_url", "image2_url"])  # Exemple de réponse JSON
 
-if __name__ == "__main__":
-    app.run(debug=True)
+if __name__ == '__main__':
+    app.run()
