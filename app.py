@@ -1,9 +1,11 @@
 from flask import Flask, jsonify
+from flask_cors import CORS  # Import de CORS
 import requests
+import os
 
 app = Flask(__name__)
 
-import os
+CORS(app)
 
 NOTION_API_KEY = os.getenv("NOTION_API_KEY")
 DATABASE_ID = os.getenv("DATABASE_ID")
@@ -48,9 +50,14 @@ def fetch_image_urls():
 def home():
     return "Hello, Flask is running"
 
-@app.route("/images")
+@app.route('/images', methods=['GET'])
 def get_images():
-    return jsonify(fetch_image_urls())
+    images = [
+        # Liste de tes URL d'images
+        "https://example.com/image1.jpg",
+        "https://example.com/image2.jpg"
+    ]
+    return jsonify(images)
 
 if __name__ == "__main__":
     app.run(debug=True)

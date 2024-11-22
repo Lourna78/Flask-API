@@ -1,59 +1,83 @@
-/* Style global */
+/* Style général */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-}
-
-/* Conteneur principal */
-.widget-container {
-    width: 90%;
-    max-width: 600px;
-    margin: 20px auto;
-    background-color: #ffffff;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Filtres */
-.filter {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+  }
 
-.filter label {
-    font-size: 14px;
-    font-weight: bold;
-}
+  /* Style du titre */
+.widget-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 10px 0;
+    color: #333;
+  }
 
-/* Grille des images */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+  /* Style des items vides (cases grises) */
+.grid-item.empty {
+    background-color: #f0f0f0; /* Fond gris uni pour les cases vides */
+    background-image: none; /* Supprime toute image résiduelle */
+  }
+
+  /* Conteneur principal */
+.widget-container {
+    width: 400px; /* Ajuste la largeur selon ton besoin */
+    margin: 0 auto;
     background-color: #ffffff;
-}
-
-/* Carrés vides et images */
-.grid div {
-    width: 100%;
-    padding-top: 100%;
-    position: relative;
-    background-color: #e0e0e0;
-    border-radius: 4px;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 10px;
     overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Conteneur de la grille */
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 colonnes */
+    gap: 5px; /* Espacement entre les images */
+    padding: 20px;
+    box-sizing: border-box; /* Inclut les bordures dans la taille totale */
+    overflow: hidden; /*Empêche les débordements */
+    position: relative; /*Nécessaire pour limiter les débordements au conteneur */
+  }
+  
+  /* Style des items de la grille */
+  .grid-item {
+    width: 100%;
+    padding-top: 100%; /* Maintient un carré parfait */
+    background-size: cover;
+    background-position: center;
+    border: none;
+    outline: none; /* Supprime les contours bleus par défaut */
+    border-radius: 3px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+  /* Ajouter un effet visuel sur les éléments en cours de glissement */
+.grid-item.dragging {
+    opacity: 0.5;
+    outline: none; /* Supprime également l'outline pendant le drag */
 }
 
-.grid img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.grid-item:focus {
+    outline: none; /* Supprime les contours bleus au focus */
+}
+
+  .grid-item:hover {
+    transition: transform 0.5s ease, box-shadow 0.5s ease; /* Ajuste la durée */
+    transform: scale(1.15); /* Légèrement moins de zoom */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Accentue l'ombre pour un effet plus prononcé */
+    z-index: 1; /*Met l'élément zommé au dessus des autres */
+  }
+  
+  @media (max-width: 600px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 colonnes sur mobile */
+    }
 }
