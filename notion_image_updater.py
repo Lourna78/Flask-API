@@ -16,13 +16,9 @@ def fetch_notion_data():
         "Content-Type": "application/json",
         "Notion-Version": "2022-06-28",
     }
-
-    response = requests.post(NOTION_URL, headers=headers)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print("Erreur lors de la récupération des données :", response.text)
-        return None
+    url = f"https://api.notion.com/v1/databases/122a00a01f2280f0bb48ff47ff03a9b9/query"
+    response = requests.post(url, headers=headers)
+print(response.json())
 
 # Extraire les URLs des images
 def extract_image_urls(data):

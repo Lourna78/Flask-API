@@ -6,20 +6,18 @@ fetch("https://flask-api-0qgo.onrender.com/images")
     return response.json();
   })
   .then((data) => {
-    console.log("Données récupérées :", data); // Vérifie les données ici
+    console.log("Données récupérées :", data);
 
     const totalCases = 12; // Nombre total de cases dans la grille
     const grid = document.getElementById("grid");
 
     // Ajouter les images récupérées
     data.forEach((url, index) => {
-      const div = document.createElement("div");
-      div.className = "grid-item";
-      div.style.backgroundImage = `url(${url})`; // Appliquer l'image comme fond
-      div.setAttribute("draggable", "true"); // Rendre l'élément déplaçable
-      div.dataset.index = index; // Stocker l'index
-      grid.appendChild(div);
-    });
+        const div = document.createElement("div");
+        div.className = "grid-item";
+        div.style.backgroundImage = `url(${url})`;
+        grid.appendChild(div);
+    });    
 
     // Ajouter des cases vides pour compléter la grille
     for (let i = data.length; i < totalCases; i++) {

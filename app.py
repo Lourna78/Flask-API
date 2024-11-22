@@ -1,37 +1,33 @@
-from flask import Flask, jsonify
-from flask_cors import CORS  # Import de CORS
+from flask import Flask, jsonify, send_from_directory
+from flask_cors import CORS
 import requests
 import os
 
 app = Flask(__name__)
-
 CORS(app)
 
+# Chargement des variables d'environnement
 NOTION_API_KEY = os.getenv("NOTION_API_KEY")
 DATABASE_ID = os.getenv("DATABASE_ID")
-NOTION_URL = os.getenv("NOTION_URL", f"https://api.notion.com/v1/databases/122a00a01f2280f0bb48ff47ff03a9b9/query")
+NOTION_URL = os.getenv("NOTION_URL", f"https://api.notion.com/v1/databases/{DATABASE_ID}/query")
 
 if not NOTION_API_KEY or not DATABASE_ID or not NOTION_URL:
     raise ValueError("Une ou plusieurs variables d'environnement sont manquantes : NOTION_API_KEY, DATABASE_ID, NOTION_URL")
 
+# Fonction pour récupérer les URLs des images depuis Notion
 def fetch_image_urls():
     headers = {
         "Authorization": f"Bearer {NOTION_API_KEY}",
         "Content-Type": "application/json",
         "Notion-Version": "2022-06-28",
     }
-    print("=== Débogage des variables d'environnement ===")
-    print("NOTION_API_KEY :", NOTION_API_KEY)
-    print("DATABASE_ID :", DATABASE_ID)
-    print("NOTION_URL :", NOTION_URL)
-    print("=============================================")
     try:
         response = requests.post(NOTION_URL, headers=headers)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Erreur lors de la requête vers l'API Notion :", e)
         return {"error": str(e)}
-    
+
     data = response.json()
     image_urls = []
 
@@ -46,13 +42,25 @@ def fetch_image_urls():
 
     return image_urls
 
-@app.route("/")
-def home():
+# Endpoint pour servir le frontend
+@app.route('/')
+def index():
+    return send_from_directory('frontend', 'index.html')
+
+@app.route('/<path:path>')
+def static_files(path):
+    return send_from_directory('frontend', path)
+
+# Endpoint pour vérifier que Flask est en ligne
+@app.route('/health')
+def health_check():
     return "Hello, Flask est en ligne !"
 
+# Endpoint pour retourner les images
 @app.route('/images', methods=['GET'])
 def get_images():
-    return jsonify(["image1_url", "image2_url"])  # Exemple de réponse JSON
+    image_urls = fetch_image_urls()
+    return jsonify(image_urls)
 
 if __name__ == '__main__':
     app.run()
