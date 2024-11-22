@@ -2,6 +2,7 @@ from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 import requests
 import os
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -55,6 +56,11 @@ def static_files(path):
 @app.route('/health')
 def health_check():
     return "Hello, Flask est en ligne !"
+
+@app.route('/images', methods=['GET'])
+def get_images():
+    image_urls = fetch_image_urls()
+    return jsonify({"images": image_urls, "timestamp": time.time()})
 
 # Endpoint pour retourner les images
 @app.route('/images', methods=['GET'])

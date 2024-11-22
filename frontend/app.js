@@ -28,6 +28,15 @@ fetch("https://flask-api-0qgo.onrender.com/images")
       grid.appendChild(emptyDiv);
     }
 
+    setInterval(() => {
+      fetch('https://ton-api-render-url/images')
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("Données mises à jour :", data);
+            updateGrid(data.images); // Implémente la logique pour mettre à jour la grille
+        });
+  }, 30000); // Rafraîchit toutes les 5 secondes 
+    
     // Gestion des événements drag-and-drop
     grid.addEventListener("dragstart", (e) => {
       if (e.target.classList.contains("grid-item")) {
@@ -79,7 +88,48 @@ fetch("https://flask-api-0qgo.onrender.com/images")
       } else {
         targetItem.classList.remove("empty");
       }
-
+      document.getElementById("refresh-btn").addEventListener("click", () => {
+        // Efface la grille actuelle
+        const grid = document.getElementById("grid");
+        grid.innerHTML = "";
+      
+        // Recharge les images depuis l'API
+        fetch("https://flask-api-0qgo.onrender.com/images")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Erreur lors de la récupération des images.");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Données récupérées :", data); // Vérifie les données ici
+      
+            const totalCases = 12; // Nombre total de cases dans la grille
+      
+            // Ajouter les images récupérées
+            data.forEach((url, index) => {
+              const div = document.createElement("div");
+              div.className = "grid-item";
+              div.style.backgroundImage = `url(${url})`; // Appliquer l'image comme fond
+              div.setAttribute("draggable", "true"); // Rendre l'élément déplaçable
+              div.dataset.index = index; // Stocker l'index
+              grid.appendChild(div);
+            });
+      
+            // Ajouter des cases vides pour compléter la grille
+            for (let i = data.length; i < totalCases; i++) {
+              const emptyDiv = document.createElement("div");
+              emptyDiv.className = "grid-item empty";
+              emptyDiv.setAttribute("draggable", "true"); // Rendre les cases vides déplaçables
+              grid.appendChild(emptyDiv);
+            }
+          })
+          .catch((error) => {
+            console.error("Erreur lors de la récupération des données :", error);
+            alert("Impossible de rafraîchir les images.");
+          });
+      });
+      
       // Retirer les classes d'état
       targetItem.classList.remove("drag-over");
       draggedItem.classList.remove("dragging");
