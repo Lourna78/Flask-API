@@ -74,18 +74,24 @@ function loadPage(page) {
     });
 }
 
-// Événements pour les boutons de navigation
-document.getElementById("prev-btn").addEventListener("click", () => {
-  if (currentPage > 1) {
-    currentPage--;
-    loadPage(currentPage);
-  }
-});
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
 
-document.getElementById("next-btn").addEventListener("click", () => {
-  currentPage++;
-  loadPage(currentPage);
-});
+if (prevBtn && nextBtn) {
+  prevBtn.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      loadPage(currentPage);
+    }
+  });
+
+  nextBtn.addEventListener("click", () => {
+    currentPage++;
+    loadPage(currentPage);
+  });
+} else {
+  console.error("Les boutons de pagination n'ont pas été trouvés dans le DOM.");
+}
 
 // Charger la première page au démarrage
 loadPage(currentPage);

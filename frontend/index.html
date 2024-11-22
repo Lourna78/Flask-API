@@ -7,19 +7,17 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="widget-container">
-        <!-- Titre du widget -->
-        <h2 class="widget-title">Aperçu du feed Instagram</h2>
-        <div class="refresh-container">
-          <button id="refresh-btn">Rafraîchir</button>
-        </div>
-        <div id="grid" class="grid-container"></div>
-        
-        <!-- Conteneur de la grille -->
-        <div id="grid" class="grid-container"></div>
-          <!-- Les images et cases grises seront insérées dynamiquement ici -->
-        </div>
-      </div>      
-  <script src="app.js"></script>
+  <div class="widget-container">
+      <h2 class="widget-title">Aperçu du feed Instagram</h2>
+      <div class="refresh-container">
+        <button id="refresh-btn">Rafraîchir</button>
+      </div>
+      <div id="grid" class="grid-container"></div>
+      <div id="pagination" class="pagination-controls">
+        <button id="prev-btn" class="pagination-btn">Précédent</button>
+        <button id="next-btn" class="pagination-btn">Suivant</button>
+      </div>
+  </div>
+  <script src="app.js"></script> <!-- Script appelé ici -->
 </body>
 </html>
