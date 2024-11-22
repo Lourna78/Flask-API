@@ -74,5 +74,18 @@ def get_images():
         print("Erreur lors de la récupération des images :", str(e))
         return jsonify({"error": "Une erreur est survenue lors de la récupération des images."}), 500
 
+# Endpoint pour servir la page d'accueil (index.html)
+@app.route('/')
+def index():
+    return send_from_directory('frontend', 'index.html')
+
+# Endpoint pour servir les fichiers statiques (CSS, JS, images, etc.)
+@app.route('/<path:path>')
+def static_files(path):
+    return send_from_directory('frontend', path)
+
 if __name__ == '__main__':
-    app.run()
+    # Ajout de gestion dynamique du port pour Render
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
+
