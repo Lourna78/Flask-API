@@ -1,7 +1,7 @@
 let currentPage = 1; // Page actuelle
 const limit = 12; // Nombre d'images par page
 
-// Fonction pour charger une page
+// Fonction pour charger une page spécifique
 function loadPage(page) {
   fetch(`https://flask-api-0qgo.onrender.com/images?page=${page}&limit=${limit}`)
     .then((response) => {
@@ -29,23 +29,23 @@ function loadPage(page) {
         grid.appendChild(emptyDiv);
       }
 
-// Mettre à jour l'état des boutons
-const prevBtn = document.getElementById("prev-btn");
-const nextBtn = document.getElementById("next-btn");
+      // Mettre à jour l'état des boutons
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
 
-if (prevBtn && nextBtn) {
-  prevBtn.disabled = data.page <= 1;
-  nextBtn.disabled = data.page >= data.pages;
-} else {
-  console.error("Les boutons de navigation n'ont pas été trouvés.");
-}
-})
-.catch((error) => {
-console.error("Erreur lors de la récupération des données :", error);
-});
+      if (prevBtn && nextBtn) {
+        prevBtn.disabled = data.page <= 1;
+        nextBtn.disabled = data.page >= data.pages;
+      } else {
+        console.error("Les boutons de navigation n'ont pas été trouvés.");
+      }
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la récupération des données :", error);
+    });
 }
 
-// Événements pour les boutons de navigation
+// Écouteurs d'événements pour les boutons de navigation
 document.getElementById("prev-btn").addEventListener("click", () => {
   if (currentPage > 1) {
     currentPage--;

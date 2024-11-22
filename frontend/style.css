@@ -107,10 +107,11 @@ body {
     }
 }
 
-.pagination-controls {
+pagination-controls {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 15px; /* Ajoute de l'espace entre la grille et les boutons */
+  padding: 0 10px; /* Ajoute de l'espace pour les éloigner des bordures */
 }
 
 #prev-btn, #next-btn {
@@ -131,6 +132,7 @@ body {
 }
 
 #prev-btn:disabled, #next-btn:disabled {
-  background-color: #ddd; /* Grisé pour indiquer qu'ils sont désactivés */
+  background-color: #ddd; /* Couleur grisée pour indiquer qu'ils sont désactivés */
   cursor: not-allowed;
+  box-shadow: none; /* Supprime l'ombre pour les boutons désactivés */
 }
