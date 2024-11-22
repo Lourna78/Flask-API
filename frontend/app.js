@@ -11,16 +11,7 @@ function refreshGrid() {
       const grid = document.getElementById("grid");
       grid.innerHTML = ""; // Vider la grille actuelle
 
-      const totalCases = 12; // Nombre total de cases dans la grille
-
-      // Vérifiez si 'data.images' est un tableau avant de continuer
-      if (!Array.isArray(data.images)) {
-        console.error("Le format des données est invalide :", data);
-        alert("Format des données incorrect.");
-        return;
-      }
-
-      // Ajouter les images récupérées
+      // Ajouter les images triées par date
       data.images.forEach((url) => {
         const div = document.createElement("div");
         div.className = "grid-item";
@@ -29,18 +20,20 @@ function refreshGrid() {
       });
 
       // Compléter avec des cases vides si nécessaire
+      const totalCases = 12;
       for (let i = data.images.length; i < totalCases; i++) {
         const emptyDiv = document.createElement("div");
         emptyDiv.className = "grid-item empty";
-        emptyDiv.setAttribute("draggable", "true");
         grid.appendChild(emptyDiv);
       }
     })
     .catch((error) => {
-      console.error("Erreur lors du rafraîchissement :", error);
-      alert("Impossible de rafraîchir les images.");
+      console.error("Erreur lors de la récupération des données :", error);
     });
 }
+
+// Ajouter un événement pour rafraîchir
+document.getElementById("refresh-btn").addEventListener("click", refreshGrid);
 
 // Fonction principale pour charger les données et gérer les événements
 function initializeGrid() {
