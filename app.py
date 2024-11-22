@@ -27,7 +27,7 @@ def fetch_image_urls():
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Erreur lors de la requête vers l'API Notion :", e)
-        return {"error": str(e)}
+        return []
 
     data = response.json()
     image_urls = []
@@ -57,16 +57,15 @@ def static_files(path):
 def health_check():
     return "Hello, Flask est en ligne !"
 
+# Endpoint pour récupérer les images depuis Notion
 @app.route('/images', methods=['GET'])
-def get_images():
-    image_urls = fetch_image_urls()
-    return jsonify({"images": image_urls, "timestamp": time.time()})
-
-# Endpoint pour retourner les images
-@app.route('/images', methods=['GET'])
-def get_images():
-    image_urls = fetch_image_urls()
-    return jsonify(image_urls)
+def fetch_images():
+    try:
+        image_urls = fetch_image_urls()
+        return jsonify({"images": image_urls, "timestamp": time.time()})
+    except Exception as e:
+        print("Erreur lors de la récupération des images :", str(e))
+        return jsonify({"error": "Une erreur est survenue lors de la récupération des images."}), 500
 
 if __name__ == '__main__':
     app.run()
