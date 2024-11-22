@@ -10,19 +10,17 @@
     <div class="widget-container">
         <!-- Titre du widget -->
         <h2 class="widget-title">Aperçu du feed Instagram</h2>
-        <div class="refresh-container">
-          <button id="refresh-btn">Rafraîchir</button>
+
+        <!-- Ligne avec les trois boutons -->
+        <div class="button-container">
+          <button id="prev-btn" class="action-btn">Précédent</button>
+          <button id="refresh-btn" class="action-btn">Rafraîchir</button>
+          <button id="next-btn" class="action-btn">Suivant</button>
         </div>
 
         <!-- Conteneur de la grille -->
         <div id="grid" class="grid-container">
           <!-- Les images seront insérées dynamiquement ici -->
-        </div>
-
-        <!-- Boutons de pagination -->
-        <div id="pagination" class="pagination-controls">
-          <button id="prev-btn" class="pagination-btn">Précédent</button>
-          <button id="next-btn" class="pagination-btn">Suivant</button>
         </div>
     </div>
     <script src="app.js"></script>

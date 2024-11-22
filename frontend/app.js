@@ -33,19 +33,15 @@ function loadPage(page) {
       const prevBtn = document.getElementById("prev-btn");
       const nextBtn = document.getElementById("next-btn");
 
-      if (prevBtn && nextBtn) {
-        prevBtn.disabled = data.page <= 1;
-        nextBtn.disabled = data.page >= data.pages;
-      } else {
-        console.error("Les boutons de navigation n'ont pas été trouvés.");
-      }
+      prevBtn.disabled = data.page <= 1;
+      nextBtn.disabled = data.page >= data.pages;
     })
     .catch((error) => {
       console.error("Erreur lors de la récupération des données :", error);
     });
 }
 
-// Écouteurs d'événements pour les boutons de navigation
+// Écouteurs d'événements pour les boutons
 document.getElementById("prev-btn").addEventListener("click", () => {
   if (currentPage > 1) {
     currentPage--;
@@ -58,9 +54,8 @@ document.getElementById("next-btn").addEventListener("click", () => {
   loadPage(currentPage);
 });
 
-// Ajouter un événement pour le bouton de rafraîchissement
 document.getElementById("refresh-btn").addEventListener("click", () => {
-  loadPage(currentPage);
+  loadPage(currentPage); // Recharge la page actuelle
 });
 
 // Charger la première page au démarrage

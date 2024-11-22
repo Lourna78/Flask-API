@@ -1,138 +1,121 @@
 /* Style général */
 body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f8f9fa;
-  }
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
 
-  /* Style du titre */
+/* Style du titre */
 .widget-title {
-    text-align: center;
-    font-size: 18px;
-    font-weight: 600;
-    margin: 10px 0;
-    color: #333;
-  }
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 10px 0;
+  color: #333;
+}
 
-  /* Style des items vides (cases grises) */
+/* Style des items vides (cases grises) */
 .grid-item.empty {
-    background-color: #f0f0f0; /* Fond gris uni pour les cases vides */
-    background-image: none; /* Supprime toute image résiduelle */
-  }
+  background-color: #f0f0f0; /* Fond gris uni pour les cases vides */
+  background-image: none; /* Supprime toute image résiduelle */
+}
 
-  /* Conteneur principal */
+/* Conteneur principal */
 .widget-container {
-    width: 400px; /* Ajuste la largeur selon ton besoin */
-    margin: 0 auto;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  }
-  widget-header {
-    text-align: center;
-    margin: 10px;
-  }
-  .refresh-container {
-    text-align: center;
-    margin-bottom: 15px;
-  }
-
-  #refresh-btn {
-  background-color: #f0f0f0; /* Même couleur que les cases vides */
-  color: #333; /* Couleur du texte */
+  width: 400px; /* Ajuste la largeur selon ton besoin */
+  margin: 0 auto;
+  background-color: #ffffff;
   border: 1px solid #ddd;
-  padding: 8px 20px;
-  font-size: 14px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Légère ombre */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-#refresh-btn:hover {
-  background-color: #e6e6e6; /* Légèrement plus foncé */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Accentue l'ombre au survol */
+.widget-header {
+  text-align: center;
+  margin: 10px;
 }
-  
-  /* Conteneur de la grille */
-  .grid-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 colonnes */
-    gap: 5px; /* Espacement entre les images */
-    padding: 20px;
-    box-sizing: border-box; /* Inclut les bordures dans la taille totale */
-    overflow: hidden; /*Empêche les débordements */
-    position: relative; /*Nécessaire pour limiter les débordements au conteneur */
-  }
-  
-  /* Style des items de la grille */
-  .grid-item {
-    width: 100%;
-    padding-top: 100%; /* Maintient un carré parfait */
-    background-size: cover;
-    background-position: center;
-    border: none;
-    outline: none; /* Supprime les contours bleus par défaut */
-    border-radius: 3px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
 
-  /* Ajouter un effet visuel sur les éléments en cours de glissement */
+/* Conteneur de la grille */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colonnes */
+  gap: 5px; /* Espacement entre les images */
+  padding: 20px;
+  box-sizing: border-box; /* Inclut les bordures dans la taille totale */
+  overflow: hidden; /* Empêche les débordements */
+  position: relative; /* Nécessaire pour limiter les débordements au conteneur */
+}
+
+/* Style des items de la grille */
+.grid-item {
+  width: 100%;
+  padding-top: 100%; /* Maintient un carré parfait */
+  background-size: cover;
+  background-position: center;
+  border: none;
+  outline: none; /* Supprime les contours bleus par défaut */
+  border-radius: 3px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Ajouter un effet visuel sur les éléments en cours de glissement */
 .grid-item.dragging {
-    opacity: 0.5;
-    outline: none; /* Supprime également l'outline pendant le drag */
+  opacity: 0.5;
+  outline: none; /* Supprime également l'outline pendant le drag */
 }
 
 .grid-item:focus {
-    outline: none; /* Supprime les contours bleus au focus */
+  outline: none; /* Supprime les contours bleus au focus */
 }
 
-  .grid-item:hover {
-    transition: transform 0.5s ease, box-shadow 0.5s ease; /* Ajuste la durée */
-    transform: scale(1.15); /* Légèrement moins de zoom */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Accentue l'ombre pour un effet plus prononcé */
-    z-index: 1; /*Met l'élément zommé au dessus des autres */
+.grid-item:hover {
+  transition: transform 0.5s ease, box-shadow 0.5s ease; /* Ajuste la durée */
+  transform: scale(1.15); /* Légèrement moins de zoom */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Accentue l'ombre pour un effet plus prononcé */
+  z-index: 1; /* Met l'élément zoomé au-dessus des autres */
+}
+
+@media (max-width: 600px) {
+  .grid-container {
+      grid-template-columns: repeat(2, 1fr); /* 2 colonnes sur mobile */
   }
-  
-  @media (max-width: 600px) {
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr); /* 2 colonnes sur mobile */
-    }
 }
 
-pagination-controls {
+/* Conteneur des boutons */
+.button-container {
   display: flex;
-  justify-content: space-between;
-  margin-top: 15px; /* Ajoute de l'espace entre la grille et les boutons */
-  padding: 0 10px; /* Ajoute de l'espace pour les éloigner des bordures */
+  justify-content: space-between; /* Espacement entre les boutons */
+  align-items: center;
+  margin-top: 15px;
+  padding: 0 20px; /* Espacement latéral pour éviter qu'ils soient trop près des bords */
 }
 
-#prev-btn, #next-btn {
+/* Style commun des boutons */
+.action-btn {
   background-color: #f0f0f0; /* Même couleur que le bouton Rafraîchir */
-  color: #333; /* Couleur du texte */
+  color: #333;
   border: 1px solid #ddd;
   padding: 8px 20px;
   font-size: 14px;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Légère ombre */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre légère */
 }
 
-#prev-btn:hover, #next-btn:hover {
-  background-color: #e6e6e6; /* Légèrement plus foncé */
+.action-btn:hover {
+  background-color: #e6e6e6; /* Légèrement plus foncé au survol */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Accentue l'ombre au survol */
 }
 
-#prev-btn:disabled, #next-btn:disabled {
-  background-color: #ddd; /* Couleur grisée pour indiquer qu'ils sont désactivés */
+.action-btn:disabled {
+  background-color: #ddd; /* Couleur grisée pour les boutons désactivés */
   cursor: not-allowed;
-  box-shadow: none; /* Supprime l'ombre pour les boutons désactivés */
+  box-shadow: none;
 }
