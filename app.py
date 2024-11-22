@@ -1,8 +1,7 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 import requests
 import os
-import time
 
 app = Flask(__name__)
 CORS(app)
@@ -15,6 +14,7 @@ NOTION_URL = os.getenv("NOTION_URL", f"https://api.notion.com/v1/databases/{DATA
 if not NOTION_API_KEY or not DATABASE_ID or not NOTION_URL:
     raise ValueError("Une ou plusieurs variables d'environnement sont manquantes : NOTION_API_KEY, DATABASE_ID, NOTION_URL")
 
+# Fonction pour récupérer les images et leurs dates depuis Notion
 def fetch_image_urls():
     headers = {
         "Authorization": f"Bearer {NOTION_API_KEY}",
@@ -42,51 +42,37 @@ def fetch_image_urls():
                         "url": file["file"]["url"] if file["type"] == "file" else file["external"]["url"],
                         "date": page["properties"].get("Date", {}).get("date", {}).get("start", "")  # Date de publication
                     })
-    print("Données renvoyées par fetch_image_urls :", image_urls)  # Debug
+
     return image_urls
 
-# Endpoint pour servir le frontend
-@app.route('/')
-def index():
-    return send_from_directory('frontend', 'index.html')
-
-@app.route('/<path:path>')
-def static_files(path):
-    return send_from_directory('frontend', path)
-
-# Endpoint pour vérifier que Flask est en ligne
-@app.route('/health')
-def health_check():
-    return "Hello, Flask est en ligne !"
-
-from flask import request  # Import nécessaire pour gérer les paramètres GET
-
+# Endpoint pour récupérer les images avec pagination
 @app.route('/images', methods=['GET'])
 def get_images():
     try:
-        # Récupère les paramètres de pagination depuis la requête
+        # Récupère les paramètres de pagination
         page = int(request.args.get('page', 1))  # Page actuelle (par défaut : 1)
         limit = int(request.args.get('limit', 12))  # Nombre d'images par page (par défaut : 12)
 
         image_urls = fetch_image_urls()
 
-        # Trier par date descendante (ajoutez une gestion correcte si 'date' n'existe pas)
+        # Trier par date descendante
         image_urls.sort(key=lambda x: x.get('date', ""), reverse=True)
 
         # Calcul pour la pagination
-        start = (page - 1) * limit  # Index de départ
-        end = start + limit         # Index de fin
+        start = (page - 1) * limit
+        end = start + limit
         paginated_images = image_urls[start:end]
 
         return jsonify({
-            "images": paginated_images,
+            "images": [image["url"] for image in paginated_images],
             "total": len(image_urls),  # Nombre total d'images
             "page": page,
             "pages": (len(image_urls) + limit - 1) // limit  # Nombre total de pages
         })
+
     except Exception as e:
         print("Erreur lors de la récupération des images :", str(e))
         return jsonify({"error": "Une erreur est survenue lors de la récupération des images."}), 500
-    
+
 if __name__ == '__main__':
     app.run()
