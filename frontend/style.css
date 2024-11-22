@@ -106,3 +106,31 @@ body {
         grid-template-columns: repeat(2, 1fr); /* 2 colonnes sur mobile */
     }
 }
+
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 20px; /* Ajuste la marge pour aligner avec la grille */
+}
+
+.pagination-btn {
+  background-color: #f0f0f0; /* Même couleur que le bouton "Rafraîchir" */
+  border: 1px solid #ddd;
+  color: #333;
+  padding: 8px 20px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Légère ombre */
+}
+
+.pagination-btn:hover {
+  background-color: #e6e6e6; /* Légèrement plus foncé */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Accentue l'ombre au survol */
+}
+
+.pagination-btn:disabled {
+  background-color: #cccccc; /* Grisé quand désactivé */
+  cursor: not-allowed;
+}

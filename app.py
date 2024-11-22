@@ -31,18 +31,17 @@ def fetch_image_urls():
     data = response.json()
     results = data.get("results", [])
 
-    # Trier les résultats par la date de publication
-    sorted_results = sorted(results, key=lambda x: x["properties"].get("Date", {}).get("date", {}).get("start", ""), reverse=False)
-
     image_urls = []
-    for page in sorted_results:
+    for page in results:
         if "properties" in page and "Fichiers et médias" in page["properties"]:
             files = page["properties"]["Fichiers et médias"].get("files", [])
             for file in files:
-                if file["type"] == "file":
-                    image_urls.append(file["file"]["url"])
-                elif file["type"] == "external":
-                    image_urls.append(file["external"]["url"])
+                if file["type"] == "file" or file["type"] == "external":
+                    # Inclure l'URL et la date de publication
+                    image_urls.append({
+                        "url": file["file"]["url"] if file["type"] == "file" else file["external"]["url"],
+                        "date": page["properties"].get("Date", {}).get("date", {}).get("start", "")  # Date de publication
+                    })
 
     return image_urls
 
@@ -60,12 +59,31 @@ def static_files(path):
 def health_check():
     return "Hello, Flask est en ligne !"
 
-# Endpoint pour récupérer les images depuis Notion
+from flask import request  # Import nécessaire pour gérer les paramètres GET
+
 @app.route('/images', methods=['GET'])
-def fetch_images():
+def get_images():
+    # Récupère les paramètres de pagination depuis la requête
+    page = int(request.args.get('page', 1))  # Page actuelle (par défaut : 1)
+    limit = int(request.args.get('limit', 12))  # Nombre d'images par page (par défaut : 12)
+
     try:
         image_urls = fetch_image_urls()
-        return jsonify({"images": image_urls, "timestamp": time.time()})
+
+        # Trier par date descendante
+        sorted_results = sorted(image_urls, reverse=False)
+
+        # Calcul pour la pagination
+        start = (page - 1) * limit  # Index de départ
+        end = start + limit         # Index de fin
+        paginated_images = sorted_results[start:end]
+
+        return jsonify({
+            "images": paginated_images,  # Images paginées
+            "total": len(image_urls),    # Nombre total d'images
+            "page": page,                # Page actuelle
+            "pages": (len(image_urls) + limit - 1) // limit  # Nombre total de pages
+        })
     except Exception as e:
         print("Erreur lors de la récupération des images :", str(e))
         return jsonify({"error": "Une erreur est survenue lors de la récupération des images."}), 500
