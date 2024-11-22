@@ -11,16 +11,24 @@ fetch("https://flask-api-0qgo.onrender.com/images")
     const totalCases = 12; // Nombre total de cases dans la grille
     const grid = document.getElementById("grid");
 
+    // Vérifiez si 'data.images' est un tableau avant de continuer
+    if (!Array.isArray(data.images)) {
+      console.error("Le format des données est invalide :", data);
+      alert("Format des données incorrect.");
+      return;
+    }
+
     // Ajouter les images récupérées
-    data.forEach((url, index) => {
-        const div = document.createElement("div");
-        div.className = "grid-item";
-        div.style.backgroundImage = `url(${url})`;
-        grid.appendChild(div);
-    });    
+    grid.innerHTML = ""; // Nettoie la grille existante
+    data.images.forEach((url, index) => {
+      const div = document.createElement("div");
+      div.className = "grid-item";
+      div.style.backgroundImage = `url(${url})`;
+      grid.appendChild(div);
+    });
 
     // Ajouter des cases vides pour compléter la grille
-    for (let i = data.length; i < totalCases; i++) {
+    for (let i = data.images.length; i < totalCases; i++) {
       const emptyDiv = document.createElement("div");
       emptyDiv.className = "grid-item empty";
       emptyDiv.setAttribute("draggable", "true"); // Rendre les cases vides déplaçables
@@ -28,15 +36,6 @@ fetch("https://flask-api-0qgo.onrender.com/images")
       grid.appendChild(emptyDiv);
     }
 
-    setInterval(() => {
-      fetch('https://ton-api-render-url/images')
-        .then((response) => response.json())
-        .then((data) => {
-            console.log("Données mises à jour :", data);
-            updateGrid(data.images); // Implémente la logique pour mettre à jour la grille
-        });
-  }, 30000); // Rafraîchit toutes les 5 secondes 
-    
     // Gestion des événements drag-and-drop
     grid.addEventListener("dragstart", (e) => {
       if (e.target.classList.contains("grid-item")) {
@@ -66,7 +65,7 @@ fetch("https://flask-api-0qgo.onrender.com/images")
 
       if (!draggedItem || !targetItem || !targetItem.classList.contains("grid-item")) {
         console.error("Élément introuvable pendant le drop.");
-        return; // Arrête l'exécution si un des éléments est introuvable
+        return;
       }
 
       // Échanger les positions des images
@@ -88,54 +87,52 @@ fetch("https://flask-api-0qgo.onrender.com/images")
       } else {
         targetItem.classList.remove("empty");
       }
-      document.getElementById("refresh-btn").addEventListener("click", () => {
-        // Efface la grille actuelle
-        const grid = document.getElementById("grid");
-        grid.innerHTML = "";
-      
-        // Recharge les images depuis l'API
-        fetch("https://flask-api-0qgo.onrender.com/images")
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Erreur lors de la récupération des images.");
-            }
-            return response.json();
-          })
-          .then((data) => {
-            console.log("Données récupérées :", data); // Vérifie les données ici
-      
-            const totalCases = 12; // Nombre total de cases dans la grille
-      
-            // Ajouter les images récupérées
-            data.forEach((url, index) => {
-              const div = document.createElement("div");
-              div.className = "grid-item";
-              div.style.backgroundImage = `url(${url})`; // Appliquer l'image comme fond
-              div.setAttribute("draggable", "true"); // Rendre l'élément déplaçable
-              div.dataset.index = index; // Stocker l'index
-              grid.appendChild(div);
-            });
-      
-            // Ajouter des cases vides pour compléter la grille
-            for (let i = data.length; i < totalCases; i++) {
-              const emptyDiv = document.createElement("div");
-              emptyDiv.className = "grid-item empty";
-              emptyDiv.setAttribute("draggable", "true"); // Rendre les cases vides déplaçables
-              grid.appendChild(emptyDiv);
-            }
-          })
-          .catch((error) => {
-            console.error("Erreur lors de la récupération des données :", error);
-            alert("Impossible de rafraîchir les images.");
-          });
-      });
-      
+
       // Retirer les classes d'état
       targetItem.classList.remove("drag-over");
       draggedItem.classList.remove("dragging");
+    });
+
+    // Rafraîchir les images via le bouton
+    document.getElementById("refresh-btn").addEventListener("click", () => {
+      grid.innerHTML = ""; // Vide la grille actuelle
+      fetch("https://flask-api-0qgo.onrender.com/images")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Erreur lors du rafraîchissement des images.");
+          }
+          return response.json();
+        })
+        .then((newData) => {
+          if (!Array.isArray(newData.images)) {
+            console.error("Le format des données rafraîchies est invalide :", newData);
+            alert("Format des données incorrect après rafraîchissement.");
+            return;
+          }
+
+          // Ajouter les nouvelles images
+          newData.images.forEach((url) => {
+            const div = document.createElement("div");
+            div.className = "grid-item";
+            div.style.backgroundImage = `url(${url})`;
+            grid.appendChild(div);
+          });
+
+          // Ajouter des cases vides si nécessaire
+          for (let i = newData.images.length; i < totalCases; i++) {
+            const emptyDiv = document.createElement("div");
+            emptyDiv.className = "grid-item empty";
+            grid.appendChild(emptyDiv);
+          }
+        })
+        .catch((error) => {
+          console.error("Erreur lors du rafraîchissement :", error);
+          alert("Impossible de rafraîchir les images.");
+        });
     });
   })
   .catch((error) => {
     console.error("Erreur lors de la récupération des données :", error);
     alert("Impossible de charger les images.");
   });
+  
