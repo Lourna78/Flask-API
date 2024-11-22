@@ -29,16 +29,20 @@ function loadPage(page) {
         grid.appendChild(emptyDiv);
       }
 
-      // Mise à jour des boutons
-      const prevBtn = document.getElementById("prev-btn");
-      const nextBtn = document.getElementById("next-btn");
+// Mettre à jour l'état des boutons
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
 
-      prevBtn.disabled = data.page <= 1;
-      nextBtn.disabled = data.page >= data.pages;
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la récupération des données :", error);
-    });
+if (prevBtn && nextBtn) {
+  prevBtn.disabled = data.page <= 1;
+  nextBtn.disabled = data.page >= data.pages;
+} else {
+  console.error("Les boutons de navigation n'ont pas été trouvés.");
+}
+})
+.catch((error) => {
+console.error("Erreur lors de la récupération des données :", error);
+});
 }
 
 // Événements pour les boutons de navigation

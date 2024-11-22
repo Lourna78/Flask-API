@@ -113,20 +113,24 @@ body {
   margin-top: 10px;
 }
 
-.pagination-btn {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
+#prev-btn, #next-btn {
+  background-color: #f0f0f0; /* Même couleur que le bouton Rafraîchir */
+  color: #333; /* Couleur du texte */
+  border: 1px solid #ddd;
+  padding: 8px 20px;
   font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Légère ombre */
 }
 
-.pagination-btn:hover {
-  background-color: #e0e0e0;
+#prev-btn:hover, #next-btn:hover {
+  background-color: #e6e6e6; /* Légèrement plus foncé */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Accentue l'ombre au survol */
 }
 
-.pagination-btn:disabled {
-  background-color: #ddd;
+#prev-btn:disabled, #next-btn:disabled {
+  background-color: #ddd; /* Grisé pour indiquer qu'ils sont désactivés */
   cursor: not-allowed;
 }
