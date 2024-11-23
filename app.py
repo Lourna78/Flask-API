@@ -60,10 +60,12 @@ def save_config():
     try:
         global user_config
         data = request.json
+        print("Données reçues :", data)  # Ajoutez ceci pour voir les données dans les logs
         user_config["api_key"] = data.get("api_key")
         user_config["database_id"] = data.get("database_id")
         return jsonify({"message": "Configuration sauvegardée avec succès"}), 200
     except Exception as e:
+        print("Erreur lors de la sauvegarde de la configuration :", e)
         return jsonify({"error": str(e)}), 500
     
 # Endpoint pour récupérer les images avec pagination
