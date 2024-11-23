@@ -51,6 +51,46 @@ document.getElementById("next-btn").addEventListener("click", () => {
   loadPage(currentPage);
 });
 
+document.getElementById("config-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  // Récupérer les valeurs du formulaire
+  const apiKey = document.getElementById("api-key").value;
+  const databaseId = document.getElementById("database-id").value;
+
+  // Enregistrer les valeurs dans le stockage local
+  localStorage.setItem("notionApiKey", apiKey);
+  localStorage.setItem("notionDatabaseId", databaseId);
+
+  alert("Configuration enregistrée avec succès !");
+});
+
+document.getElementById("config-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const apiKey = document.getElementById("api-key").value;
+  const databaseId = document.getElementById("database-id").value;
+
+  // Envoi de la configuration à Flask via POST
+  fetch("https://widget.artyzan-agency.com/set-config", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      notionApiKey: apiKey,
+      databaseId: databaseId,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      alert("Configuration enregistrée : " + data.message);
+    })
+    .catch((error) => {
+      console.error("Erreur lors de l'enregistrement de la configuration :", error);
+    });
+});
+
 // Ajouter un événement pour le bouton Rafraîchir
 document.getElementById("refresh-btn").addEventListener("click", () => {
   loadPage(currentPage); // Recharger la page actuelle

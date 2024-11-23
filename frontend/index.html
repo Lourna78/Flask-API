@@ -22,6 +22,17 @@
         <div id="grid" class="grid-container">
           <!-- Les images seront insérées dynamiquement ici -->
         </div>
+
+        <div class="config-container">
+          <h3>Configuration Notion</h3>
+          <form id="config-form">
+            <label for="api-key">Clé API Notion :</label>
+            <input type="text" id="api-key" placeholder="Votre clé API Notion" required>
+            <label for="database-id">ID de la base de données :</label>
+            <input type="text" id="database-id" placeholder="ID de votre base Notion" required>
+            <button type="submit">Enregistrer</button>
+          </form>
+        </div>
     </div>
     <script src="app.js"></script>
 </body>

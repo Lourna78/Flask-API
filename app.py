@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
+from flask import request, jsonify
 import requests
 import os
 
@@ -16,6 +17,13 @@ if not NOTION_API_KEY or not DATABASE_ID or not NOTION_URL:
 
 # Fonction pour récupérer les images et leurs dates depuis Notion
 def fetch_image_urls():
+    notion_api_key = user_config.get('notionApiKey')
+    database_id = user_config.get('databaseId')
+
+    if not notion_api_key or not database_id:
+        return {"error": "Configuration Notion manquante"}
+    
+    notion_url = f"https://api.notion.com/v1/databases/{database_id}/query"
     headers = {
         "Authorization": f"Bearer {NOTION_API_KEY}",
         "Content-Type": "application/json",
@@ -87,6 +95,16 @@ def static_files(path):
 @app.route('/test')
 def test():
     return "Connexion réussie via widget.artyzan-agency.com"
+
+user_config = {}
+
+@app.route('/set-config', methods=['POST'])
+def set_config():
+    global user_config
+    data = request.json
+    user_config['notionApiKey'] = data.get('notionApiKey')
+    user_config['databaseId'] = data.get('databaseId')
+    return jsonify({"message": "Configuration enregistrée"}), 200
 
 if __name__ == '__main__':
     # Ajout de gestion dynamique du port pour Render
