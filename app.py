@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 from flask import request, jsonify
+from flask import flash, jsonify, request
 import requests
 import os
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -17,20 +19,14 @@ if not NOTION_API_KEY or not DATABASE_ID or not NOTION_URL:
 
 # Fonction pour récupérer les images et leurs dates depuis Notion
 def fetch_image_urls():
-    notion_api_key = user_config.get('notionApiKey')
-    database_id = user_config.get('databaseId')
-
-    if not notion_api_key or not database_id:
-        return {"error": "Configuration Notion manquante"}
-    
-    notion_url = f"https://api.notion.com/v1/databases/{database_id}/query"
     headers = {
-        "Authorization": f"Bearer {NOTION_API_KEY}",
+        "Authorization": f"Bearer {user_config['api_key']}",
         "Content-Type": "application/json",
         "Notion-Version": "2022-06-28",
     }
+    notion_url = f"https://api.notion.com/v1/databases/{user_config['database_id']}/query"
     try:
-        response = requests.post(NOTION_URL, headers=headers)
+        response = requests.post(notion_url, headers=headers)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Erreur lors de la requête vers l'API Notion :", e)
@@ -45,14 +41,31 @@ def fetch_image_urls():
             files = page["properties"]["Fichiers et médias"].get("files", [])
             for file in files:
                 if file["type"] == "file" or file["type"] == "external":
-                    # Inclure l'URL et la date de publication
                     image_urls.append({
                         "url": file["file"]["url"] if file["type"] == "file" else file["external"]["url"],
-                        "date": page["properties"].get("Date", {}).get("date", {}).get("start", "")  # Date de publication
+                        "date": page["properties"].get("Date", {}).get("date", {}).get("start", "")
                     })
 
     return image_urls
 
+# Variable pour stocker temporairement la configuration utilisateur
+user_config = {
+    "api_key": None,
+    "database_id": None
+}
+
+# Endpoint pour sauvegarder la configuration
+@app.route('/config', methods=['POST'])
+def save_config():
+    try:
+        global user_config
+        data = request.json
+        user_config["api_key"] = data.get("api_key")
+        user_config["database_id"] = data.get("database_id")
+        return jsonify({"message": "Configuration sauvegardée avec succès"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 # Endpoint pour récupérer les images avec pagination
 @app.route('/images', methods=['GET'])
 def get_images():

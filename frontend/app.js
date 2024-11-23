@@ -38,6 +38,46 @@ function loadPage(page) {
     });
 }
 
+// Sauvegarder la configuration
+function saveConfig(apiKey, databaseId) {
+  fetch('/config', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      api_key: apiKey,
+      database_id: databaseId
+    })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("Erreur lors de la sauvegarde de la configuration.");
+    }
+    return response.json();
+  })
+  .then(data => {
+    alert(data.message || "Configuration sauvegardée !");
+    loadPage(1); // Recharge la première page avec la nouvelle configuration
+  })
+  .catch(error => {
+    console.error("Erreur :", error);
+    alert("Impossible de sauvegarder la configuration.");
+  });
+}
+
+// Ajouter un gestionnaire d'événements pour le bouton "Enregistrer"
+document.getElementById("save-config-btn").addEventListener("click", () => {
+  const apiKey = document.getElementById("api-key-input").value;
+  const databaseId = document.getElementById("database-id-input").value;
+
+  if (apiKey && databaseId) {
+    saveConfig(apiKey, databaseId);
+  } else {
+    alert("Veuillez remplir les deux champs avant d'enregistrer.");
+  }
+});
+
 // Ajouter des événements pour les boutons de navigation
 document.getElementById("prev-btn").addEventListener("click", () => {
   if (currentPage > 1) {

@@ -25,13 +25,11 @@
 
         <div class="config-container">
           <h3>Configuration Notion</h3>
-          <form id="config-form">
-            <label for="api-key">Clé API Notion :</label>
-            <input type="text" id="api-key" placeholder="Votre clé API Notion" required>
-            <label for="database-id">ID de la base de données :</label>
-            <input type="text" id="database-id" placeholder="ID de votre base Notion" required>
-            <button type="submit">Enregistrer</button>
-          </form>
+          <label for="api-key-input">Clé API Notion :</label>
+          <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
+          <label for="database-id-input">ID de la base de données :</label>
+          <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
+          <button id="save-config-btn">Enregistrer</button>
         </div>
     </div>
     <script src="app.js"></script>
