@@ -38,6 +38,18 @@ function loadPage(page) {
     });
 }
 
+fetch('https://widget.artyzan-agency.com/config', {
+  method: 'POST',
+  headers: {
+      'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+      api_key: apiKey,
+      database_id: databaseId
+  })
+})
+
+
 // Sauvegarder la configuration
 function saveConfig(apiKey, databaseId) {
   fetch('/config', {

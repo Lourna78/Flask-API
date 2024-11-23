@@ -25,12 +25,13 @@ def fetch_image_urls():
         "Notion-Version": "2022-06-28",
     }
     notion_url = f"https://api.notion.com/v1/databases/{user_config['database_id']}/query"
+    
     try:
         response = requests.post(notion_url, headers=headers)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Erreur lors de la requête vers l'API Notion :", e)
-        return []
+        return {"error": str(e)}
 
     data = response.json()
     results = data.get("results", [])
@@ -41,6 +42,7 @@ def fetch_image_urls():
             files = page["properties"]["Fichiers et médias"].get("files", [])
             for file in files:
                 if file["type"] == "file" or file["type"] == "external":
+                     # Inclure l'URL et la date de publication
                     image_urls.append({
                         "url": file["file"]["url"] if file["type"] == "file" else file["external"]["url"],
                         "date": page["properties"].get("Date", {}).get("date", {}).get("start", "")
@@ -72,11 +74,18 @@ def save_config():
 @app.route('/images', methods=['GET'])
 def get_images():
     try:
+        # Récupérer les paramètres utilisateur
+        api_key = user_config.get("api_key")
+        database_id = user_config.get("database_id")
+        if not api_key or not database_id:
+            return jsonify({"error": "Configuration utilisateur manquante. Veuillez sauvegarder vos paramètres."}), 400
+
         # Récupère les paramètres de pagination
         page = int(request.args.get('page', 1))  # Page actuelle (par défaut : 1)
         limit = int(request.args.get('limit', 12))  # Nombre d'images par page (par défaut : 12)
 
-        image_urls = fetch_image_urls()
+        # Utiliser la fonction fetch_image_urls avec les clés dynamiques
+        image_urls = fetch_image_urls(api_key, database_id)
 
         # Trier par date descendante
         image_urls.sort(key=lambda x: x.get('date', ""), reverse=True)
