@@ -99,3 +99,8 @@ document.getElementById("refresh-btn").addEventListener("click", () => {
 
 // Charger la première page au démarrage
 loadPage(currentPage);
+
+body: JSON.stringify({
+  api_key: apiKey,
+  database_id: databaseId
+})

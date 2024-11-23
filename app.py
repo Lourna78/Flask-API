@@ -63,16 +63,19 @@ def save_config():
 
         # Vérifiez immédiatement la connexion à l'API Notion
         test_result = fetch_image_urls(user_config["api_key"], user_config["database_id"])
-        if "error" in test_result:
+        if isinstance(test_result, dict) and "error" in test_result:
             print(f"Erreur lors du test de connexion : {test_result['error']}")
             return jsonify({"error": "Configuration incorrecte : " + test_result["error"]}), 400
         
-        print("Configuration utilisateur mise à jour :", user_config)
+        print("Connexion réussie avec la configuration utilisateur.")
         return jsonify({"message": "Configuration sauvegardée avec succès"}), 200
     except Exception as e:
-        
-        print("Erreur lors de la sauvegarde de la configuration :", e)
+        print("Erreur lors de la sauvegarde de la configuration :", str(e))
         return jsonify({"error": str(e)}), 500
+    
+    print("Clé API reçue :", user_config["api_key"])
+
+
 
 # Endpoint pour récupérer les images avec pagination
 @app.route('/images', methods=['GET'])
@@ -92,7 +95,7 @@ def get_images():
         # Utiliser la fonction fetch_image_urls avec les clés dynamiques
         image_urls = fetch_image_urls(api_key, database_id)
 
-        if "error" in image_urls:
+        if isinstance(image_urls, dict) and "error" in image_urls:
             print("Erreur lors de la récupération des images :", image_urls["error"])
             return jsonify({"error": image_urls["error"]}), 500
 
@@ -114,18 +117,31 @@ def get_images():
         })
 
     except Exception as e:
-        print("Erreur lors de la récupération des images :", e)
+        print("Erreur lors de la récupération des images :", str(e))
         return jsonify({"error": "Une erreur est survenue lors de la récupération des images."}), 500
 
+
+# Endpoint pour servir la page d'accueil (index.html)
 @app.route('/')
 def index():
-    return send_from_directory('frontend', 'index.html')
+    try:
+        return send_from_directory('frontend', 'index.html')
+    except FileNotFoundError:
+        print("Erreur : Le fichier index.html est introuvable.")
+        return "Fichier introuvable.", 404
+
 
 # Endpoint pour servir les fichiers statiques (CSS, JS, images, etc.)
 @app.route('/<path:path>')
 def static_files(path):
-    return send_from_directory('frontend', path)
+    try:
+        return send_from_directory('frontend', path)
+    except FileNotFoundError:
+        print(f"Erreur : Le fichier {path} est introuvable.")
+        return "Fichier introuvable.", 404
 
+
+# Lancer l'application Flask
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
