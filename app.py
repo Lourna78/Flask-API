@@ -84,6 +84,10 @@ def index():
 def static_files(path):
     return send_from_directory('frontend', path)
 
+@app.route('/test')
+def test():
+    return "Connexion réussie via widget.artyzan-agency.com"
+
 if __name__ == '__main__':
     # Ajout de gestion dynamique du port pour Render
     port = int(os.environ.get('PORT', 5000))
