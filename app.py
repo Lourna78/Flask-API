@@ -18,16 +18,21 @@ if not NOTION_API_KEY or not DATABASE_ID or not NOTION_URL:
     raise ValueError("Une ou plusieurs variables d'environnement sont manquantes : NOTION_API_KEY, DATABASE_ID, NOTION_URL")
 
 # Fonction pour récupérer les images et leurs dates depuis Notion
-def fetch_image_urls():
+def fetch_image_urls(api_key, database_id):
     headers = {
-        "Authorization": f"Bearer {user_config['api_key']}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
         "Notion-Version": "2022-06-28",
     }
-    notion_url = f"https://api.notion.com/v1/databases/{user_config['database_id']}/query"
-    
+    notion_url = f"https://api.notion.com/v1/databases/{database_id}/query"
+
     try:
+        print("Requête envoyée à Notion avec les données suivantes :")
+        print("API Key :", api_key)
+        print("Database ID :", database_id)
+
         response = requests.post(notion_url, headers=headers)
+        print("Réponse de Notion :", response.status_code, response.text)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Erreur lors de la requête vers l'API Notion :", e)
@@ -42,12 +47,12 @@ def fetch_image_urls():
             files = page["properties"]["Fichiers et médias"].get("files", [])
             for file in files:
                 if file["type"] == "file" or file["type"] == "external":
-                     # Inclure l'URL et la date de publication
                     image_urls.append({
                         "url": file["file"]["url"] if file["type"] == "file" else file["external"]["url"],
-                        "date": page["properties"].get("Date", {}).get("date", {}).get("start", "")
+                        "date": page["properties"].get("Date", {}).get("date", {}).get("start", "")  # Date de publication
                     })
 
+    print("Images récupérées :", image_urls)
     return image_urls
 
 # Variable pour stocker temporairement la configuration utilisateur
@@ -62,9 +67,9 @@ def save_config():
     try:
         global user_config
         data = request.json
-        print("Données reçues :", data)  # Ajoutez ceci pour voir les données dans les logs
         user_config["api_key"] = data.get("api_key")
         user_config["database_id"] = data.get("database_id")
+        print("Configuration utilisateur mise à jour :", user_config)
         return jsonify({"message": "Configuration sauvegardée avec succès"}), 200
     except Exception as e:
         print("Erreur lors de la sauvegarde de la configuration :", e)
