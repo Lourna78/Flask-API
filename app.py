@@ -1,9 +1,11 @@
-from flask import Flask, send_from_directory, jsonify, request
+from flask import Flask, send_from_directory
+from flask import Flask, render_template
 from flask_cors import CORS
 import requests
 import os
 
-app = Flask(__name__, static_folder='frontend')
+app = Flask(__name__)
+app = Flask(__name__, static_folder='frontend/static', template_folder='frontend')
 CORS(app)
 
 # Configuration utilisateur par défaut
@@ -56,24 +58,21 @@ def save_config():
     global user_config
     try:
         data = request.json
-        user_config["api_key"] = data.get("api_key")
-        user_config["database_id"] = data.get("database_id")
+        user_config["api_key"] = data.get("api_key").strip()  # Supprime les espaces éventuels
+        user_config["database_id"] = data.get("database_id").strip()
 
         print(f"Configuration utilisateur mise à jour : {user_config}")
 
-        # Vérifiez immédiatement la connexion à l'API Notion
+        # Test immédiat de la configuration
         test_result = fetch_image_urls(user_config["api_key"], user_config["database_id"])
-        if isinstance(test_result, dict) and "error" in test_result:
+        if "error" in test_result:
             print(f"Erreur lors du test de connexion : {test_result['error']}")
             return jsonify({"error": "Configuration incorrecte : " + test_result["error"]}), 400
         
-        print("Connexion réussie avec la configuration utilisateur.")
         return jsonify({"message": "Configuration sauvegardée avec succès"}), 200
     except Exception as e:
-        print("Erreur lors de la sauvegarde de la configuration :", str(e))
+        print("Erreur lors de la sauvegarde de la configuration :", e)
         return jsonify({"error": str(e)}), 500
-    
-    print("Clé API reçue :", user_config["api_key"])
 
 
 
@@ -124,13 +123,13 @@ def get_images():
 # Route pour servir l'index.html
 @app.route('/')
 def index():
-    return send_from_directory(app.static_folder, 'index.html')
+    return render_template('index.html')  # Utilisez render_template pour interpréter les balises Jinja2
 
 
 # Route pour servir les fichiers CSS, JS, et autres fichiers statiques
-@app.route('/<path:path>')
-def static_files(path):
-    return send_from_directory(app.static_folder, path)
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory(app.static_folder, filename)
 
 
 # Lancer l'application Flask

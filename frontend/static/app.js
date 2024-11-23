@@ -43,25 +43,25 @@ function saveConfig(apiKey, databaseId) {
   fetch('/config', {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-          api_key: apiKey,
-          database_id: databaseId
-      })
+          api_key: apiKey.trim(), // Supprime les espaces éventuels
+          database_id: databaseId.trim()
+      }),
   })
-  .then(response => {
+  .then((response) => {
       if (!response.ok) {
           throw new Error("Erreur lors de la sauvegarde de la configuration.");
       }
       return response.json();
   })
-  .then(data => {
-      console.log("Réponse du serveur :", data);
+  .then((data) => {
+      console.log("Configuration sauvegardée :", data);
       alert(data.message || "Configuration sauvegardée !");
       loadPage(1); // Recharge la première page avec la nouvelle configuration
   })
-  .catch(error => {
+  .catch((error) => {
       console.error("Erreur :", error);
       alert("Impossible de sauvegarder la configuration.");
   });
@@ -104,3 +104,5 @@ body: JSON.stringify({
   api_key: apiKey,
   database_id: databaseId
 })
+
+console.log("Fichier JavaScript chargé avec succès.");
