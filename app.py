@@ -1,9 +1,9 @@
-from flask import Flask, jsonify, send_from_directory, request
+from flask import Flask, send_from_directory, jsonify, request
 from flask_cors import CORS
 import requests
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='frontend')
 CORS(app)
 
 # Configuration utilisateur par défaut
@@ -121,24 +121,16 @@ def get_images():
         return jsonify({"error": "Une erreur est survenue lors de la récupération des images."}), 500
 
 
-# Endpoint pour servir la page d'accueil (index.html)
+# Route pour servir l'index.html
 @app.route('/')
 def index():
-    try:
-        return send_from_directory('frontend', 'index.html')
-    except FileNotFoundError:
-        print("Erreur : Le fichier index.html est introuvable.")
-        return "Fichier introuvable.", 404
+    return send_from_directory(app.static_folder, 'index.html')
 
 
-# Endpoint pour servir les fichiers statiques (CSS, JS, images, etc.)
+# Route pour servir les fichiers CSS, JS, et autres fichiers statiques
 @app.route('/<path:path>')
 def static_files(path):
-    try:
-        return send_from_directory('frontend', path)
-    except FileNotFoundError:
-        print(f"Erreur : Le fichier {path} est introuvable.")
-        return "Fichier introuvable.", 404
+    return send_from_directory(app.static_folder, path)
 
 
 # Lancer l'application Flask
