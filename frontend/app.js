@@ -3,7 +3,7 @@ const limit = 12; // Nombre d'images par page
 
 // Fonction pour charger une page spécifique
 function loadPage(page) {
-  fetch(`https://flask-api-0qgo.onrender.com/images?page=${page}&limit=${limit}`)
+  fetch(`/images?page=${page}&limit=${limit}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error("Erreur lors de la récupération des images.");
@@ -37,18 +37,6 @@ function loadPage(page) {
       console.error("Erreur lors de la récupération des données :", error);
     });
 }
-
-fetch('https://widget.artyzan-agency.com/config', {
-  method: 'POST',
-  headers: {
-      'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-      api_key: apiKey,
-      database_id: databaseId
-  })
-})
-
 
 // Sauvegarder la configuration
 function saveConfig(apiKey, databaseId) {
@@ -91,18 +79,6 @@ document.getElementById("save-config-btn").addEventListener("click", () => {
   }
 });
 
-document.getElementById("save-config-btn").addEventListener("click", () => {
-  const apiKey = document.getElementById("api-key-input").value;
-  const databaseId = document.getElementById("database-id-input").value;
-
-  if (apiKey && databaseId) {
-      console.log("Données saisies :", apiKey, databaseId);
-      saveConfig(apiKey, databaseId);
-  } else {
-      alert("Veuillez remplir les deux champs avant d'enregistrer.");
-  }
-});
-
 // Ajouter des événements pour les boutons de navigation
 document.getElementById("prev-btn").addEventListener("click", () => {
   if (currentPage > 1) {
@@ -114,46 +90,6 @@ document.getElementById("prev-btn").addEventListener("click", () => {
 document.getElementById("next-btn").addEventListener("click", () => {
   currentPage++;
   loadPage(currentPage);
-});
-
-document.getElementById("config-form").addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  // Récupérer les valeurs du formulaire
-  const apiKey = document.getElementById("api-key").value;
-  const databaseId = document.getElementById("database-id").value;
-
-  // Enregistrer les valeurs dans le stockage local
-  localStorage.setItem("notionApiKey", apiKey);
-  localStorage.setItem("notionDatabaseId", databaseId);
-
-  alert("Configuration enregistrée avec succès !");
-});
-
-document.getElementById("config-form").addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const apiKey = document.getElementById("api-key").value;
-  const databaseId = document.getElementById("database-id").value;
-
-  // Envoi de la configuration à Flask via POST
-  fetch("https://widget.artyzan-agency.com/set-config", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      notionApiKey: apiKey,
-      databaseId: databaseId,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      alert("Configuration enregistrée : " + data.message);
-    })
-    .catch((error) => {
-      console.error("Erreur lors de l'enregistrement de la configuration :", error);
-    });
 });
 
 // Ajouter un événement pour le bouton Rafraîchir
