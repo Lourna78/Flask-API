@@ -160,3 +160,9 @@ body {
   cursor: not-allowed;
   box-shadow: none;
 }
+
+input:focus {
+  outline: none;
+  border: 1px solid #ccc; /* Bordure standard */
+  box-shadow: none; /* Supprime les ombrages */
+}
