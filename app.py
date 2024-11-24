@@ -9,7 +9,7 @@ app = Flask(
     template_folder="frontend/templates",  # Dossier contenant les templates HTML
     static_folder="frontend/static"       # Dossier contenant les fichiers statiques
 )
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/static/*": {"origins": "*"}})
 
 # Configuration utilisateur par défaut
 user_config = {
@@ -57,7 +57,7 @@ def fetch_image_urls(api_key, database_id):
 @app.before_request
 def log_request_info():
     print(f"Requête : {request.path}")
-    
+
 # Endpoint pour sauvegarder la configuration utilisateur
 @app.route('/config', methods=['POST'])
 def save_config():
