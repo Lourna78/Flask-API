@@ -12,6 +12,10 @@ function loadPage(page) {
     })
     .then((data) => {
       const grid = document.getElementById("grid");
+      if (!grid) {
+        console.error("Erreur : élément 'grid' introuvable.");
+        return;
+      }
       grid.innerHTML = ""; // Vider la grille actuelle
 
       // Ajouter les images de la page actuelle
@@ -30,8 +34,11 @@ function loadPage(page) {
       }
 
       // Mettre à jour l'état des boutons de pagination
-      document.getElementById("prev-btn").disabled = data.page <= 1;
-      document.getElementById("next-btn").disabled = data.page >= data.pages;
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
+
+      if (prevBtn) prevBtn.disabled = data.page <= 1;
+      if (nextBtn) nextBtn.disabled = data.page >= data.pages;
     })
     .catch((error) => {
       console.error("Erreur lors de la récupération des données :", error);
@@ -41,68 +48,76 @@ function loadPage(page) {
 // Sauvegarder la configuration
 function saveConfig(apiKey, databaseId) {
   fetch('/config', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-          api_key: apiKey.trim(), // Supprime les espaces éventuels
-          database_id: databaseId.trim()
-      }),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      api_key: apiKey.trim(), // Supprime les espaces éventuels
+      database_id: databaseId.trim(),
+    }),
   })
-  .then((response) => {
+    .then((response) => {
       if (!response.ok) {
-          throw new Error("Erreur lors de la sauvegarde de la configuration.");
+        throw new Error("Erreur lors de la sauvegarde de la configuration.");
       }
       return response.json();
-  })
-  .then((data) => {
+    })
+    .then((data) => {
       console.log("Configuration sauvegardée :", data);
       alert(data.message || "Configuration sauvegardée !");
       loadPage(1); // Recharge la première page avec la nouvelle configuration
-  })
-  .catch((error) => {
+    })
+    .catch((error) => {
       console.error("Erreur :", error);
       alert("Impossible de sauvegarder la configuration.");
-  });
+    });
 }
 
-// Ajouter un gestionnaire d'événements pour le bouton "Enregistrer"
-document.getElementById("save-config-btn").addEventListener("click", () => {
-  const apiKey = document.getElementById("api-key-input").value;
-  const databaseId = document.getElementById("database-id-input").value;
+// Vérification des éléments DOM avant d'ajouter les événements
+document.addEventListener("DOMContentLoaded", () => {
+  const saveConfigBtn = document.getElementById("save-config-btn");
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
+  const refreshBtn = document.getElementById("refresh-btn");
 
-  if (apiKey && databaseId) {
-    saveConfig(apiKey, databaseId);
-  } else {
-    alert("Veuillez remplir les deux champs avant d'enregistrer.");
+  if (saveConfigBtn) {
+    saveConfigBtn.addEventListener("click", () => {
+      const apiKey = document.getElementById("api-key-input")?.value;
+      const databaseId = document.getElementById("database-id-input")?.value;
+
+      if (apiKey && databaseId) {
+        saveConfig(apiKey, databaseId);
+      } else {
+        alert("Veuillez remplir les deux champs avant d'enregistrer.");
+      }
+    });
   }
-});
 
-// Ajouter des événements pour les boutons de navigation
-document.getElementById("prev-btn").addEventListener("click", () => {
-  if (currentPage > 1) {
-    currentPage--;
-    loadPage(currentPage);
+  if (prevBtn) {
+    prevBtn.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadPage(currentPage);
+      }
+    });
   }
-});
 
-document.getElementById("next-btn").addEventListener("click", () => {
-  currentPage++;
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      currentPage++;
+      loadPage(currentPage);
+    });
+  }
+
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", () => {
+      loadPage(currentPage); // Recharger la page actuelle
+    });
+  }
+
+  // Charger la première page au démarrage
   loadPage(currentPage);
 });
-
-// Ajouter un événement pour le bouton Rafraîchir
-document.getElementById("refresh-btn").addEventListener("click", () => {
-  loadPage(currentPage); // Recharger la page actuelle
-});
-
-// Charger la première page au démarrage
-loadPage(currentPage);
-
-body: JSON.stringify({
-  api_key: apiKey,
-  database_id: databaseId
-})
 
 console.log("Fichier JavaScript chargé avec succès.");
