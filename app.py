@@ -47,14 +47,13 @@ def fetch_image_urls(api_key, database_id):
 
     image_urls = []
     for page in results:
-        if "properties" in page and "Fichiers et médias" in page["properties"]:
-            files = page["properties"]["Fichiers et médias"].get("files", [])
-            for file in files:
-                if file["type"] == "file" or file["type"] == "external":
-                    image_urls.append({
-                        "url": file["file"]["url"] if file["type"] == "file" else file["external"]["url"],
-                        "date": page["properties"].get("Date", {}).get("date", {}).get("start", "")  # Date de publication
-                    })
+        print("Page reçue :", page)
+        files = page.get("properties", {}).get("Fichiers et médias", {}).get("files", [])
+        for file in files:
+            if file["type"] in ["file", "external"]:
+                url = file["file"]["url"] if file["type"] == "file" else file["external"]["url"]
+                date = page.get("properties", {}).get("Date", {}).get("date", {}).get("start", "Inconnue")
+                image_urls.append({"url": url, "date": date})
 
     print("Images récupérées :", image_urls)
     return image_urls
