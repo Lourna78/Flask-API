@@ -124,18 +124,35 @@ function showConfig() {
     configContainer.innerHTML = `
       <h3>Configuration Notion</h3>
       <label for="api-key-input">Clé API Notion :</label>
-      <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
+      <input type="password" id="api-key-input" placeholder="Entrez votre clé API">
       <label for="database-id-input">ID de la base de données :</label>
-      <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
+      <input type="password" id="database-id-input" placeholder="Entrez l'ID de la base">
+      <div class="toggle-visibility">
+        <input type="checkbox" id="toggle-visibility">
+        <label for="toggle-visibility">Afficher les champs</label>
+      </div>
       <button id="save-config-btn">Enregistrer</button>
     `;
+
+    // Réactiver l'événement de bascule visibilité
+    const toggleVisibility = document.getElementById("toggle-visibility");
+    const apiKeyInput = document.getElementById("api-key-input");
+    const databaseIdInput = document.getElementById("database-id-input");
+
+    if (toggleVisibility) {
+      toggleVisibility.addEventListener("change", () => {
+        const type = toggleVisibility.checked ? "text" : "password";
+        if (apiKeyInput) apiKeyInput.type = type;
+        if (databaseIdInput) databaseIdInput.type = type;
+      });
+    }
 
     // Réactiver l'événement sur le bouton enregistrer
     const saveConfigBtn = document.getElementById("save-config-btn");
     if (saveConfigBtn) {
       saveConfigBtn.addEventListener("click", () => {
-        const apiKey = document.getElementById("api-key-input")?.value;
-        const databaseId = document.getElementById("database-id-input")?.value;
+        const apiKey = apiKeyInput?.value;
+        const databaseId = databaseIdInput?.value;
 
         if (apiKey && databaseId) {
           saveConfig(apiKey, databaseId);
