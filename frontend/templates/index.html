@@ -80,12 +80,15 @@ function saveConfig(apiKey, databaseId) {
       console.log("Configuration sauvegardée :", data);
       alert(data.message || "Configuration sauvegardée !");
       hideConfig(); // Masquer les champs après sauvegarde
-      loadPage(1); // Charger la première page
+      // Recharger le feed après la sauvegarde
+      loadPage(1); // Recharge la première page avec la nouvelle configuration
     })
     .catch((error) => {
-      console.error("Erreur lors de la sauvegarde :", error);
-      alert("Impossible de sauvegarder la configuration.");
+        console.error("Erreur :", error);
+        alert("Impossible de sauvegarder la configuration.");
     });
+    maskInput(apiKeyInput);
+    maskInput(databaseIdInput);
 }
 
 // Fonction pour masquer la section Configuration après sauvegarde
@@ -154,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     inputElement.addEventListener("input", () => {
       setTimeout(() => {
         inputElement.value = "*".repeat(inputElement.value.length);
-      }, 500); // Masquer après 500ms pour laisser le temps de coller
+      }, 100); // Masquer après 100ms pour laisser le temps de coller
     });
   }
 
