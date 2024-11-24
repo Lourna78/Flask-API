@@ -13,7 +13,7 @@ const limit = 12; // Nombre d'images par page
 function loadPage(page) {
   const grid = document.getElementById("grid");
   if (grid) {
-    grid.innerHTML = "<p>Chargement...</p>"; // Message de chargement
+    grid.innerHTML = "<p>Chargement...</p>"; // Afficher un message de chargement
   }
 
   fetch(`/images?page=${page}&limit=${limit}`)
@@ -25,22 +25,30 @@ function loadPage(page) {
     })
     .then((data) => {
       if (grid) {
-        grid.innerHTML = ""; // Vider la grille actuelle une fois les données reçues
-      // Ajouter les images
-      data.images.forEach((url) => {
+        grid.innerHTML = ""; // Effacer le contenu précédent
+
+        // Ajouter les images
+        data.images.forEach((url) => {
           const div = document.createElement("div");
           div.className = "grid-item";
           div.style.backgroundImage = `url(${url})`;
           grid.appendChild(div);
         });
 
-      // Compléter avec des cases vides si nécessaire
-      for (let i = data.images.length; i < limit; i++) {
+        // Compléter avec des cases vides si nécessaire
+        for (let i = data.images.length; i < limit; i++) {
           const emptyDiv = document.createElement("div");
           emptyDiv.className = "grid-item empty";
           grid.appendChild(emptyDiv);
         }
       }
+
+      // Mise à jour des boutons de navigation
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
+
+      if (prevBtn) prevBtn.disabled = data.page <= 1;
+      if (nextBtn) nextBtn.disabled = data.page >= data.pages;
     })
     .catch((error) => {
       console.error("Erreur lors de la récupération des données :", error);
@@ -50,15 +58,15 @@ function loadPage(page) {
     });
 }
 
-// Sauvegarder la configuration
+// Fonction pour sauvegarder la configuration
 function saveConfig(apiKey, databaseId) {
-  fetch('/config', {
-    method: 'POST',
+  return fetch("/config", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      api_key: apiKey.trim(), // Supprime les espaces éventuels
+      api_key: apiKey.trim(), // Supprimer les espaces éventuels
       database_id: databaseId.trim(),
     }),
   })
@@ -71,8 +79,8 @@ function saveConfig(apiKey, databaseId) {
     .then((data) => {
       console.log("Configuration sauvegardée :", data);
       alert(data.message || "Configuration sauvegardée !");
-      hideConfig(); // Masquer les champs une fois enregistrés
-      loadPage(1); // Charger la première page après enregistrement
+      hideConfig(); // Masquer les champs après sauvegarde
+      loadPage(1); // Charger la première page
     })
     .catch((error) => {
       console.error("Erreur lors de la sauvegarde :", error);
@@ -80,82 +88,84 @@ function saveConfig(apiKey, databaseId) {
     });
 }
 
-// Vérification des éléments DOM avant d'ajouter les événements
-document.addEventListener("DOMContentLoaded", () => {
-  const saveConfigBtn = document.getElementById("save-config-btn");
-  const editConfigBtn = document.getElementById("edit-config-btn");
+// Fonction pour masquer la section Configuration après sauvegarde
+function hideConfig() {
+  const configContainer = document.querySelector(".config-container");
   const apiKeyInput = document.getElementById("api-key-input");
   const databaseIdInput = document.getElementById("database-id-input");
-  const configForm = document.getElementById("config-form");
-  const configSummary = document.getElementById("config-summary");
-  const maskedApiKey = document.getElementById("masked-api-key");
-  const maskedDatabaseId = document.getElementById("masked-database-id");
 
-   // Fonction pour masquer la configuration
-   function hideConfig() {
-    maskedApiKey.textContent = apiKeyInput.value.replace(/./g, "*");
-    maskedDatabaseId.textContent = databaseIdInput.value.replace(/./g, "*");
-    configForm.style.display = "none";
-    configSummary.style.display = "block";
-  }
+  if (configContainer && apiKeyInput && databaseIdInput) {
+    // Masquer les champs en affichant des astérisques
+    apiKeyInput.type = "password";
+    databaseIdInput.type = "password";
 
-  // Fonction pour afficher la configuration
-  function showConfig() {
-    configForm.style.display = "block";
-    configSummary.style.display = "none";
-  }
+    // Ajouter un bouton pour modifier
+    configContainer.innerHTML = `
+      <h3>Configuration Notion</h3>
+      <p>Clé API Notion : ********************</p>
+      <p>ID de la base de données : ********************</p>
+      <button id="modify-config-btn">Modifier</button>
+    `;
 
-  // Enregistrer la configuration
-  saveConfigBtn.addEventListener("click", () => {
-    const apiKey = apiKeyInput.value.trim();
-    const databaseId = databaseIdInput.value.trim();
-
-
-    if (apiKey && databaseId) {
-      // Sauvegarde de la configuration
-      saveConfig(apiKey, databaseId).then(() => {
-        hideConfig();
+    // Réactiver la modification
+    document
+      .getElementById("modify-config-btn")
+      .addEventListener("click", () => {
+        showConfig();
       });
-    } else {
-      alert("Veuillez remplir les deux champs avant d'enregistrer.");
-    }
-  });
-
-  // Modifier la configuration
-  editConfigBtn.addEventListener("click", showConfig);
-});
-
-// Exemple de fonction saveConfig
-function saveConfig(apiKey, databaseId) {
-  return fetch('/config', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      api_key: apiKey,
-      database_id: databaseId,
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Erreur lors de la sauvegarde de la configuration.");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log("Configuration sauvegardée :", data);
-      alert("Configuration sauvegardée avec succès !");
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la sauvegarde :", error);
-      alert("Impossible de sauvegarder la configuration.");
-    });
+  }
 }
 
-  document.getElementById("save-config-btn").addEventListener("click", () => {
-    alert("Configuration enregistrée. Essayez de recharger la page !");
-});
+// Fonction pour afficher la section Configuration pour modifier
+function showConfig() {
+  const configContainer = document.querySelector(".config-container");
+
+  if (configContainer) {
+    configContainer.innerHTML = `
+      <h3>Configuration Notion</h3>
+      <label for="api-key-input">Clé API Notion :</label>
+      <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
+      <label for="database-id-input">ID de la base de données :</label>
+      <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
+      <button id="save-config-btn">Enregistrer</button>
+    `;
+
+    // Réactiver l'événement sur le bouton enregistrer
+    const saveConfigBtn = document.getElementById("save-config-btn");
+    if (saveConfigBtn) {
+      saveConfigBtn.addEventListener("click", () => {
+        const apiKey = document.getElementById("api-key-input")?.value;
+        const databaseId = document.getElementById("database-id-input")?.value;
+
+        if (apiKey && databaseId) {
+          saveConfig(apiKey, databaseId);
+        } else {
+          alert("Veuillez remplir les deux champs avant d'enregistrer.");
+        }
+      });
+    }
+  }
+}
+
+// Initialisation des événements
+document.addEventListener("DOMContentLoaded", () => {
+  const saveConfigBtn = document.getElementById("save-config-btn");
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
+  const refreshBtn = document.getElementById("refresh-btn");
+
+  if (saveConfigBtn) {
+    saveConfigBtn.addEventListener("click", () => {
+      const apiKey = document.getElementById("api-key-input")?.value;
+      const databaseId = document.getElementById("database-id-input")?.value;
+
+      if (apiKey && databaseId) {
+        saveConfig(apiKey, databaseId);
+      } else {
+        alert("Veuillez remplir les deux champs avant d'enregistrer.");
+      }
+    });
+  }
 
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
@@ -179,21 +189,9 @@ function saveConfig(apiKey, databaseId) {
     });
   }
 
-// Ajoute les gestionnaires d'événements pour détecter le focus sur les champs
-const apiKeyInput = document.getElementById("api-key-input");
-const databaseIdInput = document.getElementById("database-id-input");
-
-if (apiKeyInput) {
-  apiKeyInput.addEventListener("focus", () => console.log("Focus sur le champ API Key"));
-}
-
-if (databaseIdInput) {
-  databaseIdInput.addEventListener("focus", () => console.log("Focus sur le champ Database ID"));
-}
-
-// Charger la première page au démarrage
-loadPage(currentPage);
-;
+  // Charger la première page au démarrage
+  loadPage(currentPage);
+});
 
 console.log("Fichier JavaScript chargé avec succès.");
   </script>
