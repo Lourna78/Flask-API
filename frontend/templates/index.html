@@ -85,22 +85,76 @@ function saveConfig(apiKey, databaseId) {
 // Vérification des éléments DOM avant d'ajouter les événements
 document.addEventListener("DOMContentLoaded", () => {
   const saveConfigBtn = document.getElementById("save-config-btn");
-  const prevBtn = document.getElementById("prev-btn");
-  const nextBtn = document.getElementById("next-btn");
-  const refreshBtn = document.getElementById("refresh-btn");
+  const editConfigBtn = document.getElementById("edit-config-btn");
+  const apiKeyInput = document.getElementById("api-key-input");
+  const databaseIdInput = document.getElementById("database-id-input");
+  const configForm = document.getElementById("config-form");
+  const configSummary = document.getElementById("config-summary");
+  const maskedApiKey = document.getElementById("masked-api-key");
+  const maskedDatabaseId = document.getElementById("masked-database-id");
 
-  if (saveConfigBtn) {
-    saveConfigBtn.addEventListener("click", () => {
-      const apiKey = document.getElementById("api-key-input")?.value;
-      const databaseId = document.getElementById("database-id-input")?.value;
-
-      if (apiKey && databaseId) {
-        saveConfig(apiKey, databaseId);
-      } else {
-        alert("Veuillez remplir les deux champs avant d'enregistrer.");
-      }
-    });
+   // Fonction pour masquer la configuration
+   function hideConfig() {
+    maskedApiKey.textContent = apiKeyInput.value.replace(/./g, "*");
+    maskedDatabaseId.textContent = databaseIdInput.value.replace(/./g, "*");
+    configForm.style.display = "none";
+    configSummary.style.display = "block";
   }
+
+  // Fonction pour afficher la configuration
+  function showConfig() {
+    configForm.style.display = "block";
+    configSummary.style.display = "none";
+  }
+
+  // Enregistrer la configuration
+  saveConfigBtn.addEventListener("click", () => {
+    const apiKey = apiKeyInput.value.trim();
+    const databaseId = databaseIdInput.value.trim();
+
+
+    if (apiKey && databaseId) {
+      // Sauvegarde de la configuration
+      saveConfig(apiKey, databaseId).then(() => {
+        hideConfig();
+      });
+    } else {
+      alert("Veuillez remplir les deux champs avant d'enregistrer.");
+    }
+  });
+
+  // Modifier la configuration
+  editConfigBtn.addEventListener("click", showConfig);
+});
+
+// Exemple de fonction saveConfig
+function saveConfig(apiKey, databaseId) {
+  return fetch('/config', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      api_key: apiKey,
+      database_id: databaseId,
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Erreur lors de la sauvegarde de la configuration.");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Configuration sauvegardée :", data);
+      alert("Configuration sauvegardée avec succès !");
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la sauvegarde :", error);
+      alert("Impossible de sauvegarder la configuration.");
+    });
+}
+
   document.getElementById("save-config-btn").addEventListener("click", () => {
     alert("Configuration enregistrée. Essayez de recharger la page !");
 });
@@ -141,7 +195,7 @@ if (databaseIdInput) {
 
 // Charger la première page au démarrage
 loadPage(currentPage);
-});
+;
 
 console.log("Fichier JavaScript chargé avec succès.");
   </script>
@@ -165,13 +219,21 @@ console.log("Fichier JavaScript chargé avec succès.");
 
         <div class="config-container">
           <h3>Configuration Notion</h3>
-          <label for="api-key-input">Clé API Notion :</label>
-          <input type="text" id="api-key-input" placeholder="Exemple : secret_xxxx" required>
-          <label for="database-id-input">ID de la base de données :</label>
-          <input type="text" id="database-id-input" placeholder="Exemple : abc123xyz" required>
-          <button id="save-config-btn">Enregistrer</button>
-      </div>
-    </div>
+          <!-- Zone de configuration -->
+          <div id="config-form">
+            <label for="api-key-input">Clé API Notion :</label>
+            <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
+            <label for="database-id-input">ID de la base de données :</label>
+            <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
+            <button id="save-config-btn">Enregistrer</button>
+          </div>
+          <!-- Zone masquée après enregistrement -->
+          <div id="config-summary" style="display: none;">
+            <p>Clé API Notion : <span id="masked-api-key">********</span></p>
+            <p>ID de la base de données : <span id="masked-database-id">********</span></p>
+            <button id="edit-config-btn">Modifier</button>
+          </div>
+        </div>
     <script src="app.js"></script>
 </body>
 </html>
