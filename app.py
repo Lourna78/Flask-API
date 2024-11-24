@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, send_from_directory
 from flask_cors import CORS
 import requests
 import os
@@ -39,8 +39,7 @@ def fetch_image_urls(api_key, database_id):
         print("Erreur lors de la requête vers l'API Notion :", e)
         return {"error": str(e)}
     
-    # Parse the JSON response here
-
+    # Parse la réponse JSON
     data = response.json()
     results = data.get("results", [])
 
@@ -77,16 +76,18 @@ def save_config():
         # Test immédiat de la configuration
         test_result = fetch_image_urls(user_config["api_key"], user_config["database_id"])
         if "error" in test_result:
-            print(f"Erreur lors du test de connexion : {test_result['error']}")
-            return jsonify({"error": "Configuration incorrecte : " + test_result["error"]}), 400
-        
+            # Gérer les erreurs spécifiques
+            if "unauthorized" in test_result["error"].lower():
+                return jsonify({"error": "Clé API ou ID de base de données incorrects."}), 400
+            return jsonify({"error": "Erreur lors du test de connexion : " + test_result["error"]}), 400
+
         return jsonify({"message": "Configuration sauvegardée avec succès"}), 200
     except Exception as e:
         print("Erreur lors de la sauvegarde de la configuration :", e)
         return jsonify({"error": str(e)}), 500
+    
 
-
-
+    
 # Endpoint pour récupérer les images avec pagination
 @app.route('/images', methods=['GET'])
 def get_images():
