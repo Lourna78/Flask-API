@@ -119,8 +119,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Charger la première page au démarrage
-  loadPage(currentPage);
+// Ajoute les gestionnaires d'événements pour détecter le focus sur les champs
+const apiKeyInput = document.getElementById("api-key-input");
+const databaseIdInput = document.getElementById("database-id-input");
+
+if (apiKeyInput) {
+  apiKeyInput.addEventListener("focus", () => console.log("Focus sur le champ API Key"));
+}
+
+if (databaseIdInput) {
+  databaseIdInput.addEventListener("focus", () => console.log("Focus sur le champ Database ID"));
+}
+
+// Charger la première page au démarrage
+loadPage(currentPage);
 });
 
 console.log("Fichier JavaScript chargé avec succès.");
