@@ -27,9 +27,10 @@ def fetch_image_urls(api_key, database_id):
     notion_url = f"https://api.notion.com/v1/databases/{database_id}/query"
 
     try:
+        # Masquage des informations sensibles dans les logs
         print("Requête envoyée à Notion avec les données suivantes :")
-        print("API Key :", api_key)
-        print("Database ID :", database_id)
+        print("API Key :", "*" * len(api_key))  # Masque toute la clé API
+        print("Database ID :", "*" * len(database_id))  # Masque tout l'ID de la base
 
         response = requests.post(notion_url, headers=headers)
         print("Réponse de Notion :", response.status_code, response.text)
@@ -37,19 +38,23 @@ def fetch_image_urls(api_key, database_id):
     except requests.exceptions.RequestException as e:
         print("Erreur lors de la requête vers l'API Notion :", e)
         return {"error": str(e)}
+    
+    # Parse the JSON response here
 
     data = response.json()
     results = data.get("results", [])
 
+    # Extraction des URLs et des dates
     image_urls = []
     for page in results:
-        print("Page reçue :", page)
-        files = page.get("properties", {}).get("Fichiers et médias", {}).get("files", [])
-        for file in files:
-            if file["type"] in ["file", "external"]:
-                url = file["file"]["url"] if file["type"] == "file" else file["external"]["url"]
-                date = page.get("properties", {}).get("Date", {}).get("date", {}).get("start", "Inconnue")
-                image_urls.append({"url": url, "date": date})
+        if "properties" in page and "Fichiers et médias" in page["properties"]:
+            files = page["properties"]["Fichiers et médias"].get("files", [])
+            for file in files:
+                if file["type"] == "file" or file["type"] == "external":
+                    image_urls.append({
+                        "url": file["file"]["url"] if file["type"] == "file" else file["external"]["url"],
+                        "date": page["properties"].get("Date", {}).get("date", {}).get("start", "")  # Date de publication
+                    })
 
     print("Images récupérées :", image_urls)
     return image_urls
