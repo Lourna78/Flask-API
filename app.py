@@ -9,7 +9,7 @@ app = Flask(
     template_folder="frontend/templates",  # Dossier contenant les templates HTML
     static_folder="frontend/static"       # Dossier contenant les fichiers statiques
 )
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Configuration utilisateur par défaut
 user_config = {

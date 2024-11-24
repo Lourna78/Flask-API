@@ -93,6 +93,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+  document.getElementById("save-config-btn").addEventListener("click", () => {
+    alert("Configuration enregistrée. Essayez de recharger la page !");
+});
 
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
