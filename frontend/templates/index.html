@@ -149,6 +149,25 @@ function showConfig() {
 
 // Initialisation des événements
 document.addEventListener("DOMContentLoaded", () => {
+  // Fonction pour masquer les champs avec des astérisques
+  function maskInput(inputElement) {
+    inputElement.addEventListener("input", () => {
+      setTimeout(() => {
+        inputElement.value = "*".repeat(inputElement.value.length);
+      }, 500); // Masquer après 500ms pour laisser le temps de coller
+    });
+  }
+
+  // Appliquer le masquage sur les champs API Key et Database ID
+  const apiKeyInput = document.getElementById("api-key-input");
+  const databaseIdInput = document.getElementById("database-id-input");
+
+  if (apiKeyInput && databaseIdInput) {
+    maskInput(apiKeyInput);
+    maskInput(databaseIdInput);
+  }
+
+  // Ajout des autres événements
   const saveConfigBtn = document.getElementById("save-config-btn");
   const prevBtn = document.getElementById("prev-btn");
   const nextBtn = document.getElementById("next-btn");

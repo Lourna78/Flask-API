@@ -70,6 +70,25 @@ body {
   outline: none; /* Supprime également l'outline pendant le drag */
 }
 
+/* Supprimer la bordure orange sur focus */
+input[type="text"]:focus {
+  outline: none; /* Supprime l'effet de contour par défaut */
+  border: 1px solid #ccc; /* Uniformiser la bordure */
+  box-shadow: none; /* Supprime l'ombre */
+}
+
+/* Alignement parfait des labels */
+label {
+  display: block; /* Forcer le label à occuper une ligne entière */
+  margin-bottom: 5px; /* Ajouter un espacement pour un affichage clair */
+}
+
+/* Centrage parfait des champs masqués */
+.config-container {
+  text-align: left; /* Aligne à gauche */
+}
+
+
 .grid-item:focus {
   outline: none; /* Supprime les contours bleus au focus */
 }
