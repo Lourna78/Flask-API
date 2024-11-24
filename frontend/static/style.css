@@ -102,6 +102,10 @@ body {
   font-size: 14px;
 }
 
+.toggle-visibility input {
+  margin-right: 5px; /* Ajoute un espace entre la case et le texte */
+}
+
 .toggle-visibility label {
   margin-left: 5px;
   cursor: pointer;
