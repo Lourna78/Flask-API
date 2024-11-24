@@ -1,17 +1,13 @@
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 import requests
 import os
 
-# Chemin absolu vers les dossiers "templates" et "static"
-template_dir = os.path.abspath('frontend/templates')
-static_dir = os.path.abspath('frontend/static')
-
-# Initialisation de Flask avec les chemins corrects
+# Initialisation de l'application Flask
 app = Flask(
     __name__,
-    template_folder="frontend/templates",  # Chemin vers le dossier "templates"
-    static_folder="frontend/static"       # Chemin vers le dossier "static"
+    template_folder="frontend/templates",  # Dossier contenant les templates HTML
+    static_folder="frontend/static"       # Dossier contenant les fichiers statiques
 )
 CORS(app)
 
