@@ -1,11 +1,18 @@
-from flask import Flask, send_from_directory
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from flask_cors import CORS
 import requests
 import os
 
-app = Flask(__name__)
-app = Flask(__name__, static_folder='frontend/static', template_folder='frontend')
+# Chemin absolu vers les dossiers "templates" et "static"
+template_dir = os.path.abspath('frontend/templates')
+static_dir = os.path.abspath('frontend/static')
+
+# Initialisation de Flask avec les chemins corrects
+app = Flask(
+    __name__,
+    template_folder="frontend/templates",  # Chemin vers le dossier "templates"
+    static_folder="frontend/static"       # Chemin vers le dossier "static"
+)
 CORS(app)
 
 # Configuration utilisateur par défaut
@@ -123,7 +130,7 @@ def get_images():
 # Route pour servir l'index.html
 @app.route('/')
 def index():
-    return render_template('index.html')  # Utilisez render_template pour interpréter les balises Jinja2
+    return render_template('index.html')  # Utilisez render_templates pour interpréter les balises Jinja2
 
 
 # Route pour servir les fichiers CSS, JS, et autres fichiers statiques
