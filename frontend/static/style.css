@@ -96,23 +96,52 @@ body {
 }
 
 .toggle-visibility {
-  margin-top: 10px;
   display: flex;
-  align-items: center;
-  font-size: 14px;
+  align-items: center; /* Aligne la case et le texte verticalement */
+  margin-top: 10px;
 }
 
 .toggle-visibility input {
-  margin-right: 5px; /* Ajoute un espace entre la case et le texte */
+  margin-right: 5px; /* Espace entre la case et le texte */
 }
 
 .toggle-visibility label {
-  margin-left: 5px;
-  cursor: pointer;
+  margin: 0; /* Supprime les marges indésirables */
+  cursor: pointer; /* Indique que le texte est cliquable */
 }
 
 .config-container h3 {
   margin-bottom: 10px;
+}
+
+#config-form {
+  display: block;
+}
+
+#config-summary {
+  display: none;
+}
+
+#config-summary p {
+  margin: 5px 0; /* Espacement entre les lignes */
+  font-size: 14px; /* Taille uniforme du texte */
+  word-wrap: break-word; /* Permet de couper les longues chaînes */
+}
+
+#config-summary button {
+  margin-top: 10px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 8px 20px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#config-summary button:hover {
+  background-color: #e6e6e6;
 }
 
 #config-form label {
@@ -142,6 +171,40 @@ body {
 
 #config-form button:hover {
   background-color: #e6e6e6;
+}
+
+/* Style des champs de configuration */
+.config-container div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 10px; /* Espacement entre les éléments */
+}
+
+.config-container label {
+  flex: 1;
+  min-width: 150px; /* Assure un alignement uniforme */
+}
+
+.config-container input {
+  flex: 2;
+  min-width: 250px;
+  padding: 8px;
+  margin-left: 10px; /* Espacement entre le label et l'input */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.config-container button {
+  margin-top: 10px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 8px 20px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Conteneur des boutons */
