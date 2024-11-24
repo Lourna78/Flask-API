@@ -39,6 +39,7 @@ def fetch_image_urls(api_key, database_id):
         print("Erreur lors de la requête vers l'API Notion :", e)
         return {"error": str(e)}
     
+    
     # Parse la réponse JSON
     data = response.json()
     results = data.get("results", [])
@@ -87,7 +88,7 @@ def save_config():
         return jsonify({"error": str(e)}), 500
     
 
-    
+
 # Endpoint pour récupérer les images avec pagination
 @app.route('/images', methods=['GET'])
 def get_images():
