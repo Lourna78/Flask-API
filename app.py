@@ -54,6 +54,10 @@ def fetch_image_urls(api_key, database_id):
     print("Images récupérées :", image_urls)
     return image_urls
 
+@app.before_request
+def log_request_info():
+    print(f"Requête : {request.path}")
+    
 # Endpoint pour sauvegarder la configuration utilisateur
 @app.route('/config', methods=['POST'])
 def save_config():
