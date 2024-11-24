@@ -95,6 +95,18 @@ body {
   background-color: #f9f9f9;
 }
 
+.toggle-visibility {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.toggle-visibility label {
+  margin-left: 5px;
+  cursor: pointer;
+}
+
 .config-container h3 {
   margin-bottom: 10px;
 }

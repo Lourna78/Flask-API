@@ -193,6 +193,20 @@ document.addEventListener("DOMContentLoaded", () => {
   loadPage(currentPage);
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  const apiKeyInput = document.getElementById("api-key-input");
+  const databaseIdInput = document.getElementById("database-id-input");
+  const toggleVisibility = document.getElementById("toggle-visibility");
+
+  if (toggleVisibility) {
+    toggleVisibility.addEventListener("change", () => {
+      const type = toggleVisibility.checked ? "text" : "password";
+      if (apiKeyInput) apiKeyInput.type = type;
+      if (databaseIdInput) databaseIdInput.type = type;
+    });
+  }
+});
+
 console.log("Fichier JavaScript chargé avec succès.");
     </script>
 </head>
@@ -217,11 +231,13 @@ console.log("Fichier JavaScript chargé avec succès.");
           <h3>Configuration Notion</h3>
           <!-- Zone de configuration -->
           <div id="config-form">
-            <label for="api-key-input">Clé API Notion :</label>
-            <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
-            <label for="database-id-input">ID de la base de données :</label>
-            <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
-            <button id="save-config-btn">Enregistrer</button>
+          <label for="api-key-input">Clé API Notion :</label>
+          <input type="password" id="api-key-input" placeholder="Entrez votre clé API">
+          <label for="database-id-input">ID de la base de données :</label>
+          <input type="password" id="database-id-input" placeholder="Entrez l'ID de la base">
+          <div class="toggle-visibility">
+          <input type="checkbox" id="toggle-visibility">
+          <label for="toggle-visibility">Afficher les champs</label>
           </div>
           <!-- Zone masquée après enregistrement -->
           <div id="config-summary" style="display: none;">
