@@ -66,10 +66,11 @@ function saveConfig(apiKey, databaseId) {
     .then((data) => {
       console.log("Configuration sauvegardée :", data);
       alert(data.message || "Configuration sauvegardée !");
-      loadPage(1); // Recharge la première page avec la nouvelle configuration
+      hideConfig(); // Masquer les champs une fois enregistrés
+      loadPage(1); // Charger la première page après enregistrement
     })
     .catch((error) => {
-      console.error("Erreur :", error);
+      console.error("Erreur lors de la sauvegarde :", error);
       alert("Impossible de sauvegarder la configuration.");
     });
 }
