@@ -81,45 +81,68 @@ body {
   z-index: 1; /* Met l'élément zoomé au-dessus des autres */
 }
 
+/* Conteneur de configuration */
 .config-container {
   margin: 20px;
-  padding: 15px;
+  padding: 20px;
+  width: 90%; /* S'adapte à des tailles plus petites */
+  max-width: 400px; /* Largeur maximale */
   border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombre subtile */
 }
 
+/* Titre de la section configuration */
 .config-container h3 {
-  margin-bottom: 10px;
+  text-align: center; /* Centrer le titre */
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px; /* Espacement sous le titre */
+  color: #333; /* Couleur de texte sombre */
 }
 
+/* Espacement global */
+#config-form {
+  margin-top: 15px;
+}
+
+/* Labels */
 #config-form label {
-  display: block;
+  display: block; /* Les labels apparaissent au-dessus des champs */
   margin-bottom: 5px;
   font-weight: bold;
+  color: #555; /* Couleur légèrement plus claire que le texte normal */
 }
 
+/* Champs de texte */
 #config-form input {
   width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 15px; /* Espacement entre les champs */
+  border: 1px solid #ddd; /* Bordure légère */
+  border-radius: 5px; /* Coins arrondis */
+  box-sizing: border-box; /* Inclut les bordures dans la largeur totale */
 }
 
+/* Bouton Enregistrer */
 #config-form button {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ddd;
-  padding: 8px 20px;
-  font-size: 14px;
+  width: 100%;
+  padding: 10px;
+  background-color: #007BFF; /* Bleu primaire */
+  color: #ffffff; /* Texte blanc */
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+/* Effet hover sur le bouton */
 #config-form button:hover {
-  background-color: #e6e6e6;
+  background-color: #0056b3; /* Bleu plus foncé */
+  transform: scale(1.02); /* Légère mise en avant */
 }
 
 /* Conteneur des boutons */
