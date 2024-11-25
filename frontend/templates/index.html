@@ -9,6 +9,46 @@
 let currentPage = 1; // Page actuelle
 const limit = 12; // Nombre d'images par page
 
+
+// Fonction pour charger une page spécifique
+// Paramètres : page (numéro de page à charger)
+function loadPage(page) {
+  const grid = document.getElementById("grid"); // Conteneur des images
+  const spinner = document.getElementById("loading-spinner"); // Spinner de chargement
+  
+  // Affiche le spinner pendant le chargement des données
+  if (spinner) {
+    spinner.style.display = "block";
+  }
+
+  fetch(`/images?page=${page}&limit=${limit}`) // Appel à l'API
+    .then((response) => response.json()) // Conversion en JSON
+    .then((data) => {
+      // Masque le spinner après récupération
+      if (spinner) {
+        spinner.style.display = "none";
+      }
+      
+      // Ajoute les images récupérées
+      if (grid) {
+        grid.innerHTML = ""; // Réinitialise la grille
+        data.images.forEach((url) => {
+          const div = document.createElement("div");
+          div.className = "grid-item";
+          div.style.backgroundImage = `url(${url})`;
+          div.onclick = () => handleImageClick(url); // Ajoute l'événement
+          grid.appendChild(div);
+        });
+      }
+    })
+    .catch((error) => {
+      console.error("Erreur :", error);
+      if (spinner) {
+        spinner.style.display = "none"; // Masque le spinner
+      }
+    });
+}
+
 // Fonction pour charger une page spécifique
 function loadPage(page) {
   const grid = document.getElementById("grid");
@@ -212,6 +252,8 @@ console.log("Fichier JavaScript chargé avec succès.");
         <div id="grid" class="grid-container">
           <!-- Les images seront insérées dynamiquement ici -->
         </div>
+
+        <div id="loading-spinner" style="display: none;">Chargement...</div>
 
         <div class="config-container">
           <h3>Configuration Notion</h3>
