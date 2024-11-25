@@ -4,12 +4,68 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Instagram Feed Preview</title>
-  <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css?v=1.0.1">
-  <script src="https://widget.artyzan-agency.com/static/app.js?v=1.0.1"></script>
+  <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css">
   <script>
 let currentPage = 1; // Page actuelle
 const limit = 12; // Nombre d'images par page
 
+// Fonction pour sauvegarder la configuration
+function saveConfig(apiKey, databaseId) {
+  return fetch("/config", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      api_key: apiKey.trim(), // Supprimer les espaces éventuels
+      database_id: databaseId.trim(),
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Erreur lors de la sauvegarde de la configuration.");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Configuration sauvegardée :", data);
+      alert(data.message || "Configuration sauvegardée !");
+      hideConfig(); // Masquer les champs après sauvegarde
+      loadPage(1); // Charger la première page
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la sauvegarde :", error);
+      alert("Impossible de sauvegarder la configuration.");
+    });
+}
+
+// Fonction pour masquer la section Configuration après sauvegarde
+function hideConfig() {
+  const configContainer = document.querySelector(".config-container");
+  const apiKeyInput = document.getElementById("api-key-input");
+  const databaseIdInput = document.getElementById("database-id-input");
+
+  if (configContainer && apiKeyInput && databaseIdInput) {
+    // Masquer les champs en affichant des astérisques
+    apiKeyInput.type = "password";
+    databaseIdInput.type = "password";
+
+    // Ajouter un bouton pour modifier
+    configContainer.innerHTML = `
+      <h3>Configuration Notion</h3>
+      <p>Clé API Notion : ********************</p>
+      <p>ID de la base de données : ********************</p>
+      <button id="modify-config-btn">Modifier</button>
+    `;
+
+    // Réactiver la modification
+    document
+      .getElementById("modify-config-btn")
+      .addEventListener("click", () => {
+        showConfig();
+      });
+  }
+}
 
 // Fonction pour charger une page spécifique
 // Paramètres : page (numéro de page à charger)
@@ -102,64 +158,6 @@ function loadPage(page) {
     });
 }
 
-// Fonction pour sauvegarder la configuration
-function saveConfig(apiKey, databaseId) {
-  return fetch("/config", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      api_key: apiKey.trim(), // Supprimer les espaces éventuels
-      database_id: databaseId.trim(),
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Erreur lors de la sauvegarde de la configuration.");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log("Configuration sauvegardée :", data);
-      alert(data.message || "Configuration sauvegardée !");
-      hideConfig(); // Masquer les champs après sauvegarde
-      loadPage(1); // Charger la première page
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la sauvegarde :", error);
-      alert("Impossible de sauvegarder la configuration.");
-    });
-}
-
-// Fonction pour masquer la section Configuration après sauvegarde
-function hideConfig() {
-  const configContainer = document.querySelector(".config-container");
-  const apiKeyInput = document.getElementById("api-key-input");
-  const databaseIdInput = document.getElementById("database-id-input");
-
-  if (configContainer && apiKeyInput && databaseIdInput) {
-    // Masquer les champs en affichant des astérisques
-    apiKeyInput.type = "password";
-    databaseIdInput.type = "password";
-
-    // Ajouter un bouton pour modifier
-    configContainer.innerHTML = `
-      <h3>Configuration Notion</h3>
-      <p>Clé API Notion : ********************</p>
-      <p>ID de la base de données : ********************</p>
-      <button id="modify-config-btn">Modifier</button>
-    `;
-
-    // Réactiver la modification
-    document
-      .getElementById("modify-config-btn")
-      .addEventListener("click", () => {
-        showConfig();
-      });
-  }
-}
-
 // Fonction pour afficher la section Configuration pour modifier
 function showConfig() {
   const configContainer = document.querySelector(".config-container");
@@ -191,6 +189,11 @@ function showConfig() {
       });
     }
   }
+
+  window.hideConfig = function() {
+  // Contenu de la fonction hideConfig
+};
+
 
   // Vider la grille pour éviter de garder les anciennes images
   if (grid) {
