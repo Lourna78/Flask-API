@@ -75,66 +75,52 @@ function saveConfig(apiKey, databaseId) {
     }),
   })
     .then((response) => {
-      if (!response.ok) {
-        throw new Error("Erreur lors de la sauvegarde de la configuration.");
-      }
+      if (!response.ok) throw new Error("Erreur lors de la sauvegarde de la configuration.");
       return response.json();
     })
     .then((data) => {
-      console.log("Configuration sauvegardée :", data);
-      alert(data.message || "Configuration sauvegardée !");
-      hideConfig(); // Masquer les champs après sauvegarde
-      loadPage(1); // Charger la première page
+      alert("Configuration sauvegardée !");
+      hideConfig(); // Masque le panneau de configuration après sauvegarde
+      loadPage(1); // Charge la première page du widget
     })
-    .catch((error) => {
-      console.error("Erreur lors de la sauvegarde :", error);
-      if (grid) {
-        grid.innerHTML = "<p>Erreur lors de la configuration.</p>";
-      }
-    });
+    .catch((error) => console.error(error.message));
 }
 
 // Fonction pour masquer la section Configuration après sauvegarde
 function hideConfig() {
   const configContainer = document.querySelector(".config-container");
-  const apiKeyInput = document.getElementById("api-key-input");
-  const databaseIdInput = document.getElementById("database-id-input");
 
-  if (configContainer && apiKeyInput && databaseIdInput) {
-    // Masquer les champs en affichant des astérisques
-    apiKeyInput.type = "password";
-    databaseIdInput.type = "password";
-
-    // Ajouter un bouton pour modifier
+  if (configContainer) {
     configContainer.innerHTML = `
       <h3>Configuration Notion</h3>
-      <p>Clé API Notion : ********************</p>
-      <p>ID de la base de données : ********************</p>
+      <p>Clé API Notion : ************</p>
+      <p>ID de la base de données : ************</p>
       <button id="modify-config-btn">Modifier</button>
     `;
 
-    // Réactiver la modification
-    document
-      .getElementById("modify-config-btn")
-      .addEventListener("click", () => {
-        showConfig();
+    // Ajoute l'événement pour le bouton "Modifier"
+    const modifyConfigBtn = document.getElementById("modify-config-btn");
+    if (modifyConfigBtn) {
+      modifyConfigBtn.addEventListener("click", () => {
+        showConfig(); // Retourne au panneau initial
       });
+    }
   }
 }
 
-// Fonction pour afficher la section Configuration pour modifier
+// Fonction pour afficher la configuration initiale
 function showConfig() {
   const configContainer = document.querySelector(".config-container");
   const grid = document.getElementById("grid");  // Sélectionne la grille
 
   if (configContainer) {
-    // Réinitialiser le formulaire de configuration
+    // Réinitialise le contenu du panneau de configuration
     configContainer.innerHTML = `
       <h3>Configuration Notion</h3>
       <label for="api-key-input">Clé API Notion :</label>
-      <input type="text" id="api-key-input" placeholder="Entrez votre clé API Notion">
+      <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
       <label for="database-id-input">ID de la base de données :</label>
-      <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base de données">
+      <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
       <button id="save-config-btn">Enregistrer</button>
     `;
 
@@ -148,18 +134,28 @@ function showConfig() {
         if (apiKey && databaseId) {
           saveConfig(apiKey, databaseId);
         } else {
-          alert("Veuillez remplir les deux champs avant d'enregistrer.");
+          alert("Veuillez remplir tous les champs");
         }
       });
     }
   }
 }
 
-const grid = document.getElementById("grid")
-// Vider la grille pour éviter de garder les anciennes images
+// Cache la grille (widget) lorsqu'on retourne au panneau de configuration
 if (grid) {
     grid.innerHTML = "<p>Configurez votre widget.</p>";
   }
+
+  // Modifie le bouton "Modifier" pour réafficher le panneau initial
+document.addEventListener("DOMContentLoaded", () => {
+  const modifyConfigBtn = document.getElementById("modify-config-btn");
+
+  if (modifyConfigBtn) {
+    modifyConfigBtn.addEventListener("click", () => {
+      showConfig(); // Réaffiche le panneau initial
+    });
+  }
+});
 
 // Initialisation des événements
 document.addEventListener("DOMContentLoaded", () => {
