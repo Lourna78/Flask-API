@@ -41,15 +41,6 @@ body {
   margin: 10px;
 }
 
-/* Grille adaptative */
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Colonnes adaptatives */
-  gap: 5px; /* Espacement entre les images */
-  padding: 20px;
-  box-sizing: border-box;
-}
-
 /* Conteneur de la grille */
 .grid-container {
   display: grid;
@@ -85,8 +76,8 @@ body {
 
 .grid-item:hover {
   transition: transform 0.5s ease, box-shadow 0.5s ease; /* Ajuste la durée */
-  transform: scale(1.1); /* Effet de */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Ombre accentuée */
+  transform: scale(1.15); /* Légèrement moins de zoom */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Accentue l'ombre pour un effet plus prononcé */
   z-index: 1; /* Met l'élément zoomé au-dessus des autres */
 }
 

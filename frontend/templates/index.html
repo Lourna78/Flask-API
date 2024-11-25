@@ -9,6 +9,55 @@
 let currentPage = 1; // Page actuelle
 const limit = 12; // Nombre d'images par page
 
+// Fonction pour charger une page spécifique
+function loadPage(page) {
+  const grid = document.getElementById("grid");
+  if (grid) {
+    grid.innerHTML = "<p>Chargement...</p>"; // Afficher un message de chargement
+  }
+
+  fetch(`/images?page=${page}&limit=${limit}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des images.");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      if (grid) {
+        grid.innerHTML = ""; // Effacer le contenu précédent
+
+        // Ajouter les images
+        data.images.forEach((url) => {
+          const div = document.createElement("div");
+          div.className = "grid-item";
+          div.style.backgroundImage = `url(${url})`;
+          grid.appendChild(div);
+        });
+
+        // Compléter avec des cases vides si nécessaire
+        for (let i = data.images.length; i < limit; i++) {
+          const emptyDiv = document.createElement("div");
+          emptyDiv.className = "grid-item empty";
+          grid.appendChild(emptyDiv);
+        }
+      }
+
+      // Mise à jour des boutons de navigation
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
+
+      if (prevBtn) prevBtn.disabled = data.page <= 1;
+      if (nextBtn) nextBtn.disabled = data.page >= data.pages;
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la récupération des données :", error);
+      if (grid) {
+        grid.innerHTML = "<p>Erreur lors du chargement du feed.</p>";
+      }
+    });
+}
+
 // Fonction pour sauvegarder la configuration
 function saveConfig(apiKey, databaseId) {
   return fetch("/config", {
@@ -67,114 +116,21 @@ function hideConfig() {
   }
 }
 
-// Fonction pour charger une page spécifique
-// Paramètres : page (numéro de page à charger)
-function loadPage(page) {
-  const grid = document.getElementById("grid"); // Conteneur des images
-  const spinner = document.getElementById("loading-spinner"); // Spinner de chargement
-  if (spinner) {
-  spinner.style.display = "none"; // Cache le spinner
-}
-  
-  // Affiche le spinner pendant le chargement des données
-  if (spinner) {
-    spinner.style.display = "block";
-  }
-
-  fetch(`/images?page=${page}&limit=${limit}`) // Appel à l'API
-    .then((response) => response.json()) // Conversion en JSON
-    .then((data) => {
-      // Masque le spinner après récupération
-      if (spinner) {
-        spinner.style.display = "none";
-      }
-      
-      // Ajoute les images récupérées
-      if (grid) {
-        grid.innerHTML = ""; // Réinitialise la grille
-        data.images.forEach((url) => {
-          const div = document.createElement("div");
-          div.className = "grid-item";
-          div.style.backgroundImage = `url(${url})`;
-          div.onclick = () => handleImageClick(url); // Ajoute l'événement
-          grid.appendChild(div);
-        });
-      }
-    })
-    .catch((error) => {
-      console.error("Erreur :", error);
-      if (spinner) {
-        spinner.style.display = "none"; // Masque le spinner
-      }
-    });
-}
-
-// Fonction pour charger une page spécifique
-function loadPage(page) {
-  const grid = document.getElementById("grid");
-  if (grid) {
-    grid.innerHTML = "<p>Chargement...</p>"; // Afficher un message de chargement
-  }
-
-  fetch(`/images?page=${page}&limit=${limit}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des images.");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      if (grid) {
-        grid.innerHTML = ""; // Effacer le contenu précédent
-
-        // Ajouter les images
-        data.images.forEach((url) => {
-          const div = document.createElement("div");
-          div.className = "grid-item";
-          div.style.backgroundImage = `url(${url})`;
-          grid.appendChild(div);
-        });
-
-        // Compléter avec des cases vides si nécessaire
-        for (let i = data.images.length; i < limit; i++) {
-          const emptyDiv = document.createElement("div");
-          emptyDiv.className = "grid-item empty";
-          grid.appendChild(emptyDiv);
-        }
-      }
-
-      // Mise à jour des boutons de navigation
-      const prevBtn = document.getElementById("prev-btn");
-      const nextBtn = document.getElementById("next-btn");
-
-      if (prevBtn) prevBtn.disabled = data.page <= 1;
-      if (nextBtn) nextBtn.disabled = data.page >= data.pages;
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la récupération des données :", error);
-      if (grid) {
-        grid.innerHTML = "<p>Configurez votre widget.</p>";
-      }
-    });
-}
-
 // Fonction pour afficher la section Configuration pour modifier
 function showConfig() {
   const configContainer = document.querySelector(".config-container");
-  const grid = document.getElementById("grid"); // Sélectionne la grille
 
   if (configContainer) {
-    // Réinitialiser le formulaire de configuration
     configContainer.innerHTML = `
       <h3>Configuration Notion</h3>
       <label for="api-key-input">Clé API Notion :</label>
-      <input type="text" id="api-key-input" placeholder="Entrez votre clé API Notion">
+      <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
       <label for="database-id-input">ID de la base de données :</label>
-      <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base de données">
+      <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
       <button id="save-config-btn">Enregistrer</button>
     `;
 
-    // Ajouter l'événement pour enregistrer la nouvelle configuration
+    // Réactiver l'événement sur le bouton enregistrer
     const saveConfigBtn = document.getElementById("save-config-btn");
     if (saveConfigBtn) {
       saveConfigBtn.addEventListener("click", () => {
@@ -188,16 +144,6 @@ function showConfig() {
         }
       });
     }
-  }
-
-  window.hideConfig = function() {
-  // Contenu de la fonction hideConfig
-};
-
-
-  // Vider la grille pour éviter de garder les anciennes images
-  if (grid) {
-    grid.innerHTML = "<p>Configurez votre widget.</p>";
   }
 }
 
@@ -267,16 +213,14 @@ console.log("Fichier JavaScript chargé avec succès.");
           <!-- Les images seront insérées dynamiquement ici -->
         </div>
 
-        <div id="loading-spinner" style="display: none;">Chargement...</div>
-
         <div class="config-container">
           <h3>Configuration Notion</h3>
           <!-- Zone de configuration -->
           <div id="config-form">
             <label for="api-key-input">Clé API Notion :</label>
-            <input type="text" id="api-key-input" placeholder="Entrez votre clé API Notion">
+            <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
             <label for="database-id-input">ID de la base de données :</label>
-            <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base de données">
+            <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
             <button id="save-config-btn">Enregistrer</button>
           </div>
           <!-- Zone masquée après enregistrement -->
