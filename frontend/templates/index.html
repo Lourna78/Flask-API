@@ -88,20 +88,6 @@ function saveConfig(apiKey, databaseId) {
     });
 }
 
-function toggleVisibility(inputId) {
-  const input = document.getElementById(inputId);
-  if (input) {
-    input.type = input.type === "password" ? "text" : "password"; // Alterne entre masqué et visible
-  }
-}
-
-// Exemple pour masquer/afficher l'API Key
-const apiKeyInput = document.getElementById("api-key-input");
-const toggleBtn = document.createElement("button");
-toggleBtn.textContent = "Afficher/Masquer";
-toggleBtn.onclick = () => toggleVisibility("api-key-input");
-apiKeyInput.parentElement.appendChild(toggleBtn);
-
 // Fonction pour masquer la section Configuration après sauvegarde
 function hideConfig() {
   const configContainer = document.querySelector(".config-container");
