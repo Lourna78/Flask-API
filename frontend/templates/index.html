@@ -124,35 +124,18 @@ function showConfig() {
     configContainer.innerHTML = `
       <h3>Configuration Notion</h3>
       <label for="api-key-input">Clé API Notion :</label>
-      <input type="password" id="api-key-input" placeholder="Entrez votre clé API">
+      <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
       <label for="database-id-input">ID de la base de données :</label>
-      <input type="password" id="database-id-input" placeholder="Entrez l'ID de la base">
-      <div class="toggle-visibility">
-        <input type="checkbox" id="toggle-visibility">
-        <label for="toggle-visibility">Afficher les caractères</label>
-      </div>
+      <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
       <button id="save-config-btn">Enregistrer</button>
     `;
 
-        // Ajouter l'événement pour afficher/masquer les champs
-    const toggleVisibility = document.getElementById("toggle-visibility");
-    const apiKeyInput = document.getElementById("api-key-input");
-    const databaseIdInput = document.getElementById("database-id-input");
-
-    if (toggleVisibility) {
-      toggleVisibility.addEventListener("change", () => {
-        const type = toggleVisibility.checked ? "text" : "password";
-        if (apiKeyInput) apiKeyInput.type = type;
-        if (databaseIdInput) databaseIdInput.type = type;
-      });
-    }
-
-        // Réactiver l'événement sur le bouton enregistrer
+    // Réactiver l'événement sur le bouton enregistrer
     const saveConfigBtn = document.getElementById("save-config-btn");
     if (saveConfigBtn) {
       saveConfigBtn.addEventListener("click", () => {
-        const apiKey = apiKeyInput?.value;
-        const databaseId = databaseIdInput?.value;
+        const apiKey = document.getElementById("api-key-input")?.value;
+        const databaseId = document.getElementById("database-id-input")?.value;
 
         if (apiKey && databaseId) {
           saveConfig(apiKey, databaseId);
@@ -210,20 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
   loadPage(currentPage);
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const apiKeyInput = document.getElementById("api-key-input");
-  const databaseIdInput = document.getElementById("database-id-input");
-  const toggleVisibility = document.getElementById("toggle-visibility");
-
-  if (toggleVisibility) {
-    toggleVisibility.addEventListener("change", () => {
-      const type = toggleVisibility.checked ? "text" : "password";
-      if (apiKeyInput) apiKeyInput.type = type;
-      if (databaseIdInput) databaseIdInput.type = type;
-    });
-  }
-});
-
 console.log("Fichier JavaScript chargé avec succès.");
     </script>
 </head>
@@ -235,7 +204,7 @@ console.log("Fichier JavaScript chargé avec succès.");
         <!-- Ligne avec les trois boutons -->
         <div class="button-container">
           <button id="prev-btn" class="action-btn">Précédent</button>
-          <button id="refresh-btn" class="action-btn">Actualiser</button>
+          <button id="refresh-btn" class="action-btn">Rafraîchir</button>
           <button id="next-btn" class="action-btn">Suivant</button>
         </div>
 
@@ -244,27 +213,22 @@ console.log("Fichier JavaScript chargé avec succès.");
           <!-- Les images seront insérées dynamiquement ici -->
         </div>
 
-        <!-- Avant modification -->
-        <div id="config-form" class="config-container visible">
-        <h3>Configuration Notion</h3>
-          <label for="api-key-input">Clé API Notion :</label>
-          <input type="password" id="api-key-input" placeholder="Entrez votre clé API Notion">
-          <label for="database-id-input">ID de la base de données :</label>
-          <input type="password" id="database-id-input" placeholder="Entrez l'ID de la base de données">
-        <div class="toggle-visibility">
-          <input type="checkbox" id="toggle-visibility">
-          <label for="toggle-visibility">Afficher les champs</label>
-        </div>
-          <button id="save-config-btn">Enregistrer</button>
-        </div>
-
-          <!-- Après modification -->
-        <div id="config-summary" class="config-container hidden">
-        <h3>Configuration Notion</h3>
-          <p>Clé API Notion : ************</p>
-          <p>ID de la base de données : ************</p>
-          <button id="edit-config-btn">Modifier</button>
-        </div>
+        <div class="config-container">
+          <h3>Configuration Notion</h3>
+          <!-- Zone de configuration -->
+          <div id="config-form">
+            <label for="api-key-input">Clé API Notion :</label>
+            <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
+            <label for="database-id-input">ID de la base de données :</label>
+            <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
+            <button id="save-config-btn">Enregistrer</button>
+          </div>
+          <!-- Zone masquée après enregistrement -->
+          <div id="config-summary" style="display: none;">
+            <p>Clé API Notion : <span id="masked-api-key">********</span></p>
+            <p>ID de la base de données : <span id="masked-database-id">********</span></p>
+            <button id="edit-config-btn">Modifier</button>
+          </div>
           <script src="app.js"></script>
 </body>
 </html>
