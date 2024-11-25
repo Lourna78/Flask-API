@@ -128,12 +128,9 @@ body {
   margin-bottom: 10px;
 }
 
-#config-form {
-  display: block;
-}
-
-#config-summary {
-  display: none;
+#config-form p {
+  margin: 5px 0; /* Espacement uniforme */
+  font-size: 14px; /* Alignement avec l'état configuré */
 }
 
 #config-summary p {
@@ -158,18 +155,17 @@ body {
   background-color: #e6e6e6;
 }
 
-#config-form label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+#config-form p label {
+  margin-bottom: 5px; /* Espace entre label et input */
 }
 
 #config-form input {
-  width: 100%;
+  width: 100%; /* Champs qui occupent toute la largeur */
   padding: 8px;
-  margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
+  font-size: 14px;
+  box-sizing: border-box;
 }
 
 #config-form button {
