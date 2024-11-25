@@ -193,27 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
   loadPage(currentPage);
 });
 
-// Fonction pour ouvrir une image dans un nouvel onglet ou copier son URL
-function handleImageClick(url) {
-  const action = confirm("Cliquez sur OK pour ouvrir l'image ou Annuler pour copier l'URL.");
-  if (action) {
-    window.open(url, "_blank"); // Ouvre l'image dans un nouvel onglet
-  } else {
-    navigator.clipboard.writeText(url).then(() => {
-      alert("URL copiée dans le presse-papiers !");
-    });
-  }
-}
-
-// Modifier la boucle pour intégrer onclick
-data.images.forEach((url) => {
-  const div = document.createElement("div");
-  div.className = "grid-item";
-  div.style.backgroundImage = `url(${url})`;
-  div.onclick = () => handleImageClick(url); // Ajoute l'événement onclick
-  grid.appendChild(div);
-});
-
 console.log("Fichier JavaScript chargé avec succès.");
     </script>
 </head>

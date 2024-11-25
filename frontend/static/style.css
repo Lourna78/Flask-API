@@ -41,6 +41,15 @@ body {
   margin: 10px;
 }
 
+/* Grille adaptative */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Colonnes adaptatives */
+  gap: 5px; /* Espacement entre les images */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
 /* Conteneur de la grille */
 .grid-container {
   display: grid;
