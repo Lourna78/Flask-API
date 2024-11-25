@@ -123,37 +123,18 @@ function showConfig() {
     if (configContainer) {
         configContainer.innerHTML = `
           <h3>Configuration Notion</h3>
-          <div style="display: flex; flex-wrap: wrap; align-items: center;">
-            <label for="api-key-input" style="flex: 1; min-width: 150px;">Clé API Notion :</label>
-            <input type="password" id="api-key-input" placeholder="Entrez votre clé API" style="flex: 2; min-width: 250px;">
-          </div>
-          <div style="display: flex; flex-wrap: wrap; align-items: center; margin-top: 10px;">
-            <label for="database-id-input" style="flex: 1; min-width: 150px;">ID de la base de données :</label>
-            <input type="password" id="database-id-input" placeholder="Entrez l'ID de la base" style="flex: 2; min-width: 250px;">
-          </div>
-          <div class="toggle-visibility" style="margin-top: 10px;">
+          <label for="api-key-input">Clé API Notion :</label>
+          <input type="password" id="api-key-input" placeholder="Entrez votre clé API">
+          <label for="database-id-input">ID de la base de données :</label>
+          <input type="password" id="database-id-input" placeholder="Entrez l'ID de la base">
+          <div class="toggle-visibility">
             <input type="checkbox" id="toggle-visibility">
             <label for="toggle-visibility">Afficher les champs</label>
           </div>
-          <button id="save-config-btn" style="margin-top: 10px;">Enregistrer</button>
+          <button id="save-config-btn">Enregistrer</button>
         `;
 
-        // Réactiver l'événement sur le bouton enregistrer
-        const saveConfigBtn = document.getElementById("save-config-btn");
-        if (saveConfigBtn) {
-            saveConfigBtn.addEventListener("click", () => {
-                const apiKey = document.getElementById("api-key-input")?.value;
-                const databaseId = document.getElementById("database-id-input")?.value;
-
-                if (apiKey && databaseId) {
-                    saveConfig(apiKey, databaseId);
-                } else {
-                    alert("Veuillez remplir les deux champs avant d'enregistrer.");
-                }
-            });
-        }
-
-        // Réactiver la logique pour la case "Afficher les champs"
+        // Ajouter l'événement pour afficher/masquer les champs
         const toggleVisibility = document.getElementById("toggle-visibility");
         const apiKeyInput = document.getElementById("api-key-input");
         const databaseIdInput = document.getElementById("database-id-input");
@@ -163,6 +144,21 @@ function showConfig() {
                 const type = toggleVisibility.checked ? "text" : "password";
                 if (apiKeyInput) apiKeyInput.type = type;
                 if (databaseIdInput) databaseIdInput.type = type;
+            });
+        }
+
+        // Réactiver l'événement sur le bouton enregistrer
+        const saveConfigBtn = document.getElementById("save-config-btn");
+        if (saveConfigBtn) {
+            saveConfigBtn.addEventListener("click", () => {
+                const apiKey = apiKeyInput?.value; // Utilisation des variables déjà déclarées
+                const databaseId = databaseIdInput?.value;
+
+                if (apiKey && databaseId) {
+                    saveConfig(apiKey, databaseId);
+                } else {
+                    alert("Veuillez remplir les deux champs avant d'enregistrer.");
+                }
             });
         }
     }
