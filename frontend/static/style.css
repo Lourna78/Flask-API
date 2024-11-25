@@ -27,13 +27,14 @@ body {
 
 /* Conteneur principal */
 .widget-container {
-  width: 400px; /* Définit une largeur fixe de 400 pixels pour le conteneur. */
-  margin: 0 auto; /* Centre horizontalement le conteneur avec des marges automatiques. */
+  width: 100px; /* Par défaut, occupe 100% de l'espace disponible */
+  max-width: 300px; /* Largeur maximale dans un espace réduit */
+  margin: 10px auto; /* Centré horizontalement avec marges */
   background-color: #ffffff; /* Définit un fond blanc pour le conteneur. */
   border: 1px solid #ddd; /* Ajoute une bordure fine grise claire autour du conteneur. */
-  border-radius: 10px; /* Arrondit les coins du conteneur avec un rayon de 10 pixels. */
+  border-radius: 8px; /* Arrondit les coins du conteneur avec un rayon de 8 pixels. */
   overflow: hidden; /* Coupe tout contenu qui dépasse les limites du conteneur. */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Ajoute une ombre douce en dessous du conteneur. */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre discrète */
 }
 
 /* En-tête du widget */
@@ -47,10 +48,7 @@ body {
   display: grid; /* Utilise une grille CSS pour organiser les items. */
   grid-template-columns: repeat(3, 1fr); /* Divise la grille en 3 colonnes de tailles égales. */
   gap: 5px; /* Ajoute un espacement de 5 pixels entre les éléments de la grille. */
-  padding: 20px; /* Ajoute un rembourrage intérieur de 20 pixels autour de la grille. */
-  box-sizing: border-box; /* Inclut les bordures et le rembourrage dans les dimensions totales. */
-  overflow: hidden; /* Empêche tout débordement de contenu hors des limites de la grille. */
-  position: relative; /* Positionne les éléments par rapport au conteneur pour mieux gérer les débordements. */
+  padding: 10px; /* Ajoute un rembourrage intérieur de 10 pixels autour de la grille. */
 }
 
 /* Style des items de la grille */
@@ -59,10 +57,7 @@ body {
   padding-top: 100%; /* Crée un ratio de 1:1 pour maintenir un format carré. */
   background-size: cover; /* Ajuste l'image de fond pour couvrir toute la zone sans déformation. */
   background-position: center; /* Centre l'image de fond dans l'élément. */
-  border: none; /* Supprime toute bordure. */
-  outline: none; /* Supprime les contours bleus par défaut (souvent affichés au focus). */
-  border-radius: 3px; /* Arrondit légèrement les coins avec un rayon de 3 pixels. */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Ajoute une transition fluide sur le zoom et l'ombre lors des interactions. */
+  border-radius: 5px; /* Arrondit légèrement les coins avec un rayon de 3 pixels. */
 }
 
 
@@ -134,7 +129,15 @@ body {
   margin-bottom: 10px; /* Espacement sous le titre. */
 }
 
-/* Résumé de la configuration */
+/* Avant modification */
+#config-form {
+  display: block; /* Afficher le formulaire */
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
 #config-form input {
   width: 100%;
   padding: 8px;
@@ -145,37 +148,8 @@ body {
   background-color: #fff; /* Assure un fond blanc pour les champs. */
 }
 
-#config-summary {
-  display: flex;
-  flex-direction: column; /* Aligne les champs en colonne. */
-  gap: 10px; /* Espacement uniforme entre les éléments. */
-}
-
-#config-summary p {
-  margin: 5px 0;
-  font-size: 14px;
-  color: #333;
-  font-weight: normal;
-}
-
-#config-summary button, #config-form button {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ddd;
-  padding: 8px 20px;
-  font-size: 14px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 10px; /* Espacement avec les champs. */
-}
-
-#config-summary button:hover, #config-form button:hover {
-  background-color: #e6e6e6;
-}
-
 /* Champs de formulaire */
-#config-form p label {
+#config-form label {
   margin-bottom: 5px; /* Espacement entre le label et le champ. */
 }
 
@@ -202,6 +176,36 @@ body {
 
 #config-form button:hover {
   background-color: #e6e6e6; /* Fond légèrement plus sombre au survol. */
+}
+
+/* Résumé après modification */
+#config-summary {
+  display: flex;
+  flex-direction: column; /* Aligne les champs en colonne. */
+  gap: 10px; /* Espacement uniforme entre les éléments. */
+}
+
+#config-summary p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #333;
+  font-weight: normal;
+}
+
+#config-form button {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 8px 20px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px; /* Espacement avec les champs. */
+}
+
+#config-summary button:hover {
+  background-color: #e6e6e6;
 }
 
 /* Style des champs de configuration */
