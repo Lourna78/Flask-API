@@ -6,165 +6,140 @@
   <title>Instagram Feed Preview</title>
   <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css">
   <script>
+/* -------------------------
+   1. Variables globales
+------------------------- */
+const API_ENDPOINT = "/config"; // Endpoint pour sauvegarder la configuration
 let currentPage = 1; // Page actuelle
 const limit = 12; // Nombre d'images par page
 
-// Fonction pour charger une page spécifique
-function loadPage(page) {
-  const grid = document.getElementById("grid");
-  if (grid) {
-    grid.innerHTML = "<p>Chargement du feed...</p>"; // Afficher un message de chargement
-  }
+/* -------------------------
+   2. Fonctions utilitaires
+------------------------- */
 
-  fetch(`/images?page=${page}&limit=${limit}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des images.");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      if (grid) {
-        grid.innerHTML = ""; //  Réinitialise le contenu de la grille pour qu'elle soit vide
-
-        // Ajouter les images
-        data.images.forEach((url) => {
-          const div = document.createElement("div");
-          div.className = "grid-item";
-          div.style.backgroundImage = `url(${url})`;
-          grid.appendChild(div);
-        });
-
-        // Compléter avec des cases vides si nécessaire
-        for (let i = data.images.length; i < limit; i++) {
-          const emptyDiv = document.createElement("div");
-          emptyDiv.className = "grid-item empty";
-          grid.appendChild(emptyDiv);
-        }
-      }
-
-      // Mise à jour des boutons de navigation
-      const prevBtn = document.getElementById("prev-btn");
-      const nextBtn = document.getElementById("next-btn");
-
-      if (prevBtn) prevBtn.disabled = data.page <= 1;
-      if (nextBtn) nextBtn.disabled = data.page >= data.pages;
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la récupération des données :", error);
-      if (grid) {
-        grid.innerHTML = "<p>Veuillez configurer.</p>";
-      }
-    });
+/**
+ * Affiche un message d'erreur dans la console.
+ * @param {string} message - Le message d'erreur.
+ */
+function logError(message) {
+  console.error(`[Erreur] ${message}`);
 }
 
-// Fonction pour sauvegarder la configuration
-function saveConfig(apiKey, databaseId) {
-  const grid = document.getElementById("grid");  // Sélectionne la grille
-  if (grid) {
-    grid.innerHTML = "<p>Chargement...</p>";  // Indique à l'utilisateur que la sauvegarde est en cours
+/**
+ * Montre ou cache un élément HTML en fonction de son ID.
+ * @param {string} id - L'ID de l'élément HTML.
+ * @param {boolean} show - `true` pour afficher, `false` pour cacher.
+ */
+function toggleVisibility(id, show) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.style.display = show ? "block" : "none";
+  } else {
+    logError(`L'élément avec l'ID '${id}' est introuvable.`);
   }
-  return fetch("/config", {
+}
+
+/* -------------------------
+   3. Gestion de l'API et des données
+------------------------- */
+
+/**
+ * Sauvegarde la configuration utilisateur via l'API.
+ * @param {string} apiKey - Clé API de l'utilisateur.
+ * @param {string} databaseId - ID de la base de données.
+ */
+function saveConfig(apiKey, databaseId) {
+  return fetch(API_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      api_key: apiKey.trim(), // Supprimer les espaces éventuels
-      database_id: databaseId.trim(),
-    }),
+    body: JSON.stringify({ api_key: apiKey.trim(), database_id: databaseId.trim() }),
   })
     .then((response) => {
       if (!response.ok) throw new Error("Erreur lors de la sauvegarde de la configuration.");
       return response.json();
     })
     .then((data) => {
-      alert("Configuration sauvegardée !");
-      hideConfig(); // Masque le panneau de configuration après sauvegarde
+      console.log("Configuration sauvegardée :", data);
+
+      // Cache le panneau de configuration et affiche la grille
+      toggleVisibility("config-container", false); // Cache la configuration
+      toggleVisibility("grid", true); // Affiche la grille
       loadPage(1); // Charge la première page du widget
     })
-    .catch((error) => console.error(error.message));
+    .catch((error) => logError(`Erreur lors de la sauvegarde : ${error.message}`));
 }
 
-// Fonction pour masquer la section Configuration après sauvegarde
-function hideConfig() {
-  const configContainer = document.querySelector(".config-container");
-
-  if (configContainer) {
-    configContainer.innerHTML = `
-      <h3>Configuration Notion</h3>
-      <p>Clé API Notion : ************</p>
-      <p>ID de la base de données : ************</p>
-      <button id="modify-config-btn">Modifier</button>
-    `;
-
-    // Ajoute l'événement pour le bouton "Modifier"
-    const modifyConfigBtn = document.getElementById("modify-config-btn");
-    if (modifyConfigBtn) {
-      modifyConfigBtn.addEventListener("click", () => {
-        showConfig(); // Retourne au panneau initial
-      });
-    }
-  }
-}
-
-// Fonction pour afficher la configuration initiale
-function showConfig() {
-  const configContainer = document.querySelector(".config-container");
-  const grid = document.getElementById("grid");  // Sélectionne la grille
-
-  if (configContainer) {
-    // Réinitialise le contenu du panneau de configuration
-    configContainer.innerHTML = `
-      <h3>Configuration Notion</h3>
-      <label for="api-key-input">Clé API Notion :</label>
-      <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
-      <label for="database-id-input">ID de la base de données :</label>
-      <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
-      <button id="save-config-btn">Enregistrer</button>
-    `;
-
-    // Réactiver l'événement sur le bouton enregistrer
-    const saveConfigBtn = document.getElementById("save-config-btn");
-    if (saveConfigBtn) {
-      saveConfigBtn.addEventListener("click", () => {
-        const apiKey = document.getElementById("api-key-input")?.value;
-        const databaseId = document.getElementById("database-id-input")?.value;
-
-        if (apiKey && databaseId) {
-          saveConfig(apiKey, databaseId);
-        } else {
-          alert("Veuillez remplir tous les champs");
-        }
-      });
-    }
-  }
-}
-
-// Cache la grille (widget) lorsqu'on retourne au panneau de configuration
-if (grid) {
-    grid.innerHTML = "<p>Configurez votre widget.</p>";
-  }
-
-  // Modifie le bouton "Modifier" pour réafficher le panneau initial
-document.addEventListener("DOMContentLoaded", () => {
-  const modifyConfigBtn = document.getElementById("modify-config-btn");
-
-  if (modifyConfigBtn) {
-    modifyConfigBtn.addEventListener("click", () => {
-      showConfig(); // Réaffiche le panneau initial
-    });
-  }
-});
-
-// Initialisation des événements
-document.addEventListener("DOMContentLoaded", () => {
+/**
+ * Charge une page spécifique du widget.
+ * @param {number} page - Numéro de la page.
+ */
+function loadPage(page) {
   const grid = document.getElementById("grid");
-  const saveConfigBtn = document.getElementById("save-config-btn");
-  const prevBtn = document.getElementById("prev-btn");
-  const nextBtn = document.getElementById("next-btn");
-  const refreshBtn = document.getElementById("refresh-btn");
 
+  if (!grid) {
+    logError("L'élément 'grid' n'existe pas dans le DOM.");
+    return;
+  }
+
+  // Affiche un message de chargement
+  grid.innerHTML = "<p>Chargement du feed...</p>";
+
+  fetch(`/images?page=${page}&limit=${limit}`)
+    .then((response) => response.json())
+    .then((data) => {
+      grid.innerHTML = ""; // Vide la grille
+
+      // Ajoute les images dans la grille
+      data.images.forEach((url) => {
+        const div = document.createElement("div");
+        div.className = "grid-item";
+        div.style.backgroundImage = `url(${url})`;
+        grid.appendChild(div);
+      });
+
+      // Complète avec des cases vides si nécessaire
+      for (let i = data.images.length; i < limit; i++) {
+        const emptyDiv = document.createElement("div");
+        emptyDiv.className = "grid-item empty";
+        grid.appendChild(emptyDiv);
+      }
+    })
+    .catch((error) => {
+      logError(`Erreur lors du chargement de la page : ${error.message}`);
+      grid.innerHTML = "<p>Erreur lors du chargement du feed.</p>";
+    });
+}
+
+/* -------------------------
+   4. Gestion du DOM
+------------------------- */
+
+/**
+ * Affiche le panneau de configuration initial.
+ */
+function showConfig() {
+  const configContainer = document.getElementById("config-container");
+  const grid = document.getElementById("grid");
+
+  if (!configContainer) {
+    logError("Le conteneur de configuration n'existe pas.");
+    return;
+  }
+
+  // Réinitialise le contenu du panneau de configuration
+  configContainer.innerHTML = `
+    <h3>Configuration Notion</h3>
+    <label for="api-key-input">Clé API Notion :</label>
+    <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
+    <label for="database-id-input">ID de la base de données :</label>
+    <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
+    <button id="save-config-btn">Enregistrer</button>
+  `;
+
+  // Ajoute un événement au bouton "Enregistrer"
+  const saveConfigBtn = document.getElementById("save-config-btn");
   if (saveConfigBtn) {
     saveConfigBtn.addEventListener("click", () => {
       const apiKey = document.getElementById("api-key-input")?.value;
@@ -173,40 +148,81 @@ document.addEventListener("DOMContentLoaded", () => {
       if (apiKey && databaseId) {
         saveConfig(apiKey, databaseId);
       } else {
-        alert("Veuillez remplir les deux champs avant d'enregistrer.");
+        alert("Veuillez remplir tous les champs !");
       }
     });
   }
 
-  if (prevBtn) {
-    prevBtn.addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        loadPage(currentPage);
-      }
-    });
-  }
-
-  if (nextBtn) {
-    nextBtn.addEventListener("click", () => {
-      currentPage++;
-      loadPage(currentPage);
-    });
-  }
-
-  if (refreshBtn) {
-    refreshBtn.addEventListener("click", () => {
-      loadPage(currentPage); // Recharger la page actuelle
-    });
-  }
-
-  // Charge la première page au démarrage si la configuration est valide
+  // Cache la grille et affiche le panneau de configuration
   if (grid) {
     grid.innerHTML = "<p>Configurez votre widget.</p>";
+    toggleVisibility("grid", false);
   }
-});
+  toggleVisibility("config-container", true);
+}
 
-console.log("Fichier JavaScript chargé avec succès.");
+/**
+ * Cache le panneau de configuration et affiche le bouton "Modifier".
+ */
+function hideConfig() {
+  const configContainer = document.getElementById("config-container");
+
+  if (!configContainer) {
+    logError("Le conteneur de configuration n'existe pas.");
+    return;
+  }
+
+  configContainer.innerHTML = `
+    <h3>Configuration Notion</h3>
+    <p>Clé API Notion : ************</p>
+    <p>ID de la base de données : ************</p>
+    <button id="modify-config-btn">Modifier</button>
+  `;
+
+  // Ajoute un événement au bouton "Modifier"
+  const modifyConfigBtn = document.getElementById("modify-config-btn");
+  if (modifyConfigBtn) {
+    modifyConfigBtn.addEventListener("click", () => {
+      showConfig(); // Retourne au panneau de configuration initial
+    });
+  }
+}
+
+/* -------------------------
+   5. Gestionnaires d'événements
+------------------------- */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const grid = document.getElementById("grid");
+  const configContainer = document.getElementById("config-container");
+
+  // Cache la grille au démarrage
+  if (grid) {
+    grid.style.display = "none";
+  }
+
+  // Affiche la configuration au démarrage
+  if (configContainer) {
+    showConfig();
+  }
+
+  // Ajoute les événements pour les boutons de navigation
+  document.getElementById("prev-btn")?.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      loadPage(currentPage);
+    }
+  });
+
+  document.getElementById("next-btn")?.addEventListener("click", () => {
+    currentPage++;
+    loadPage(currentPage);
+  });
+
+  document.getElementById("refresh-btn")?.addEventListener("click", () => {
+    loadPage(currentPage);
+  });
+});
     </script>
 </head>
 <body>
