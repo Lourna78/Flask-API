@@ -1,174 +1,165 @@
 /* Style général */
 body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f8f9fa;
+  font-family: 'Poppins', sans-serif; /* Définit une police principale 'Poppins', avec une police de secours 'sans-serif' si 'Poppins' n'est pas disponible. */
+  margin: 0; /* Supprime les marges par défaut autour de la page. */
+  padding: 0; /* Supprime les marges intérieures par défaut de la page. */
+  display: flex; /* Utilise un conteneur flex pour centrer les éléments enfants. */
+  justify-content: center; /* Centre horizontalement les éléments enfants. */
+  align-items: center; /* Centre verticalement les éléments enfants. */
+  height: 100vh; /* Fixe la hauteur de la page à 100% de la hauteur de la fenêtre (viewport). */
+  background-color: #f8f9fa; /* Définit un fond gris clair pour la page. */
 }
 
 /* Style du titre */
 .widget-title {
-  text-align: center;
-  font-size: 18px;
-  font-weight: 600;
-  margin: 10px 0;
-  color: #333;
+  text-align: center; /* Centre le texte horizontalement. */
+  font-size: 18px; /* Définit une taille de police de 18 pixels. */
+  font-weight: 600; /* Définit l'épaisseur de la police à semi-gras. */
+  margin: 10px 0; /* Ajoute une marge de 10 pixels en haut et en bas, et aucune sur les côtés. */
+  color: #333; /* Définit une couleur de texte gris foncé. */
 }
 
 /* Style des items vides (cases grises) */
 .grid-item.empty {
-  background-color: #f0f0f0; /* Fond gris uni pour les cases vides */
-  background-image: none; /* Supprime toute image résiduelle */
+  background-color: #f0f0f0; /* Définit une couleur de fond gris clair uni pour les items vides. */
+  background-image: none; /* Supprime toute image de fond pour ces items. */
 }
 
 /* Conteneur principal */
 .widget-container {
-  width: 400px; /* Ajuste la largeur selon ton besoin */
-  margin: 0 auto;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  width: 400px; /* Définit une largeur fixe de 400 pixels pour le conteneur. */
+  margin: 0 auto; /* Centre horizontalement le conteneur avec des marges automatiques. */
+  background-color: #ffffff; /* Définit un fond blanc pour le conteneur. */
+  border: 1px solid #ddd; /* Ajoute une bordure fine grise claire autour du conteneur. */
+  border-radius: 10px; /* Arrondit les coins du conteneur avec un rayon de 10 pixels. */
+  overflow: hidden; /* Coupe tout contenu qui dépasse les limites du conteneur. */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Ajoute une ombre douce en dessous du conteneur. */
 }
 
+/* En-tête du widget */
 .widget-header {
-  text-align: center;
-  margin: 10px;
+  text-align: center; /* Centre horizontalement le contenu de l'en-tête. */
+  margin: 10px; /* Ajoute une marge uniforme de 10 pixels tout autour. */
 }
 
 /* Conteneur de la grille */
 .grid-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 colonnes */
-  gap: 5px; /* Espacement entre les images */
-  padding: 20px;
-  box-sizing: border-box; /* Inclut les bordures dans la taille totale */
-  overflow: hidden; /* Empêche les débordements */
-  position: relative; /* Nécessaire pour limiter les débordements au conteneur */
+  display: grid; /* Utilise une grille CSS pour organiser les items. */
+  grid-template-columns: repeat(3, 1fr); /* Divise la grille en 3 colonnes de tailles égales. */
+  gap: 5px; /* Ajoute un espacement de 5 pixels entre les éléments de la grille. */
+  padding: 20px; /* Ajoute un rembourrage intérieur de 20 pixels autour de la grille. */
+  box-sizing: border-box; /* Inclut les bordures et le rembourrage dans les dimensions totales. */
+  overflow: hidden; /* Empêche tout débordement de contenu hors des limites de la grille. */
+  position: relative; /* Positionne les éléments par rapport au conteneur pour mieux gérer les débordements. */
 }
 
 /* Style des items de la grille */
 .grid-item {
-  width: 100%;
-  padding-top: 100%; /* Maintient un carré parfait */
-  background-size: cover;
-  background-position: center;
-  border: none;
-  outline: none; /* Supprime les contours bleus par défaut */
-  border-radius: 3px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%; /* L'élément occupe toute la largeur de sa cellule dans la grille. */
+  padding-top: 100%; /* Crée un ratio de 1:1 pour maintenir un format carré. */
+  background-size: cover; /* Ajuste l'image de fond pour couvrir toute la zone sans déformation. */
+  background-position: center; /* Centre l'image de fond dans l'élément. */
+  border: none; /* Supprime toute bordure. */
+  outline: none; /* Supprime les contours bleus par défaut (souvent affichés au focus). */
+  border-radius: 3px; /* Arrondit légèrement les coins avec un rayon de 3 pixels. */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Ajoute une transition fluide sur le zoom et l'ombre lors des interactions. */
 }
 
-/* Ajouter un effet visuel sur les éléments en cours de glissement */
+/* Effet visuel pendant le glissement */
 .grid-item.dragging {
-  opacity: 0.5;
-  outline: none; /* Supprime également l'outline pendant le drag */
+  opacity: 0.5; /* Réduit l'opacité à 50% pour indiquer que l'élément est en cours de déplacement. */
+  outline: none; /* Supprime les contours (parfois ajoutés automatiquement lors des événements de glissement). */
 }
 
+/* Suppression des contours au focus */
 .grid-item:focus {
-  outline: none; /* Supprime les contours bleus au focus */
+  outline: none; /* Supprime les contours bleus visibles lorsqu'un élément est sélectionné avec le clavier ou activé. */
 }
 
+/* Effet au survol */
 .grid-item:hover {
-  transition: transform 0.5s ease, box-shadow 0.5s ease; /* Ajuste la durée */
-  transform: scale(1.15); /* Légèrement moins de zoom */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Accentue l'ombre pour un effet plus prononcé */
-  z-index: 1; /* Met l'élément zoomé au-dessus des autres */
+  transition: transform 0.5s ease, box-shadow 0.5s ease; /* Ajoute une transition fluide avec une durée légèrement augmentée. */
+  transform: scale(1.15); /* Agrandit légèrement l'élément avec un effet de zoom (15% plus grand). */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Ajoute une ombre plus accentuée pour donner un effet de surélévation. */
+  z-index: 1; /* Positionne l'élément agrandi au-dessus des autres pour éviter des superpositions non désirées. */
 }
 
+/* Style responsivbe (pour écrans < 600 px) */
 @media (max-width: 600px) {
   .grid-container {
-      grid-template-columns: repeat(2, 1fr); /* 2 colonnes sur mobile */
+      grid-template-columns: repeat(2, 1fr); /* Passe de 3 colonnes à 2 colonnes sur les petits écrans. */
   }
 }
 
+/* Conteneur principal */
 .config-container {
-  margin: 20px;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+  margin: 20px; /* Espace autour du conteneur. */
+  padding: 15px; /* Rembourrage interne du conteneur. */
+  border: 1px solid #ddd; /* Bordure fine grise claire. */
+  border-radius: 5px; /* Coins légèrement arrondis. */
+  background-color: #f9f9f9; /* Fond gris très clair pour différencier le conteneur. */
 }
 
-/* Style pour les champs en mode modification */
+/* Champs en mode modification */
 .config-container p {
-  margin: 10px 0; /* Uniformité avec les lignes après enregistrement */
-  font-size: 14px; /* Alignement avec le texte configuré */
-  display: flex;
-  flex-direction: column; /* Place les labels au-dessus des champs */
+  margin: 10px 0; /* Espacement vertical uniforme entre les éléments. */
+  font-size: 14px; /* Taille de police standard. */
+  display: flex; /* Dispose les enfants en flexbox. */
+  flex-direction: column; /* Les labels sont positionnés au-dessus des champs. */
 }
 
+/* Label des champs en mode modification */
 .config-container p label {
-  margin-bottom: 5px; /* Espacement entre le label et le champ */
+  margin-bottom: 5px; /* Espace entre le label et le champ d'entrée. */
 }
 
-/* Alignement et espacement pour la case "Afficher les champs" */
+/* Section "afficher les champs" */
 .toggle-visibility {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  font-size: 14px;
+  margin-top: 10px; /* Espacement supérieur avec les autres éléments. */
+  display: flex; /* Dispose les enfants en ligne (case et texte). */
+  align-items: center; /* Centre verticalement la case et le texte. */
+  font-size: 14px; /* Taille de police standard. */
 }
 
 .toggle-visibility input {
-  margin-right: 5px; /* Espacement entre la case et le texte */
+  margin-right: 5px; /* Espace entre la case à cocher et le texte. */
 }
 
 .toggle-visibility label {
-  font-size: 14px;
-  cursor: pointer;
+  font-size: 14px; /* Taille de police uniforme. */
+  cursor: pointer; /* Change le curseur pour indiquer la cliquabilité. */
 }
 
+/* Titre de section */
 .config-container h3 {
-  margin-bottom: 10px;
+  margin-bottom: 10px; /* Espacement sous le titre. */
 }
 
-#config-form p {
-  margin: 5px 0; /* Espacement uniforme */
-  font-size: 14px; /* Alignement avec l'état configuré */
-}
-
-#config-summary p {
-  margin: 5px 0; /* Espacement entre les lignes */
-  font-size: 14px; /* Taille uniforme du texte */
-  word-wrap: break-word; /* Permet de couper les longues chaînes */
-}
-
-#config-summary button {
-  margin-top: 10px;
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ddd;
-  padding: 8px 20px;
-  font-size: 14px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#config-summary button:hover {
-  background-color: #e6e6e6;
-}
-
-#config-form p label {
-  margin-bottom: 5px; /* Espace entre label et input */
-}
-
+/* Résumé de la configuration */
 #config-form input {
-  width: 100%; /* Champs qui occupent toute la largeur */
+  width: 100%;
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid #ddd; /* Bordure fine pour les champs. */
   border-radius: 5px;
   font-size: 14px;
   box-sizing: border-box;
+  background-color: #fff; /* Assure un fond blanc pour les champs. */
 }
 
-#config-form button {
+#config-summary {
+  display: flex;
+  flex-direction: column; /* Aligne les champs en colonne. */
+  gap: 10px; /* Espacement uniforme entre les éléments. */
+}
+
+#config-summary p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #333;
+  font-weight: normal;
+}
+
+#config-summary button, #config-form button {
   background-color: #f0f0f0;
   color: #333;
   border: 1px solid #ddd;
@@ -177,27 +168,58 @@ body {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 10px; /* Espacement avec les champs. */
+}
+
+#config-summary button:hover, #config-form button:hover {
+  background-color: #e6e6e6;
+}
+
+/* Champs de formulaire */
+#config-form p label {
+  margin-bottom: 5px; /* Espacement entre le label et le champ. */
+}
+
+#config-form input {
+  width: 100%; /* Les champs occupent toute la largeur disponible. */
+  padding: 8px; /* Rembourrage interne pour une meilleure lisibilité. */
+  border: 1px solid #ddd; /* Bordure fine grise claire. */
+  border-radius: 5px; /* Coins arrondis. */
+  font-size: 14px; /* Taille de texte uniforme. */
+  box-sizing: border-box; /* Inclut les bordures et rembourrages dans la largeur totale. */
+}
+
+/* Boutons de formulaire */
+#config-form button {
+  background-color: #f0f0f0; /* Fond gris clair. */
+  color: #333; /* Texte gris foncé. */
+  border: 1px solid #ddd; /* Bordure fine grise claire. */
+  padding: 8px 20px; /* Rembourrage autour du texte. */
+  font-size: 14px; /* Taille de texte uniforme. */
+  border-radius: 5px; /* Coins arrondis. */
+  cursor: pointer; /* Change le curseur au survol. */
+  transition: background-color 0.3s ease; /* Animation fluide du changement de couleur. */
 }
 
 #config-form button:hover {
-  background-color: #e6e6e6;
+  background-color: #e6e6e6; /* Fond légèrement plus sombre au survol. */
 }
 
 /* Style des champs de configuration */
 .config-container div {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-bottom: 10px; /* Espacement entre les éléments */
+  display: flex; /* Dispose les enfants en ligne. */
+  flex-wrap: wrap; /* Permet le retour à la ligne si nécessaire. */
+  align-items: center; /* Centre verticalement les enfants. */
+  margin-bottom: 10px; /* Espacement avec les éléments adjacents. */
 }
 
 .config-container label {
-  display: inline-block; /* Pour aligner les labels avec les champs */
-  width: 150px; /* Largeur fixe pour aligner avec les champs */
-  font-weight: bold;
+  display: inline-block; /* Aligne les labels et les champs sur une même ligne. */
+  width: 150px; /* Largeur fixe pour un alignement cohérent. */
+  font-weight: bold; /* Texte en gras pour mettre en valeur les labels. */
 }
 
-/* Uniformiser les styles des champs et boutons en mode modification */
+/* Boutons d'action généraux */
 .config-container input[type="password"],
 .config-container input[type="text"] {
   width: 100%;
@@ -210,56 +232,56 @@ body {
 
 /* Bouton uniforme */
 .config-container button {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ddd;
-  padding: 8px 20px;
-  font-size: 14px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 10px; /* Espacement avec les champs */
+  background-color: #f0f0f0; /* Fond gris clair. */
+  color: #333; /* Texte gris foncé. */
+  border: 1px solid #ddd; /* Bordure fine grise claire. */
+  padding: 8px 20px; /* Rembourrage autour du texte. */
+  font-size: 14px; /* Taille de texte uniforme. */
+  border-radius: 5px; /* Coins arrondis. */
+  cursor: pointer; /* Change le curseur au survol. */
+  transition: background-color 0.3s ease; /* Animation fluide du changement de couleur. */
+  margin-top: 10px; /* Espacement avec les champs au-dessus. */
 }
 
 .config-container button:hover {
-  background-color: #e6e6e6;
+  background-color: #e6e6e6; /* Fond légèrement plus sombre au survol. */
 }
 
 /* Conteneur des boutons */
 .button-container {
-  display: flex;
-  justify-content: space-between; /* Espacement entre les boutons */
-  align-items: center;
-  margin-top: 15px;
-  padding: 0 20px; /* Espacement latéral pour éviter qu'ils soient trop près des bords */
+  display: flex; /* Dispose les boutons en ligne. */
+  justify-content: space-between; /* Sépare les boutons uniformément. */
+  align-items: center; /* Centre verticalement les boutons. */
+  margin-top: 15px; /* Espacement avec les éléments précédents. */
+  padding: 0 20px; /* Rembourrage latéral pour éviter que les boutons touchent les bords. */
 }
 
 /* Style commun des boutons */
 .action-btn {
-  background-color: #f0f0f0; /* Même couleur que le bouton Rafraîchir */
-  color: #333;
-  border: 1px solid #ddd;
-  padding: 8px 20px;
-  font-size: 14px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre légère */
+  background-color: #f0f0f0; /* Fond gris clair. */
+  color: #333; /* Texte gris foncé. */
+  border: 1px solid #ddd; /* Bordure fine grise claire. */
+  padding: 8px 20px; /* Rembourrage autour du texte. */
+  font-size: 14px; /* Taille de texte uniforme. */
+  border-radius: 5px; /* Coins arrondis. */
+  cursor: pointer; /* Change le curseur au survol. */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Animation fluide pour les couleurs et l'ombre. */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre légère pour un effet de profondeur. */
 }
 
 .action-btn:hover {
-  background-color: #e6e6e6; /* Légèrement plus foncé au survol */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Accentue l'ombre au survol */
+  background-color: #e6e6e6; /* Fond légèrement plus sombre au survol. */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Accentuation de l'ombre au survol. */
 }
 
 .action-btn:disabled {
-  background-color: #ddd; /* Couleur grisée pour les boutons désactivés */
-  cursor: not-allowed;
-  box-shadow: none;
+  background-color: #ddd; /* Fond grisé pour indiquer l'état désactivé. */
+  cursor: not-allowed; /* Change le curseur pour montrer que le bouton n'est pas cliquable. */
+  box-shadow: none; /* Supprime l'ombre pour cet état. */
 }
 
 input:focus {
   outline: none;
-  border: 1px solid #ccc; /* Bordure standard */
-  box-shadow: none; /* Supprime les ombrages */
+  border: 1px solid #ccc;
+  box-shadow: none;
 }
