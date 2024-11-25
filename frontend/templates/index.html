@@ -96,7 +96,7 @@ function loadPage(page) {
     .catch((error) => {
       console.error("Erreur lors de la récupération des données :", error);
       if (grid) {
-        grid.innerHTML = "<p>Erreur lors du chargement du feed.</p>";
+        grid.innerHTML = "<p>Veuillez configurer.</p>";
       }
     });
 }
