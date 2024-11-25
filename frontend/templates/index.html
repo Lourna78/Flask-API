@@ -60,6 +60,7 @@ function loadPage(page) {
 
 // Fonction pour sauvegarder la configuration
 function saveConfig(apiKey, databaseId) {
+  const grid = document.getElementById("grid");  // Sélectionne la grille
   return fetch("/config", {
     method: "POST",
     headers: {
