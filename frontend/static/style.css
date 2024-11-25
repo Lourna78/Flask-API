@@ -65,11 +65,7 @@ body {
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* Ajoute une transition fluide sur le zoom et l'ombre lors des interactions. */
 }
 
-/* Effet visuel pendant le glissement */
-.grid-item.dragging {
-  opacity: 0.5; /* Réduit l'opacité à 50% pour indiquer que l'élément est en cours de déplacement. */
-  outline: none; /* Supprime les contours (parfois ajoutés automatiquement lors des événements de glissement). */
-}
+
 
 /* Suppression des contours au focus */
 .grid-item:focus {
@@ -79,7 +75,7 @@ body {
 /* Effet au survol */
 .grid-item:hover {
   transition: transform 0.5s ease, box-shadow 0.5s ease; /* Ajoute une transition fluide avec une durée légèrement augmentée. */
-  transform: scale(1.15); /* Agrandit légèrement l'élément avec un effet de zoom (15% plus grand). */
+  transform: scale(1.10); /* Agrandit légèrement l'élément avec un effet de zoom (10% plus grand). */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Ajoute une ombre plus accentuée pour donner un effet de surélévation. */
   z-index: 1; /* Positionne l'élément agrandi au-dessus des autres pour éviter des superpositions non désirées. */
 }
@@ -93,11 +89,14 @@ body {
 
 /* Conteneur principal */
 .config-container {
-  margin: 20px; /* Espace autour du conteneur. */
-  padding: 15px; /* Rembourrage interne du conteneur. */
-  border: 1px solid #ddd; /* Bordure fine grise claire. */
-  border-radius: 5px; /* Coins légèrement arrondis. */
-  background-color: #f9f9f9; /* Fond gris très clair pour différencier le conteneur. */
+  margin: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espacement uniforme entre les enfants */
 }
 
 /* Champs en mode modification */
@@ -115,10 +114,10 @@ body {
 
 /* Section "afficher les champs" */
 .toggle-visibility {
-  margin-top: 10px; /* Espacement supérieur avec les autres éléments. */
-  display: flex; /* Dispose les enfants en ligne (case et texte). */
-  align-items: center; /* Centre verticalement la case et le texte. */
-  font-size: 14px; /* Taille de police standard. */
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Espacement entre la case et le texte */
+  font-size: 14px;
 }
 
 .toggle-visibility input {
@@ -213,10 +212,11 @@ body {
   margin-bottom: 10px; /* Espacement avec les éléments adjacents. */
 }
 
+/* Styles pour les labels */
 .config-container label {
-  display: inline-block; /* Aligne les labels et les champs sur une même ligne. */
-  width: 150px; /* Largeur fixe pour un alignement cohérent. */
-  font-weight: bold; /* Texte en gras pour mettre en valeur les labels. */
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px; /* Espacement avec les champs */
 }
 
 /* Boutons d'action généraux */
@@ -224,23 +224,23 @@ body {
 .config-container input[type="text"] {
   width: 100%;
   padding: 8px;
+  margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 14px;
   box-sizing: border-box; /* Inclut les bordures dans la largeur totale */
 }
 
-/* Bouton uniforme */
+/* Bouton Enregistrer */
 .config-container button {
-  background-color: #f0f0f0; /* Fond gris clair. */
-  color: #333; /* Texte gris foncé. */
-  border: 1px solid #ddd; /* Bordure fine grise claire. */
-  padding: 8px 20px; /* Rembourrage autour du texte. */
-  font-size: 14px; /* Taille de texte uniforme. */
-  border-radius: 5px; /* Coins arrondis. */
-  cursor: pointer; /* Change le curseur au survol. */
-  transition: background-color 0.3s ease; /* Animation fluide du changement de couleur. */
-  margin-top: 10px; /* Espacement avec les champs au-dessus. */
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 8px 20px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .config-container button:hover {
