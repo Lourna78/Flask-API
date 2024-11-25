@@ -71,6 +71,11 @@ input:focus {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombre subtile */
 }
 
+.config-container p {
+  font-size: 14px; /* Réduit la taille de la police */
+  margin-bottom: 10px; /* Ajuste l'espacement sous chaque ligne */
+  color: #333; /* Optionnel : ajuste la couleur si nécessaire */
+}
 
 /* Espacement global */
 #config-form {
