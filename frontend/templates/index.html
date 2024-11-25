@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Instagram Feed Preview</title>
-  <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css">
+  <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css?v=1.0.1">
+  <script src="https://widget.artyzan-agency.com/static/app.js?v=1.0.1"></script>
   <script>
 let currentPage = 1; // Page actuelle
 const limit = 12; // Nombre d'images par page
@@ -96,6 +97,7 @@ function loadPage(page) {
     .catch((error) => {
       console.error("Erreur lors de la récupération des données :", error);
       if (grid) {
+        grid.innerHTML = "<p>Configurez votre widget.</p>";
       }
     });
 }
