@@ -19,12 +19,6 @@ body {
   color: #333;
 }
 
-/* Style des items vides (cases grises) */
-.grid-item.empty {
-  background-color: #f0f0f0; /* Fond gris uni pour les cases vides */
-  background-image: none; /* Supprime toute image résiduelle */
-}
-
 /* Conteneur principal */
 .widget-container {
   width: 400px; /* Ajuste la largeur selon ton besoin */
@@ -56,6 +50,7 @@ body {
   box-sizing: border-box; /* Inclut les bordures dans la taille totale */
 }
 
+
 /* Style des items de la grille */
 .grid-item {
   width: 100%;
@@ -68,6 +63,12 @@ body {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Style des items vides (cases grises) */
+.grid-item.empty {
+  background-color: #f0f0f0; /* Fond gris uni pour les cases vides */
+  background-image: none; /* Supprime toute image résiduelle */
+}
+
 
 .grid-item:focus {
   outline: none; /* Supprime les contours bleus au focus */
@@ -78,12 +79,6 @@ body {
   transform: scale(1.1); /* Effet de zoom */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Ombre accentuée */
   z-index: 1; /* Met l'élément zoomé au-dessus des autres */
-}
-
-@media (max-width: 600px) {
-  .grid-container {
-      grid-template-columns: repeat(2, 1fr); /* 2 colonnes sur mobile */
-  }
 }
 
 .config-container {

@@ -13,7 +13,7 @@ const limit = 12; // Nombre d'images par page
 function loadPage(page) {
   const grid = document.getElementById("grid");
   if (grid) {
-    grid.innerHTML = "<p>Chargement...</p>"; // Afficher un message de chargement
+    grid.innerHTML = "<p>Chargement du feed...</p>"; // Afficher un message de chargement
   }
 
   fetch(`/images?page=${page}&limit=${limit}`)
@@ -53,7 +53,7 @@ function loadPage(page) {
     .catch((error) => {
       console.error("Erreur lors de la récupération des données :", error);
       if (grid) {
-        grid.innerHTML = "<p>Erreur lors du chargement du feed.</p>";
+        grid.innerHTML = "<p>Veuillez configurer.</p>";
       }
     });
 }
