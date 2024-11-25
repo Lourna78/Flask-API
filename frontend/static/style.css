@@ -95,6 +95,18 @@ body {
   background-color: #f9f9f9;
 }
 
+/* Style pour les champs en mode modification */
+.config-container p {
+  margin: 10px 0; /* Uniformité avec les lignes après enregistrement */
+  font-size: 14px; /* Alignement avec le texte configuré */
+  display: flex;
+  flex-direction: column; /* Place les labels au-dessus des champs */
+}
+
+.config-container p label {
+  margin-bottom: 5px; /* Espacement entre le label et le champ */
+}
+
 /* Alignement et espacement pour la case "Afficher les champs" */
 .toggle-visibility {
   margin-top: 10px;
@@ -190,17 +202,17 @@ body {
 }
 
 /* Uniformiser les styles des champs et boutons en mode modification */
-.config-container input[type="text"],
-.config-container input[type="password"] {
-  width: 100%; /* Champs qui occupent toute la largeur */
-  padding: 8px; /* Espacement interne pour un meilleur confort visuel */
-  margin-bottom: 10px; /* Espace entre les champs */
-  border: 1px solid #ddd; /* Bordure grise */
-  border-radius: 5px; /* Coins arrondis */
-  font-size: 14px; /* Taille de texte uniforme */
+.config-container input[type="password"],
+.config-container input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
   box-sizing: border-box; /* Inclut les bordures dans la largeur totale */
 }
 
+/* Bouton uniforme */
 .config-container button {
   background-color: #f0f0f0;
   color: #333;
@@ -210,6 +222,7 @@ body {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 10px; /* Espacement avec les champs */
 }
 
 .config-container button:hover {
