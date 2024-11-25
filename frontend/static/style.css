@@ -96,18 +96,18 @@ body {
 }
 
 .toggle-visibility {
-  display: flex;
-  align-items: center; /* Aligne la case et le texte verticalement */
   margin-top: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .toggle-visibility input {
-  margin-right: 5px; /* Espace entre la case et le texte */
+  margin-right: 5px;
 }
 
 .toggle-visibility label {
-  margin: 0; /* Supprime les marges indésirables */
-  cursor: pointer; /* Indique que le texte est cliquable */
+  font-size: 14px;
+  cursor: pointer;
 }
 
 .config-container h3 {
@@ -182,15 +182,15 @@ body {
 }
 
 .config-container label {
-  flex: 1;
-  min-width: 150px; /* Assure un alignement uniforme */
+  display: inline-block; /* Pour aligner les labels avec les champs */
+  width: 150px; /* Largeur fixe pour aligner avec les champs */
+  font-weight: bold;
 }
 
 .config-container input {
-  flex: 2;
-  min-width: 250px;
+  width: calc(100% - 160px); /* Ajuste la largeur pour tenir compte des labels */
   padding: 8px;
-  margin-left: 10px; /* Espacement entre le label et l'input */
+  margin-left: 10px; /* Espace entre le label et l'input */
   border: 1px solid #ddd;
   border-radius: 5px;
 }
@@ -205,6 +205,10 @@ body {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.config-container button:hover {
+  background-color: #e6e6e6;
 }
 
 /* Conteneur des boutons */
