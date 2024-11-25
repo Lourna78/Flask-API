@@ -96,7 +96,6 @@ function loadPage(page) {
     .catch((error) => {
       console.error("Erreur lors de la récupération des données :", error);
       if (grid) {
-        grid.innerHTML = "<p>Veuillez configurer.</p>";
       }
     });
 }
