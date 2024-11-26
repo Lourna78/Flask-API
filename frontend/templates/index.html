@@ -13,7 +13,7 @@ const limit = 12; // Nombre d'images par page
 // Fonction pour charger une page spécifique
 function loadPage(page) {
   const grid = document.getElementById("grid");
-  if (grid) {
+  if (!grid) { // Corrigé : Vérifie si 'grid' n'existe pas
     console.error("L'élément 'grid' n'existe pas dans le DOM.");
     return;
   }
@@ -22,18 +22,15 @@ function loadPage(page) {
 
   fetch(`/images?page=${page}&limit=${limit}`)
     .then((response) => {
-      if (!response.ok) throw new Error("Erreur lors de la récupération des images.");
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des images.");
+      }
       return response.json();
     })
     .then((data) => {
       console.log("Données reçues de l'API /images :", data);
+
       grid.innerHTML = ""; // Réinitialiser le contenu
-    })
-    .catch((error) => {
-      console.error("Erreur :", error);
-      grid.innerHTML = "<p>Erreur lors du chargement du feed.</p>";
-    
-        grid.innerHTML = ""; // Efface la grille actuelle
 
         // Ajouter les images
         data.images.forEach((url) => {
@@ -59,9 +56,7 @@ function loadPage(page) {
     })
     .catch((error) => {
       console.error("Erreur lors de la récupération des données :", error);
-      if (grid) {
-        grid.innerHTML = "<p>Veuillez configurer.</p>";
-      }
+      grid.innerHTML = "<p>Erreur lors du chargement du feed. Veuillez vérifier la configuration.</p>";
     });
 }
 
