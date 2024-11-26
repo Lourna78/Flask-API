@@ -96,13 +96,17 @@ function hideConfig() {
   if (configContainer) {
     configContainer.innerHTML = `
       <h3 class="config-title">Configuration Notion</h3>
-      <label for="masked-api-key" class="config-label">Clé API Notion :</label>
-      <input type="text" id="masked-api-key" class="config-input" value="************" readonly>
-      <label for="masked-database-id" class="config-label">ID de la base de données :</label>
-      <input type="text" id="masked-database-id" class="config-input" value="************" readonly>
+      <div>
+        <label class="config-label">Clé API Notion :</label>
+        <input type="password" class="config-input" value="************" disabled>
+      </div>
+      <div>
+        <label class="config-label">ID de la base de données :</label>
+        <input type="password" class="config-input" value="************" disabled>
+      </div>
       <button id="modify-config-btn" class="action-btn">Modifier</button>
     `;
-    
+
     // Ajoute l'événement pour le bouton "Modifier"
     const modifyConfigBtn = document.getElementById("modify-config-btn");
     if (modifyConfigBtn) {
@@ -129,14 +133,19 @@ function showConfig() {
   const grid = document.getElementById("grid");  // Sélectionne la grille
 
   if (configContainer) {
-    // Réinitialise le contenu du panneau de configuration
     configContainer.innerHTML = `
-      <h3>Configuration Notion</h3>
-      <label for="api-key-input">Clé API Notion :</label>
-      <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
-      <label for="database-id-input">ID de la base de données :</label>
-      <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
-      <button id="save-config-btn">Enregistrer</button>
+      <h3 class="config-title">Configuration Notion</h3>
+      <form id="config-form">
+        <div>
+          <label for="api-key-input" class="config-label">Clé API Notion :</label>
+          <input type="text" id="api-key-input" class="config-input" placeholder="Entrez votre clé API">
+        </div>
+        <div>
+          <label for="database-id-input" class="config-label">ID de la base de données :</label>
+          <input type="text" id="database-id-input" class="config-input" placeholder="Entrez l'ID de la base">
+        </div>
+        <button id="save-config-btn" class="action-btn">Enregistrer</button>
+      </form>
     `;
 
     // Réinitialise les événements sur le bouton "Enregistrer"
