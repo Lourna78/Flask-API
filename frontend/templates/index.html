@@ -13,6 +13,7 @@ function showConfig() {
   resetGrid(); // Réinitialise la grille avant d'afficher la configuration
   const configContainer = document.querySelector(".config-container");
   const configSummary = document.getElementById("config-summary");
+  console.log("Fonction showConfig appelée");
 
   if (configContainer) {
     configContainer.style.display = "block"; // Affiche le formulaire de configuration
@@ -27,6 +28,7 @@ function showConfig() {
 function saveConfig(apiKey, databaseId) {
   const grid = document.getElementById("grid");  // Sélectionne la grille
   const editConfigBtn = document.getElementById("edit-config-btn");
+  console.log("Fonction saveConfig appelée avec API et Database ID :", apiKey, databaseId);
 
   if (grid) {
     grid.innerHTML = "<p>Chargement en cours...</p>";  // Indique à l'utilisateur que la sauvegarde est en cours
@@ -72,6 +74,7 @@ function loadPage(page) {
   const prevBtn = document.getElementById("prev-btn");
   const nextBtn = document.getElementById("next-btn");
   const editConfigBtn = document.getElementById("edit-config-btn");
+  console.log("Fonction loadPage appelée pour la page :", page);
 
   if (!grid) {
     console.error("L'élément 'grid' n'existe pas dans le DOM.");
