@@ -23,19 +23,12 @@ input:focus {
    2. Titres et en-têtes
 ------------------------- */
 /* Style du titre */
-.widget-title {
-  text-align: center;
-  font-size: 18px;
-  font-weight: 600;
-  margin: 10px 0;
-  color: #333;
-}
-
+.widget-title,
 .config-title {
   text-align: center;
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 15px;
+  margin: 15px;
   color: #333;
 }
 
@@ -63,6 +56,7 @@ input:focus {
 /* Placeholder plus visible */
 .config-input::placeholder {
   color: #aaa; /* Gris clair pour le placeholder */
+  font-style: italic; /* Ajoute un style distinct pour le placeholder */
 }
 
 .widget-header {
@@ -121,27 +115,16 @@ input:focus {
 ------------------------- */
 
 #config-form label {
-  display: block;
-  margin-bottom: 10px; /* Espacement plus généreux */
-  font-size: 14px; /* Taille ajustée */
-  font-weight: normal; /* Réduit l'épaisseur de la police */
-  color: #555;
+  margin-bottom: 5px; /* Réduit l'espacement entre le label et l'input */
 }
 
 /* Champs de texte */
 #config-form input {
-  width: 100%;
-  height: 35px; /* Réduit la hauteur */
-  font-size: 14px; /* Taille de texte plus petite */
-  padding: 5px 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 3px; /* Coins légèrement arrondis */
-  box-sizing: border-box;
+  margin-bottom: 20px;  /* Ajoute un espacement plus large entre les inputs */
 }
 
-/* Bouton d'action (Enregistrer) */
-#config-form button {
+#config-form button, 
+#config-summary button {
   width: 100%; /* Rendre le bouton aussi large que les champs */
   height: 40px; /* Augmenter la hauteur pour un style cohérent */
   background-color: #f0f0f0;
@@ -149,7 +132,7 @@ input:focus {
   border: 1px solid #ddd;
   padding: 8px 20px;
   font-size: 14px; /* Taille de la police harmonisée */
-  border: none;
+  border: 1px solid #ddd;
   border-radius: 5px; /* Coins arrondis */
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.2s ease;
