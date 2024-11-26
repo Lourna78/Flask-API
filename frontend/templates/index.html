@@ -9,22 +9,10 @@
 let currentPage = 1; // Page actuelle
 const limit = 12; // Nombre d'images par page
 
-// Réinitialise la grille avec un message par défaut
-function resetGrid() {
-  const grid = document.getElementById("grid");
-  if (grid) {
-    grid.innerHTML = "<p>Configurez votre widget.</p>";
-  } else {
-    console.error("Erreur : L'élément 'grid' n'existe pas dans le DOM.");
-  }
-}
-
-// Affiche le formulaire de configuration et masque le feed
 function showConfig() {
   resetGrid(); // Réinitialise la grille avant d'afficher la configuration
   const configContainer = document.querySelector(".config-container");
   const configSummary = document.getElementById("config-summary");
-  const navigationContainer = document.querySelector(".navigation-container");
 
   if (configContainer) {
     configContainer.style.display = "block"; // Affiche le formulaire de configuration
@@ -33,73 +21,57 @@ function showConfig() {
   if (configSummary) {
     configSummary.style.display = "none"; // Masque le résumé de configuration
   }
-
-  if (navigationContainer) {
-    navigationContainer.style.display = "none"; // Masque les boutons de navigation
-  }
 }
 
-// Cache le formulaire de configuration et affiche le résumé
-function hideConfig() {
-  const configContainer = document.querySelector(".config-container");
-  const configSummary = document.getElementById("config-summary");
-  const editConfigBtn = document.getElementById("edit-config-btn");
-
-  if (configContainer) {
-    configContainer.style.display = "none"; // Masque le formulaire de configuration
-  }
-
-  if (configSummary) {
-    configSummary.style.display = "block"; // Affiche le résumé
-
-    // Mettre en place le bouton "Modifier"
-    if (editConfigBtn) {
-      editConfigBtn.style.display = "inline-block"; // Affiche le bouton "Modifier"
-    }
-  }
-}
-
-// Sauvegarde la configuration et charge le feed
+// Fonction pour sauvegarder la configuration
 function saveConfig(apiKey, databaseId) {
-  const grid = document.getElementById("grid");
+  const grid = document.getElementById("grid");  // Sélectionne la grille
   if (grid) {
-    grid.innerHTML = "<p>Chargement du feed...</p>";
+    grid.innerHTML = "<p>Chargement en cours...</p>";  // Indique à l'utilisateur que la sauvegarde est en cours
   }
-
   return fetch("/config", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
-      api_key: apiKey.trim(),
+      api_key: apiKey.trim(), // Supprimer les espaces éventuels
       database_id: databaseId.trim(),
     }),
   })
-    .then((response) => {
+  .then((response) => {
       if (!response.ok) {
+        console.error("Erreur API /config : ", response.status, response.statusText);
         throw new Error("Erreur lors de la sauvegarde de la configuration.");
       }
+      console.log("Configuration sauvegardée avec succès.");
       return response.json();
     })
     .then(() => {
-      hideConfig(); // Cache la configuration
-      return loadPage(1); // Charge la première page du feed
+      console.log("Chargement de la première page du feed...");
+    })
+    .then(() => {
+      alert("Configuration sauvegardée !");
+      hideConfig(); // Appelle hideConfig pour cacher le formulaire
+      return loadPage(1); // Charge la première page du widget
     })
     .catch((error) => {
-      console.error("Erreur lors de la sauvegarde :", error);
-      resetGrid(); // Réinitialise la grille en cas d'échec
+      console.error("Erreur lors de la sauvegarde de la configuration :", error);
+      resetGrid(); // Réinitialise la grille en cas d'échec de la sauvegarde
       if (grid) {
-        grid.innerHTML = "<p>Erreur lors de la sauvegarde. Vérifiez la configuration.</p>";
+        grid.innerHTML = "<p>Impossible de charger le feed. Vérifiez la configuration.</p>";
       }
     });
 }
 
-// Charge une page spécifique du feed
+// Fonction pour charger une page spécifique
 function loadPage(page) {
   const grid = document.getElementById("grid");
-  const navigationContainer = document.querySelector(".navigation-container");
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
 
   if (!grid) {
-    console.error("Erreur : L'élément 'grid' n'existe pas dans le DOM.");
+    console.error("L'élément 'grid' n'existe pas dans le DOM.");
     return;
   }
 
@@ -113,66 +85,175 @@ function loadPage(page) {
       return response.json();
     })
     .then((data) => {
-      grid.innerHTML = ""; // Réinitialise la grille
+      console.log("Données reçues de l'API /images :", data);
 
-      // Ajoute les images reçues
-      data.images.forEach((url) => {
-        const div = document.createElement("div");
-        div.className = "grid-item";
-        div.style.backgroundImage = `url(${url})`;
-        grid.appendChild(div);
-      });
+      grid.innerHTML = ""; // Réinitialiser le contenu
 
-      // Complète avec des cases vides si nécessaire
-      for (let i = data.images.length; i < limit; i++) {
-        const emptyDiv = document.createElement("div");
-        emptyDiv.className = "grid-item empty";
-        grid.appendChild(emptyDiv);
-      }
+        // Ajouter les images
+        data.images.forEach((url) => {
+          const div = document.createElement("div");
+          div.className = "grid-item";
+          div.style.backgroundImage = `url(${url})`;
+          grid.appendChild(div);
+        });
 
-      // Affiche les boutons de navigation minimalistes
-      if (navigationContainer) {
-        navigationContainer.style.display = "flex"; // Affiche la navigation
-      }
+        // Compléter avec des cases vides si nécessaire
+        for (let i = data.images.length; i < limit; i++) {
+          const emptyDiv = document.createElement("div");
+          emptyDiv.className = "grid-item empty";
+          grid.appendChild(emptyDiv);
+        }
 
-      // Mise à jour des boutons de navigation
-      const prevBtn = document.getElementById("prev-btn");
-      const nextBtn = document.getElementById("next-btn");
-
-      if (prevBtn) prevBtn.disabled = data.page <= 1;
-      if (nextBtn) nextBtn.disabled = data.page >= data.pages;
+        // Mise à jour des boutons de navigation
+      if (prevBtn) prevBtn.style.display = data.page > 1 ? "inline-block" : "none";
+      if (nextBtn) nextBtn.style.display = data.page < data.pages ? "inline-block" : "none";
     })
     .catch((error) => {
-      console.error("Erreur lors du chargement :", error);
-      resetGrid(); // Réinitialise la grille en cas d'erreur
-      grid.innerHTML = "<p>Erreur lors du chargement du feed. Veuillez réessayer.</p>";
+      console.error("Erreur lors de la récupération des données :", error);
+      resetGrid(); // Réinitialise la grille en cas d'échec
+      grid.innerHTML = "<p>Erreur lors du chargement du feed. Veuillez vérifier la clé API et/ou l'ID.</p>";
+
+      // Masque les boutons de navigation en cas d'échec
+      if (prevBtn) prevBtn.style.display = "none";
+      if (nextBtn) nextBtn.style.display = "none";
     });
 }
 
-// Initialisation des événements au chargement
+// Fonction pour masquer la section Configuration après sauvegarde
+function hideConfig() {
+  const configContainer = document.querySelector(".config-container");
+  console.log("hideConfig appelé :", configContainer); // Vérifie si configContainer est trouvé
+
+  if (configContainer) {
+    configContainer.style.display = "none"; // Cache le conteneur principal de configuration
+    console.log("Config-container masquée.");
+
+    // Affiche le conteneur masqué avec les valeurs masquées
+    const configSummary = document.getElementById("config-summary");
+    if (configSummary) {
+      configSummary.style.display = "block";
+      console.log("Résumé de configuration affiché.");
+
+      const maskedApiKey = document.getElementById("masked-api-key");
+      const maskedDatabaseId = document.getElementById("masked-database-id");
+
+      if (maskedApiKey && maskedDatabaseId) {
+        maskedApiKey.textContent = "************"; // Placeholder pour la clé API
+        maskedDatabaseId.textContent = "************"; // Placeholder pour l'ID de la base
+        console.log("Données masquées mises à jour.");
+      }
+    } else {
+      console.error("Erreur : #config-summary n'existe pas dans le DOM.");
+    }
+  } else {
+    console.error("Erreur : .config-container n'existe pas dans le DOM.");
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  const configContainer = document.querySelector(".config-container");
+  const configSummary = document.getElementById("config-summary");
+  const editConfigBtn = document.getElementById("edit-config-btn"); // Définir ici pour éviter les erreurs
+
+  if (editConfigBtn) {
+    editConfigBtn.addEventListener("click", () => {
+      console.log("Clic sur 'Modifier'.");
+
+      if (configContainer && configSummary) {
+        configContainer.style.display = "block"; // Réaffiche le formulaire de configuration
+        console.log("Config-container affichée.");
+
+        configSummary.style.display = "none"; // Masque la zone masquée
+        console.log("Résumé masqué.");
+      } else {
+        console.error("Erreur : Un des conteneurs n'existe pas.");
+      }
+    });
+  } else {
+    console.error("Erreur : Bouton 'Modifier' introuvable.");
+  }
+
+   // Vérifie que l'état initial est correct
+   if (configContainer) {
+    configContainer.style.display = "block"; // Par défaut, le formulaire de configuration est visible
+    console.log("Config-container affichée par défaut.");
+  }
+
+  if (configSummary) {
+    configSummary.style.display = "none"; // Par défaut, le résumé est masqué
+    console.log("Résumé masqué par défaut.");
+  }
+});
+
+
+// Fonction pour afficher la configuration initiale
+function showConfig() {
+  const configContainer = document.querySelector(".config-container");
+  const grid = document.getElementById("grid");  // Sélectionne la grille
+
+  if (configContainer) {
+    configContainer.innerHTML = `
+      <h3 class="config-title">Configuration Notion</h3>
+      <form id="config-form">
+        <div>
+          <label for="api-key-input" class="config-label">Clé API Notion :</label>
+          <input type="text" id="api-key-input" class="config-input" placeholder="API">
+        </div>
+        <div>
+          <label for="database-id-input" class="config-label">ID de la base de données :</label>
+          <input type="text" id="database-id-input" class="config-input" placeholder="ID">
+        </div>
+        <button id="save-config-btn" class="action-btn">Enregistrer</button>
+      </form>
+`    ;
+
+    // Réinitialise les événements sur le bouton "Enregistrer"
+    const saveConfigBtn = document.getElementById("save-config-btn");
+    if (saveConfigBtn) {
+      saveConfigBtn.addEventListener("click", () => {
+        const apiKey = document.getElementById("api-key-input")?.value;
+        const databaseId = document.getElementById("database-id-input")?.value;
+
+        if (apiKey && databaseId) {
+          saveConfig(apiKey, databaseId);
+        } else {
+          alert("Veuillez remplir tous les champs");
+        }
+      });
+    }
+  }
+}
+
+// Initialisation des événements
+document.addEventListener("DOMContentLoaded", () => {
+  const grid = document.getElementById("grid");
   const saveConfigBtn = document.getElementById("save-config-btn");
   const prevBtn = document.getElementById("prev-btn");
   const nextBtn = document.getElementById("next-btn");
-  const editConfigBtn = document.getElementById("edit-config-btn");
+  const refreshBtn = document.getElementById("refresh-btn");
+  const editConfigBtn = document.getElementById("edit-config-btn"); // Ajouté ici
 
-  // Événement sur le bouton "Enregistrer"
+  // Masquage initial des boutons "Précédent" et "Suivant"
+  if (prevBtn) prevBtn.style.display = "none"; // Cache le bouton Précédent
+  if (nextBtn) nextBtn.style.display = "none"; // Cache le bouton Suivant
+
   if (saveConfigBtn) {
     saveConfigBtn.addEventListener("click", () => {
+      console.log("Bouton 'Enregistrer' cliqué.");
       const apiKey = document.getElementById("api-key-input")?.value;
       const databaseId = document.getElementById("database-id-input")?.value;
 
       if (apiKey && databaseId) {
         saveConfig(apiKey, databaseId);
       } else {
-        alert("Veuillez remplir les deux champs.");
+        alert("Veuillez remplir les deux champs avant d'enregistrer.");
       }
     });
-  }
-
-  // Navigation entre les pages
+  }  
+  
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
+      console.log("Bouton 'Précédent' cliqué.");
       if (currentPage > 1) {
         currentPage--;
         loadPage(currentPage);
@@ -182,19 +263,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (nextBtn) {
     nextBtn.addEventListener("click", () => {
+      console.log("Bouton 'Suivant' cliqué.");
       currentPage++;
       loadPage(currentPage);
     });
   }
 
-  // Événement sur le bouton "Modifier"
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", () => {
+      console.log("Bouton 'Rafraîchir' cliqué.");
+      loadPage(currentPage); // Recharger la page actuelle
+    });
+  }
+
   if (editConfigBtn) {
     editConfigBtn.addEventListener("click", () => {
+      console.log("Bouton 'Modifier' cliqué.");
       resetGrid(); // Réinitialise la grille
       showConfig(); // Affiche le formulaire de configuration
     });
   }
 });
+
+console.log("Fichier JavaScript chargé avec succès.");
     </script>
 </head>
 <body>
