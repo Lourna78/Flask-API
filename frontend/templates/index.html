@@ -56,7 +56,7 @@ function loadPage(page) {
     })
     .catch((error) => {
       console.error("Erreur lors de la récupération des données :", error);
-      grid.innerHTML = "<p>Erreur lors du chargement du feed. Veuillez vérifier la configuration.</p>";
+      grid.innerHTML = "<p>Erreur lors du chargement du feed. Veuillez vérifier la clé API et/ou l'ID.</p>";
     });
 }
 
@@ -104,18 +104,24 @@ function hideConfig() {
 
   if (configContainer) {
     configContainer.style.display = "none"; // Cache le conteneur principal de configuration
+    console.log("Config-container masquée.");
 
     // Affiche le conteneur masqué avec les valeurs masquées
     const configSummary = document.getElementById("config-summary");
     if (configSummary) {
       configSummary.style.display = "block";
+      console.log("Résumé de configuration affiché.");
+
       const maskedApiKey = document.getElementById("masked-api-key");
       const maskedDatabaseId = document.getElementById("masked-database-id");
 
       if (maskedApiKey && maskedDatabaseId) {
         maskedApiKey.textContent = "************"; // Placeholder pour la clé API
         maskedDatabaseId.textContent = "************"; // Placeholder pour l'ID de la base
+        console.log("Données masquées mises à jour.");
       }
+    } else {
+      console.error("Erreur : #config-summary n'existe pas dans le DOM.");
     }
   } else {
     console.error("Erreur : .config-container n'existe pas dans le DOM.");
@@ -123,17 +129,37 @@ function hideConfig() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const editConfigBtn = document.getElementById("edit-config-btn");
+  const configContainer = document.querySelector(".config-container");
+  const configSummary = document.getElementById("config-summary");
+  const editConfigBtn = document.getElementById("edit-config-btn"); // Définir ici pour éviter les erreurs
+
   if (editConfigBtn) {
     editConfigBtn.addEventListener("click", () => {
-      const configContainer = document.querySelector(".config-container");
-      const configSummary = document.getElementById("config-summary");
+      console.log("Clic sur 'Modifier'.");
 
       if (configContainer && configSummary) {
         configContainer.style.display = "block"; // Réaffiche le formulaire de configuration
+        console.log("Config-container affichée.");
+
         configSummary.style.display = "none"; // Masque la zone masquée
+        console.log("Résumé masqué.");
+      } else {
+        console.error("Erreur : Un des conteneurs n'existe pas.");
       }
     });
+  } else {
+    console.error("Erreur : Bouton 'Modifier' introuvable.");
+  }
+
+   // Vérifie que l'état initial est correct
+   if (configContainer) {
+    configContainer.style.display = "block"; // Par défaut, le formulaire de configuration est visible
+    console.log("Config-container affichée par défaut.");
+  }
+
+  if (configSummary) {
+    configSummary.style.display = "none"; // Par défaut, le résumé est masqué
+    console.log("Résumé masqué par défaut.");
   }
 });
 
