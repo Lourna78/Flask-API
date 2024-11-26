@@ -3,167 +3,189 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instagram Feed Widget</title>
+  <title>Instagram Feed Preview</title>
   <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css">
 </head>
 <body>
   <div class="widget-container">
+    <!-- Titre du widget -->
     <h2 class="widget-title">Aperçu du feed Instagram</h2>
 
-    <!-- Navigation -->
+    <!-- Ligne avec les trois boutons -->
     <div class="button-container">
       <button id="prev-btn" class="action-btn">Précédent</button>
       <button id="refresh-btn" class="action-btn">Rafraîchir</button>
       <button id="next-btn" class="action-btn">Suivant</button>
     </div>
 
-    <!-- Grille des images -->
-    <div id="grid" class="grid-container"></div>
+    <!-- Conteneur de la grille -->
+    <div id="grid" class="grid-container">
+      <!-- Les images seront insérées dynamiquement ici -->
+    </div>
 
-    <!-- Formulaire de configuration -->
+    <!-- Zone de configuration -->
     <div class="config-container">
-      <h3 class="config-title">Configuration</h3>
+      <h3 class="config-title">Configuration Notion</h3>
       <form id="config-form">
-        <label>Clé API :</label>
-        <input type="text" id="api-key-input" placeholder="Votre clé API">
-        <label>ID de la base :</label>
-        <input type="text" id="database-id-input" placeholder="Votre ID de base">
-        <button type="button" id="save-config-btn" class="action-btn">Enregistrer</button>
+        <div>
+          <label for="api-key-input" class="config-label">Clé API Notion :</label>
+          <input type="text" id="api-key-input" class="config-input" placeholder="Votre API Key">
+        </div>
+        <div>
+          <label for="database-id-input" class="config-label">ID de la base de données :</label>
+          <input type="text" id="database-id-input" class="config-input" placeholder="Votre Database ID">
+        </div>
+        <button id="save-config-btn" class="action-btn">Enregistrer</button>
       </form>
     </div>
 
-    <!-- Résumé de la configuration -->
+    <!-- Zone masquée après configuration -->
     <div id="config-summary" style="display: none;">
-      <h3>Résumé</h3>
-      <p>Clé API : <span id="masked-api-key">********</span></p>
-      <p>ID de la base : <span id="masked-database-id">********</span></p>
+      <h3 class="config-title">Résumé de la configuration</h3>
+      <p>Clé API Notion : <span id="masked-api-key">********</span></p>
+      <p>ID de la base de données : <span id="masked-database-id">********</span></p>
       <button id="edit-config-btn" class="action-btn">Modifier</button>
     </div>
   </div>
 
   <script>
-    // Variables globales
-    let currentPage = 1;
+    let currentPage = 1; // Page actuelle
     const limit = 12; // Nombre d'images par page
 
     // Réinitialise la grille
     function resetGrid() {
       const grid = document.getElementById("grid");
-      if (grid) grid.innerHTML = ""; // Vide la grille
+      if (grid) grid.innerHTML = "";
     }
 
     // Affiche la configuration
     function showConfig() {
+      resetGrid();
       document.querySelector(".config-container").style.display = "block";
       document.getElementById("config-summary").style.display = "none";
-      resetGrid(); // Vide la grille
     }
 
     // Masque la configuration après sauvegarde
     function hideConfig() {
       document.querySelector(".config-container").style.display = "none";
       document.getElementById("config-summary").style.display = "block";
-    }
 
-    // Sauvegarde la configuration et charge le feed
-    function saveConfig(apiKey, databaseId) {
-      console.log("Configuration sauvegardée :", { apiKey, databaseId });
-
-      // Stockage local pour conserver les infos
-      localStorage.setItem("api_key", apiKey);
-      localStorage.setItem("database_id", databaseId);
-
-      // Affiche le résumé et charge automatiquement le feed
       document.getElementById("masked-api-key").textContent = "********";
       document.getElementById("masked-database-id").textContent = "********";
-      hideConfig();
-      loadPage(currentPage);
     }
 
-    // Charge une page spécifique
+    // Charge les images d'une page donnée
     function loadPage(page) {
+      const grid = document.getElementById("grid");
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
       const apiKey = localStorage.getItem("api_key");
       const databaseId = localStorage.getItem("database_id");
-      const grid = document.getElementById("grid");
 
       if (!apiKey || !databaseId) {
-        console.warn("Configuration manquante !");
         resetGrid();
+        grid.innerHTML = "<p>Veuillez configurer votre widget.</p>";
         return;
       }
 
-      grid.innerHTML = "<p>Chargement...</p>";
-
-      fetch(`/images?page=${page}&limit=${limit}`, {
-        headers: { "Authorization": `Bearer ${apiKey}` },
+      grid.innerHTML = "<p>Chargement en cours...</p>";
+      fetch(`https://widget.artyzan-agency.com/images?page=${page}&limit=${limit}`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Database-ID": databaseId,
+        },
       })
-        .then(response => {
-          if (!response.ok) throw new Error("Erreur API");
+        .then((response) => {
+          if (!response.ok) throw new Error("Erreur lors du chargement des images.");
           return response.json();
         })
-        .then(data => {
-          resetGrid(); // Réinitialise la grille
-          data.images.forEach(url => {
+        .then((data) => {
+          resetGrid();
+          data.images.forEach((url) => {
             const div = document.createElement("div");
             div.className = "grid-item";
             div.style.backgroundImage = `url(${url})`;
             grid.appendChild(div);
           });
+
+          for (let i = data.images.length; i < limit; i++) {
+            const emptyDiv = document.createElement("div");
+            emptyDiv.className = "grid-item empty";
+            grid.appendChild(emptyDiv);
+          }
+
+          prevBtn.style.display = page > 1 ? "inline-block" : "none";
+          nextBtn.style.display = data.page < data.pages ? "inline-block" : "none";
         })
-        .catch(error => {
-          console.error("Erreur lors du chargement des images :", error);
-          grid.innerHTML = "<p>Erreur lors du chargement du feed.</p>";
+        .catch((error) => {
+          console.error(error);
+          resetGrid();
+          grid.innerHTML = "<p>Erreur lors du chargement des images.</p>";
         });
+    }
+
+    // Sauvegarde la configuration et charge la grille
+    function saveConfig(apiKey, databaseId) {
+      localStorage.setItem("api_key", apiKey);
+      localStorage.setItem("database_id", databaseId);
+
+      hideConfig();
+      loadPage(1); // Charge directement la première page après la sauvegarde
     }
 
     // Initialisation des événements
     document.addEventListener("DOMContentLoaded", () => {
-      console.log("Initialisation du widget.");
+      console.log("Widget initialisé.");
 
       const saveConfigBtn = document.getElementById("save-config-btn");
-      const refreshBtn = document.getElementById("refresh-btn");
       const prevBtn = document.getElementById("prev-btn");
       const nextBtn = document.getElementById("next-btn");
+      const refreshBtn = document.getElementById("refresh-btn");
       const editConfigBtn = document.getElementById("edit-config-btn");
 
-      // Gestion des boutons
-      if (saveConfigBtn) {
-        saveConfigBtn.addEventListener("click", () => {
-          const apiKey = document.getElementById("api-key-input").value;
-          const databaseId = document.getElementById("database-id-input").value;
-          if (apiKey && databaseId) saveConfig(apiKey, databaseId);
-          else alert("Veuillez remplir les champs requis.");
-        });
-      }
+      // Masquage initial des boutons
+      prevBtn.style.display = "none";
+      nextBtn.style.display = "none";
+      editConfigBtn.style.display = "none";
 
-      if (refreshBtn) {
-        refreshBtn.addEventListener("click", () => {
+      // Événement sur le bouton "Enregistrer"
+      saveConfigBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        const apiKey = document.getElementById("api-key-input").value.trim();
+        const databaseId = document.getElementById("database-id-input").value.trim();
+
+        if (apiKey && databaseId) {
+          saveConfig(apiKey, databaseId);
+        } else {
+          alert("Veuillez remplir tous les champs.");
+        }
+      });
+
+      // Événement sur le bouton "Rafraîchir"
+      refreshBtn.addEventListener("click", () => {
+        console.log("Rafraîchissement du widget.");
+        loadPage(currentPage);
+      });
+
+      // Événement sur le bouton "Précédent"
+      prevBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
           loadPage(currentPage);
-        });
-      }
+        }
+      });
 
-      if (prevBtn) {
-        prevBtn.addEventListener("click", () => {
-          if (currentPage > 1) {
-            currentPage--;
-            loadPage(currentPage);
-          }
-        });
-      }
+      // Événement sur le bouton "Suivant"
+      nextBtn.addEventListener("click", () => {
+        currentPage++;
+        loadPage(currentPage);
+      });
 
-      if (nextBtn) {
-        nextBtn.addEventListener("click", () => {
-          currentPage++;
-          loadPage(currentPage);
-        });
-      }
-
-      if (editConfigBtn) {
-        editConfigBtn.addEventListener("click", showConfig);
-      }
-
-      // Au chargement, vérifie la configuration et affiche la grille vide
-      resetGrid();
+      // Événement sur le bouton "Modifier"
+      editConfigBtn.addEventListener("click", () => {
+        showConfig();
+      });
     });
   </script>
 </body>
