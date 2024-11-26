@@ -108,7 +108,19 @@ input:focus {
 
 /* Bouton d'action (Enregistrer) */
 #config-form button {
-  background-color: #f0f0f0; /* Même couleur que le bouton Rafraîchir */
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 8px 20px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre légère */
+}
+
+#save-config-btn {
+  background-color: #f0f0f0 !important;
   color: #333;
   border: 1px solid #ddd;
   padding: 8px 20px;
