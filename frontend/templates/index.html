@@ -96,6 +96,7 @@ function hideConfig() {
   if (configContainer) {
     configContainer.innerHTML = `
       <h3 class="config-title">Configuration Notion</h3>
+      <form id="config-form"
       <div>
         <label class="config-label">Clé API Notion :</label>
         <input type="password" class="config-input" value="************" disabled>
@@ -105,6 +106,7 @@ function hideConfig() {
         <input type="password" class="config-input" value="************" disabled>
       </div>
       <button id="modify-config-btn" class="action-btn">Modifier</button>
+      </form>
     `;
 
     // Ajoute l'événement pour le bouton "Modifier"
@@ -130,7 +132,6 @@ function resetGrid() {
 // Fonction pour afficher la configuration initiale
 function showConfig() {
   const configContainer = document.querySelector(".config-container");
-  const grid = document.getElementById("grid");  // Sélectionne la grille
 
   if (configContainer) {
     configContainer.innerHTML = `
@@ -138,15 +139,15 @@ function showConfig() {
       <form id="config-form">
         <div>
           <label for="api-key-input" class="config-label">Clé API Notion :</label>
-          <input type="text" id="api-key-input" class="config-input" placeholder="Entrez votre clé API">
+          <input type="text" id="api-key-input" class="config-input" placeholder="API">
         </div>
         <div>
           <label for="database-id-input" class="config-label">ID de la base de données :</label>
-          <input type="text" id="database-id-input" class="config-input" placeholder="Entrez l'ID de la base">
+          <input type="text" id="database-id-input" class="config-input" placeholder="ID">
         </div>
         <button id="save-config-btn" class="action-btn">Enregistrer</button>
       </form>
-    `;
+`    ;
 
     // Réinitialise les événements sur le bouton "Enregistrer"
     const saveConfigBtn = document.getElementById("save-config-btn");
@@ -230,16 +231,19 @@ console.log("Fichier JavaScript chargé avec succès.");
         </div>
 
         <div class="config-container">
-          <h3>Configuration Notion</h3>
-          <form id="config-form"></form>
-          <!-- Zone de configuration -->
-          <div id="config-form">
-            <label for="api-key-input">Clé API Notion :</label>
-            <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
-            <label for="database-id-input">ID de la base de données :</label>
-            <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
-            <button id="save-config-btn">Enregistrer</button>
-          </div>
+          <h3 class="config-title">Configuration Notion</h3>
+          <form id="config-form">
+            <div>
+              <label for="api-key-input" class="config-label">Clé API Notion :</label>
+              <input type="text" id="api-key-input" class="config-input" placeholder="API">
+            </div>
+            <div>
+              <label for="database-id-input" class="config-label">ID de la base de données :</label>
+              <input type="text" id="database-id-input" class="config-input" placeholder="ID">
+            </div>
+            <button id="save-config-btn" class="action-btn">Enregistrer</button>
+          </form>
+        </div>
           <!-- Zone masquée après enregistrement -->
           <div id="config-summary" style="display: none;">
             <p>Clé API Notion : <span id="masked-api-key">********</span></p>
