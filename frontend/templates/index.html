@@ -14,7 +14,7 @@ const limit = 12; // Nombre d'images par page
 function loadPage(page) {
   const grid = document.getElementById("grid");
   if (grid) {
-    grid.innerHTML = "<p>Chargement du feed...</p>"; // Afficher un message de chargement
+    grid.innerHTML = "<p>Chargement du feed...</p>";
   }
 
   fetch(`/images?page=${page}&limit=${limit}`)
@@ -25,8 +25,9 @@ function loadPage(page) {
       return response.json();
     })
     .then((data) => {
+      console.log("Données reçues :", data); // Ajout pour débogage
       if (grid) {
-        grid.innerHTML = ""; //  Réinitialise le contenu de la grille pour qu'elle soit vide
+        grid.innerHTML = "";
 
         // Ajouter les images
         data.images.forEach((url) => {
@@ -86,6 +87,9 @@ function saveConfig(apiKey, databaseId) {
     })
     .catch((error) => {
       console.error("Erreur lors de la sauvegarde :", error);
+      if (grid) {
+        grid.innerHTML = "<p>Impossible de charger le feed. Vérifiez la configuration.</p>";
+      }
     });
 }
 
