@@ -14,20 +14,26 @@ const limit = 12; // Nombre d'images par page
 function loadPage(page) {
   const grid = document.getElementById("grid");
   if (grid) {
-    grid.innerHTML = "<p>Chargement du feed...</p>";
+    console.error("L'élément 'grid' n'existe pas dans le DOM.");
+    return;
   }
+
+  grid.innerHTML = "<p>Chargement du feed...</p>";
 
   fetch(`/images?page=${page}&limit=${limit}`)
     .then((response) => {
-      if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des images.");
-      }
+      if (!response.ok) throw new Error("Erreur lors de la récupération des images.");
       return response.json();
     })
     .then((data) => {
-      console.log("Données reçues :", data); // Ajout pour débogage
-      if (grid) {
-        grid.innerHTML = "";
+      console.log("Données reçues de l'API /images :", data);
+      grid.innerHTML = ""; // Réinitialiser le contenu
+    })
+    .catch((error) => {
+      console.error("Erreur :", error);
+      grid.innerHTML = "<p>Erreur lors du chargement du feed.</p>";
+    
+        grid.innerHTML = ""; // Efface la grille actuelle
 
         // Ajouter les images
         data.images.forEach((url) => {
@@ -43,7 +49,6 @@ function loadPage(page) {
           emptyDiv.className = "grid-item empty";
           grid.appendChild(emptyDiv);
         }
-      }
 
       // Mise à jour des boutons de navigation
       const prevBtn = document.getElementById("prev-btn");
@@ -76,17 +81,21 @@ function saveConfig(apiKey, databaseId) {
       database_id: databaseId.trim(),
     }),
   })
-    .then((response) => {
-      if (!response.ok) throw new Error("Erreur lors de la sauvegarde de la configuration.");
+  .then((response) => {
+      if (!response.ok) {
+        console.error("Erreur API /config : ", response.status, response.statusText);
+        throw new Error("Erreur lors de la sauvegarde de la configuration.");
+      }
+      console.log("Configuration sauvegardée avec succès.");
       return response.json();
     })
     .then(() => {
       alert("Configuration sauvegardée !");
-      hideConfig(); // Masque le panneau de configuration après sauvegarde
-      loadPage(1); // Charge la première page du widget
+      hideConfig();
+      loadPage(1); // Charger la première page après la sauvegarde
     })
     .catch((error) => {
-      console.error("Erreur lors de la sauvegarde :", error);
+      console.error("Erreur lors de la sauvegarde de la configuration :", error);
       if (grid) {
         grid.innerHTML = "<p>Impossible de charger le feed. Vérifiez la configuration.</p>";
       }
@@ -181,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (saveConfigBtn) {
     saveConfigBtn.addEventListener("click", () => {
+      console.log("Bouton 'Enregistrer' cliqué.");
       const apiKey = document.getElementById("api-key-input")?.value;
       const databaseId = document.getElementById("database-id-input")?.value;
 
@@ -194,6 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
+      console.log("Bouton 'Précédent' cliqué.");
       if (currentPage > 1) {
         currentPage--;
         loadPage(currentPage);
@@ -203,6 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (nextBtn) {
     nextBtn.addEventListener("click", () => {
+      console.log("Bouton 'Suivant' cliqué.");
       currentPage++;
       loadPage(currentPage);
     });
@@ -210,6 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (refreshBtn) {
     refreshBtn.addEventListener("click", () => {
+      console.log("Bouton 'Rafraîchir' cliqué.");
       loadPage(currentPage); // Recharger la page actuelle
     });
   }
