@@ -26,6 +26,8 @@ function showConfig() {
 // Fonction pour sauvegarder la configuration
 function saveConfig(apiKey, databaseId) {
   const grid = document.getElementById("grid");  // Sélectionne la grille
+  const editConfigBtn = document.getElementById("edit-config-btn");
+
   if (grid) {
     grid.innerHTML = "<p>Chargement en cours...</p>";  // Indique à l'utilisateur que la sauvegarde est en cours
   }
@@ -53,6 +55,7 @@ function saveConfig(apiKey, databaseId) {
     .then(() => {
       alert("Configuration sauvegardée !");
       hideConfig(); // Masque le formulaire après la configuration
+      if (editConfigBtn) editConfigBtn.style.display = "inline-block"; // Affiche le bouton Modifier
     })
     .catch((error) => {
       console.error("Erreur lors de la sauvegarde de la configuration :", error);
@@ -68,6 +71,7 @@ function loadPage(page) {
   const grid = document.getElementById("grid");
   const prevBtn = document.getElementById("prev-btn");
   const nextBtn = document.getElementById("next-btn");
+  const editConfigBtn = document.getElementById("edit-config-btn");
 
   if (!grid) {
     console.error("L'élément 'grid' n'existe pas dans le DOM.");
@@ -106,6 +110,9 @@ function loadPage(page) {
         // Mise à jour des boutons de navigation
       if (prevBtn) prevBtn.style.display = data.page > 1 ? "inline-block" : "none";
       if (nextBtn) nextBtn.style.display = data.page < data.pages ? "inline-block" : "none";
+
+       // Affiche le bouton Modifier
+       if (editConfigBtn) editConfigBtn.style.display = "inline-block";
     })
     .catch((error) => {
       console.error("Erreur lors de la récupération des données :", error);
@@ -115,12 +122,16 @@ function loadPage(page) {
       // Masque les boutons de navigation en cas d'échec
       if (prevBtn) prevBtn.style.display = "none";
       if (nextBtn) nextBtn.style.display = "none";
+
+      // Masque le bouton Modifier en cas d'échec
+      if (editConfigBtn) editConfigBtn.style.display = "none";
     });
 }
 
 // Fonction pour masquer la section Configuration après sauvegarde
 function hideConfig() {
   const configContainer = document.querySelector(".config-container");
+
   console.log("hideConfig appelé :", configContainer); // Vérifie si configContainer est trouvé
 
   if (configContainer) {
@@ -146,6 +157,14 @@ function hideConfig() {
     }
   } else {
     console.error("Erreur : .config-container n'existe pas dans le DOM.");
+  }
+}
+
+// Fonction pour vider la grille
+function resetGrid() {
+  const grid = document.getElementById("grid");
+  if (grid) {
+    grid.innerHTML = ""; // Vide la grille
   }
 }
 
