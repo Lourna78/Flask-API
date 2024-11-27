@@ -134,8 +134,8 @@ input:focus {
 .grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Colonnes adaptatives */
-  gap: 12px; /* Espacement entre les images */
-  padding: 10px;
+  gap: 6px; /* Espacement entre les images */
+  padding: 8px;  /* Légère réduction du padding pour plus de compacité */
   box-sizing: border-box; /* Inclut les bordures dans la taille totale */
 }
 
@@ -149,9 +149,9 @@ input:focus {
   background-color: #f7f7f7; /* Couleur de fond pour les images non chargées */
   border: 1px solid #e0e0e0; /* Bordure légère */
   outline: none; /* Supprime les contours bleus par défaut */
-  border-radius: 8px; /* Bords arrondis */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Ombre subtile */
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  border-radius: 6px; /* Bords arrondis */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8); /* Ombre subtile */
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 
