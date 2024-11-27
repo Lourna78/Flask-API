@@ -66,7 +66,7 @@ function saveConfig(apiKey, databaseId) {
     // Ajoute les logs ici pour vérifier les valeurs récupérées
     console.log("Clé API envoyée :", apiKey);
     console.log("ID de base envoyé :", databaseId);
-    
+
   return fetch("/config", {
     method: "POST",
     headers: {
@@ -125,7 +125,9 @@ function showConfig() {
     // Ajoute l'événement au bouton "Enregistrer".
     const saveConfigBtn = document.getElementById("save-config-btn");
     if (saveConfigBtn) {
+      console.log("Bouton 'Enregistrer' détecté.");
       saveConfigBtn.addEventListener("click", () => {
+        console.log("Bouton 'Enregistrer' cliqué !");
         const apiKey = document.getElementById("api-key-input")?.value;
         const databaseId = document.getElementById("database-id-input")?.value;
 

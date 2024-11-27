@@ -28,12 +28,9 @@ def fetch_image_urls(api_key, database_id):
     notion_url = f"https://api.notion.com/v1/databases/{database_id}/query"
 
     try:
-        print("Requête envoyée à Notion avec les données suivantes :")
-        print("API Key :", api_key)
-        print("Database ID :", database_id)
-
+        print(f"Requête envoyée : {notion_url}")
         response = requests.post(notion_url, headers=headers)
-        print("Réponse de Notion :", response.status_code, response.text)
+        print("Réponse de Notion :", response.status_code, response.text)  # Ajout pour débogage
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Erreur lors de la requête vers l'API Notion :", e)
