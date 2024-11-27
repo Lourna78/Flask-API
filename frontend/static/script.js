@@ -59,13 +59,13 @@ function loadPage(page) {
  * @param {string} databaseId - ID de la base de données Notion.
  */
 function saveConfig(apiKey, databaseId) {
+  console.log("saveConfig appelée !");
+  console.log("Clé API envoyée :", apiKey);
+  console.log("ID de base envoyé :", databaseId);
   const grid = document.getElementById("grid");
   if (grid) {
     grid.innerHTML = "<p>Chargement...</p>"; // Indique à l'utilisateur que la sauvegarde est en cours.
   }
-    // Ajoute les logs ici pour vérifier les valeurs récupérées
-    console.log("Clé API envoyée :", apiKey);
-    console.log("ID de base envoyé :", databaseId);
 
   return fetch("/config", {
     method: "POST",
@@ -165,31 +165,21 @@ function hideConfig() {
 
 // Initialisation des événements.
 document.addEventListener("DOMContentLoaded", () => {
-  const prevBtn = document.getElementById("prev-btn");
-  const nextBtn = document.getElementById("next-btn");
-  const refreshBtn = document.getElementById("refresh-btn");
+  const saveConfigBtn = document.getElementById("save-config-btn");
+  if (saveConfigBtn) {
+      console.log("Bouton 'Enregistrer' détecté.");
+      saveConfigBtn.addEventListener("click", () => {
+          console.log("Bouton 'Enregistrer' cliqué !");
+          const apiKey = document.getElementById("api-key-input")?.value;
+          const databaseId = document.getElementById("database-id-input")?.value;
 
-  if (prevBtn) {
-    prevBtn.addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        loadPage(currentPage);
-      }
-    });
-  }
-
-  if (nextBtn) {
-    nextBtn.addEventListener("click", () => {
-      currentPage++;
-      loadPage(currentPage);
-    });
-  }
-
-  if (refreshBtn) {
-    refreshBtn.addEventListener("click", () => {
-      loadPage(currentPage); // Recharge la page actuelle.
-    });
+          if (apiKey && databaseId) {
+              saveConfig(apiKey, databaseId);
+          } else {
+              alert("Veuillez remplir tous les champs.");
+          }
+      });
+  } else {
+      console.error("Bouton 'Enregistrer' non trouvé dans le DOM.");
   }
 });
-
-console.log("Fichier JavaScript chargé avec succès.");
