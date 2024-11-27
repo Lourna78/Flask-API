@@ -134,8 +134,8 @@ input:focus {
 .grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Colonnes adaptatives */
-  gap: 6px; /* Espacement entre les images */
-  padding: 8px;  /* Légère réduction du padding pour plus de compacité */
+  gap: 2px; /* Espacement très réduit entre les images */
+  padding: 0; /* Supprime les marges autour de la grille */
   box-sizing: border-box; /* Inclut les bordures dans la taille totale */
 }
 
@@ -147,27 +147,22 @@ input:focus {
   background-size: cover;
   background-position: center;
   background-color: #f7f7f7; /* Couleur de fond pour les images non chargées */
-  border: 1px solid #e0e0e0; /* Bordure légère */
+  border: none; /* Supprime les bordures visibles */
   outline: none; /* Supprime les contours bleus par défaut */
-  border-radius: 6px; /* Bords arrondis */
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8); /* Ombre subtile */
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  border-radius: 0; /* Supprime les bords arrondis */
+  box-shadow: none; /* Supprime l’ombre */
+  transition: transform 0.3s ease, background-color 0.3s ease; /* Effet au survol */
 }
-
 
 /* Style des items vides (cases grises) */
 .grid-item.empty {
   background-color: #f0f0f0; /* Fond gris uni pour les cases vides */
   background-image: none; /* Supprime toute image résiduelle */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Accentue l'ombre au survol */
-  transform: translateY(-2px); /* Légère remontée au survol */
-
 }
+
+/* Style au survol pour un effet moderne */
 .grid-item:hover {
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Ajuste la durée */
-  transform: scale(1.05); /* Effet de zoom */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée */
-  z-index: 1; /* Met l'élément zoomé au-dessus des autres */
+  transform: scale(1.03); /* Légère mise en avant au survol */
 }
 
 /* Texte principal dans les blocs */
