@@ -209,12 +209,12 @@ input:focus {
 
 /* Style commun des boutons */
 .btn {
-  padding: 10px 20px;
+  width: 100px; /* Largeur fixe pour uniformiser */
+  padding: 10px 0; /* Ajuste le padding vertical pour équilibrer */
   background-color: #f0f0f0;
   color: #333;
   border: 1px solid #ddd;
   border-radius: 8px; /* Coins arrondis */
-  padding: 8px 20px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
