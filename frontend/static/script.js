@@ -165,6 +165,8 @@ function hideConfig() {
 
 // Initialisation des événements.
 document.addEventListener("DOMContentLoaded", () => {
+  // Ton code principal ici
+
   const saveConfigBtn = document.getElementById("save-config-btn");
   if (saveConfigBtn) {
       console.log("Bouton 'Enregistrer' détecté.");
@@ -174,12 +176,39 @@ document.addEventListener("DOMContentLoaded", () => {
           const databaseId = document.getElementById("database-id-input")?.value;
 
           if (apiKey && databaseId) {
-              saveConfig(apiKey, databaseId);
+              saveConfig(apiKey, databaseId); // Appelle la fonction pour sauvegarder la configuration
           } else {
               alert("Veuillez remplir tous les champs.");
           }
       });
   } else {
       console.error("Bouton 'Enregistrer' non trouvé dans le DOM.");
+  }
+
+  // Initialisation des autres événements, comme les boutons de navigation
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
+  const refreshBtn = document.getElementById("refresh-btn");
+
+  if (prevBtn) {
+      prevBtn.addEventListener("click", () => {
+          if (currentPage > 1) {
+              currentPage--;
+              loadPage(currentPage);
+          }
+      });
+  }
+
+  if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+          currentPage++;
+          loadPage(currentPage);
+      });
+  }
+
+  if (refreshBtn) {
+      refreshBtn.addEventListener("click", () => {
+          loadPage(currentPage); // Recharge la page actuelle
+      });
   }
 });
