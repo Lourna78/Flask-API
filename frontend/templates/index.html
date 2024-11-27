@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instagram Feed Preview</title>
+  <title>Notion Widget</title>
   <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css">
 </head>
 <body>
@@ -11,11 +11,12 @@
     <!-- Titre du widget -->
     <h2 class="widget-title">Aperçu du feed Instagram</h2>
 
-    <!-- Ligne avec les trois boutons -->
+    <!-- Ligne des boutons -->
     <div class="button-container">
       <button id="prev-btn" class="action-btn">Précédent</button>
       <button id="refresh-btn" class="action-btn">Rafraîchir</button>
       <button id="next-btn" class="action-btn">Suivant</button>
+      <button id="disconnect-btn" class="action-btn">Déconnecter</button>
     </div>
 
     <!-- Conteneur de la grille -->
@@ -25,38 +26,33 @@
 
     <!-- Zone de configuration -->
     <div class="config-container">
-      <h3 class="config-title">Configuration Notion</h3>
+      <h3 class="config-title">Configuration</h3>
       <form id="config-form">
         <div>
-          <label for="api-key-input" class="config-label">Clé API Notion :</label>
+          <label for="api-key-input" class="config-label">Clé API:</label>
           <input type="text" id="api-key-input" class="config-input" placeholder="Votre API Key">
         </div>
         <div>
-          <label for="database-id-input" class="config-label">ID de la base de données :</label>
+          <label for="database-id-input" class="config-label">ID base:</label>
           <input type="text" id="database-id-input" class="config-input" placeholder="Votre Database ID">
         </div>
         <button id="save-config-btn" class="action-btn">Enregistrer</button>
       </form>
     </div>
 
-    <!-- Zone masquée après configuration -->
+    <!-- Résumé de la configuration -->
     <div id="config-summary" style="display: none;">
       <h3 class="config-title">Résumé de la configuration</h3>
-      <p>Clé API Notion : <span id="masked-api-key">********</span></p>
-      <p>ID de la base de données : <span id="masked-database-id">********</span></p>
-      <button id="edit-config-btn" class="action-btn">Modifier</button>
+      <p>Clé API : <span id="masked-api-key">********</span></p>
+      <p>ID Base : <span id="masked-database-id">********</span></p>
+      <button id="edit-config-btn">Modifier</button>
     </div>
   </div>
+
 
   <script>
     let currentPage = 1; // Page actuelle
     const limit = 12; // Nombre d'images par page
-
-    // Réinitialise la grille
-    function resetGrid() {
-      const grid = document.getElementById("grid");
-      if (grid) grid.innerHTML = "";
-    }
 
     // Affiche la configuration
     function showConfig() {
@@ -65,22 +61,20 @@
       document.getElementById("config-summary").style.display = "none";
     }
 
-    // Masque la configuration après sauvegarde
-    function hideConfig() {
+     // Cache le formulaire et affiche la configuration masquée
+    function hideConfig(apiKey, databaseId) {
       document.querySelector(".config-container").style.display = "none";
       document.getElementById("config-summary").style.display = "block";
-
-      document.getElementById("masked-api-key").textContent = "********";
-      document.getElementById("masked-database-id").textContent = "********";
+      document.getElementById("masked-api-key").textContent = apiKey ? "********" : "";
+      document.getElementById("masked-database-id").textContent = databaseId ? "********" : "";
     }
 
     // Charge les images d'une page donnée
+    // Charge une page spécifique d'images
     function loadPage(page) {
-      const grid = document.getElementById("grid");
-      const prevBtn = document.getElementById("prev-btn");
-      const nextBtn = document.getElementById("next-btn");
       const apiKey = localStorage.getItem("api_key");
       const databaseId = localStorage.getItem("database_id");
+      const grid = document.getElementById("grid");
 
       if (!apiKey || !databaseId) {
         resetGrid();
@@ -88,7 +82,7 @@
         return;
       }
 
-      grid.innerHTML = "<p>Chargement en cours...</p>";
+      grid.innerHTML = "<p>Chargement...</p>";
       fetch(`https://widget.artyzan-agency.com/images?page=${page}&limit=${limit}`, {
         method: "GET",
         headers: {
@@ -97,26 +91,23 @@
         },
       })
         .then((response) => {
-          if (!response.ok) throw new Error("Erreur lors du chargement des images.");
+          if (!response.ok) throw new Error("Erreur API");
           return response.json();
         })
         .then((data) => {
           resetGrid();
-          data.images.forEach((url) => {
+          data.images.forEach((image) => {
             const div = document.createElement("div");
             div.className = "grid-item";
-            div.style.backgroundImage = `url(${url})`;
+            div.style.backgroundImage = `url(${image.url})`;
+            const date = document.createElement("p");
+            date.textContent = image.date || "Date inconnue";
+            div.appendChild(date);
             grid.appendChild(div);
           });
 
-          for (let i = data.images.length; i < limit; i++) {
-            const emptyDiv = document.createElement("div");
-            emptyDiv.className = "grid-item empty";
-            grid.appendChild(emptyDiv);
-          }
-
-          prevBtn.style.display = page > 1 ? "inline-block" : "none";
-          nextBtn.style.display = data.page < data.pages ? "inline-block" : "none";
+          document.getElementById("prev-btn").style.display = page > 1 ? "inline-block" : "none";
+          document.getElementById("next-btn").style.display = data.page < data.pages ? "inline-block" : "none";
         })
         .catch((error) => {
           console.error(error);
@@ -129,25 +120,22 @@
     function saveConfig(apiKey, databaseId) {
       localStorage.setItem("api_key", apiKey);
       localStorage.setItem("database_id", databaseId);
-
-      hideConfig();
-      loadPage(1); // Charge directement la première page après la sauvegarde
+      hideConfig(apiKey, databaseId);
+      loadPage(1);
     }
 
     // Initialisation des événements
     document.addEventListener("DOMContentLoaded", () => {
-      console.log("Widget initialisé.");
-
       const saveConfigBtn = document.getElementById("save-config-btn");
       const prevBtn = document.getElementById("prev-btn");
       const nextBtn = document.getElementById("next-btn");
       const refreshBtn = document.getElementById("refresh-btn");
       const editConfigBtn = document.getElementById("edit-config-btn");
+      const disconnectBtn = document.getElementById("disconnect-btn");
 
       // Masquage initial des boutons
       prevBtn.style.display = "none";
       nextBtn.style.display = "none";
-      editConfigBtn.style.display = "none";
 
       // Événement sur le bouton "Enregistrer"
       saveConfigBtn.addEventListener("click", (event) => {
@@ -182,11 +170,23 @@
         loadPage(currentPage);
       });
 
+      disconnectBtn.addEventListener("click", () => {
+        disconnect();
+      });
+
       // Événement sur le bouton "Modifier"
       editConfigBtn.addEventListener("click", () => {
         showConfig();
       });
     });
+
+      // Charge la première page si l'utilisateur est déjà configuré
+      const storedApiKey = localStorage.getItem("api_key");
+      const storedDatabaseId = localStorage.getItem("database_id");
+      if (storedApiKey && storedDatabaseId) {
+        hideConfig(storedApiKey, storedDatabaseId);
+        loadPage(1);
+      };
   </script>
 </body>
 </html>
