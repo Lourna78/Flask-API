@@ -103,7 +103,7 @@ input:focus {
   margin: 0 auto;
   background-color: #ffffff;
   border: 1px solid #ddd;
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
@@ -115,7 +115,7 @@ input:focus {
   width: 100%; /* S'adapte à des tailles plus petites */
   max-width: 320px; /* Largeur maximale */
   border: 1px solid #ddd; /* Bordure subtile */
-  border-radius: 5px; /* Coins arrondis */
+  border-radius: 8px; /* Coins arrondis */
   background-color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombre subtile */
 }
