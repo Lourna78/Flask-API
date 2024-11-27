@@ -141,13 +141,20 @@ input:focus {
 
 /* Style des items de la grille */
 .grid-item {
+  display: flex;
   width: 100%;
+  flex-direction: column; /* Aligne les éléments verticalement */
+  justify-content: center;
+  padding: 15px; /* Espacement interne */
+  margin: 10px 0; /* Espacement externe entre les blocs */
   padding-top: 100%; /* Maintient un carré parfait */
+  background-color: #ffffff; /* Fond blanc */
   background-size: cover;
   background-position: center;
-  border: none;
+  border: 1px solid #e0e0e0; /* Bordure légère */
   outline: none; /* Supprime les contours bleus par défaut */
-  border-radius: 3px;
+  border-radius: 10px; /* Bords arrondis */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Ombre subtile */
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
@@ -156,12 +163,35 @@ input:focus {
 .grid-item.empty {
   background-color: #f0f0f0; /* Fond gris uni pour les cases vides */
   background-image: none; /* Supprime toute image résiduelle */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Accentue l'ombre au survol */
+  transform: translateY(-2px); /* Légère remontée au survol */
+
 }
 .grid-item:hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* Ajuste la durée */
   transform: scale(1.05); /* Effet de zoom */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée */
   z-index: 1; /* Met l'élément zoomé au-dessus des autres */
+}
+
+/* Texte principal dans les blocs */
+.grid-item .title {
+  font-size: 16px; /* Taille du titre */
+  font-weight: bold;
+  margin-bottom: 5px; /* Espacement sous le titre */
+  color: #333; /* Couleur sombre pour le texte */
+}
+
+.grid-item .subtitle {
+  font-size: 14px; /* Taille du sous-titre */
+  color: #666; /* Couleur légèrement grisée */
+  margin-bottom: 10px; /* Espacement sous le sous-titre */
+}
+
+.grid-item .body-text {
+  font-size: 13px; /* Texte de description ou corps */
+  color: #888; /* Texte encore plus subtil */
+  line-height: 1.6; /* Meilleure lisibilité */
 }
 
 .grid-item:focus {
