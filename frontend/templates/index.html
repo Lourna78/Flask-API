@@ -3,190 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notion Widget</title>
+  <title>Instagram Feed Preview</title>
   <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css">
 </head>
 <body>
-  <div class="widget-container">
-    <!-- Titre du widget -->
-    <h2 class="widget-title">Aperçu du feed Instagram</h2>
+    <div class="widget-container">
+        <!-- Titre du widget -->
+        <h2 class="widget-title">Aperçu du feed Instagram</h2>
 
-    <!-- Ligne des boutons -->
-    <div class="button-container">
-      <button id="prev-btn" class="action-btn">Précédent</button>
-      <button id="refresh-btn" class="action-btn">Rafraîchir</button>
-      <button id="next-btn" class="action-btn">Suivant</button>
-      <button id="disconnect-btn" class="action-btn">Déconnecter</button>
-    </div>
-
-    <!-- Conteneur de la grille -->
-    <div id="grid" class="grid-container">
-      <!-- Les images seront insérées dynamiquement ici -->
-    </div>
-
-    <!-- Zone de configuration -->
-    <div class="config-container">
-      <h3 class="config-title">Configuration</h3>
-      <form id="config-form">
-        <div>
-          <label for="api-key-input" class="config-label">Clé API:</label>
-          <input type="text" id="api-key-input" class="config-input" placeholder="Votre API Key">
+        <!-- Ligne avec les trois boutons -->
+        <div class="button-container">
+          <button id="prev-btn" class="btn">Précédent</button>
+          <button id="refresh-btn" class="btn">Rafraîchir</button>
+          <button id="next-btn" class="btn">Suivant</button>
         </div>
-        <div>
-          <label for="database-id-input" class="config-label">ID base:</label>
-          <input type="text" id="database-id-input" class="config-input" placeholder="Votre Database ID">
+
+        <!-- Conteneur de la grille -->
+        <div id="grid" class="grid-container">
+          <!-- Les images seront insérées dynamiquement ici -->
         </div>
-        <button id="save-config-btn" class="action-btn">Enregistrer</button>
-      </form>
-    </div>
 
-    <!-- Résumé de la configuration -->
-    <div id="config-summary" style="display: none;">
-      <h3 class="config-title">Résumé de la configuration</h3>
-      <p>Clé API : <span id="masked-api-key">********</span></p>
-      <p>ID Base : <span id="masked-database-id">********</span></p>
-      <button id="edit-config-btn">Modifier</button>
-    </div>
-  </div>
-
-
-  <script>
-    let currentPage = 1; // Page actuelle
-    const limit = 12; // Nombre d'images par page
-
-    // Affiche la configuration
-    function showConfig() {
-      resetGrid();
-      document.querySelector(".config-container").style.display = "block";
-      document.getElementById("config-summary").style.display = "none";
-    }
-
-     // Cache le formulaire et affiche la configuration masquée
-    function hideConfig(apiKey, databaseId) {
-      document.querySelector(".config-container").style.display = "none";
-      document.getElementById("config-summary").style.display = "block";
-      document.getElementById("masked-api-key").textContent = apiKey ? "********" : "";
-      document.getElementById("masked-database-id").textContent = databaseId ? "********" : "";
-    }
-
-    // Charge les images d'une page donnée
-    // Charge une page spécifique d'images
-    function loadPage(page) {
-      const apiKey = localStorage.getItem("api_key");
-      const databaseId = localStorage.getItem("database_id");
-      const grid = document.getElementById("grid");
-
-      if (!apiKey || !databaseId) {
-        resetGrid();
-        grid.innerHTML = "<p>Veuillez configurer votre widget.</p>";
-        return;
-      }
-
-      grid.innerHTML = "<p>Chargement...</p>";
-      fetch(`https://widget.artyzan-agency.com/images?page=${page}&limit=${limit}`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Database-ID": databaseId,
-        },
-      })
-        .then((response) => {
-          if (!response.ok) throw new Error("Erreur API");
-          return response.json();
-        })
-        .then((data) => {
-          resetGrid();
-          data.images.forEach((image) => {
-            const div = document.createElement("div");
-            div.className = "grid-item";
-            div.style.backgroundImage = `url(${image.url})`;
-            const date = document.createElement("p");
-            date.textContent = image.date || "Date inconnue";
-            div.appendChild(date);
-            grid.appendChild(div);
-          });
-
-          document.getElementById("prev-btn").style.display = page > 1 ? "inline-block" : "none";
-          document.getElementById("next-btn").style.display = data.page < data.pages ? "inline-block" : "none";
-        })
-        .catch((error) => {
-          console.error(error);
-          resetGrid();
-          grid.innerHTML = "<p>Erreur lors du chargement des images.</p>";
-        });
-    }
-
-    // Sauvegarde la configuration et charge la grille
-    function saveConfig(apiKey, databaseId) {
-      localStorage.setItem("api_key", apiKey);
-      localStorage.setItem("database_id", databaseId);
-      hideConfig(apiKey, databaseId);
-      loadPage(1);
-    }
-
-    // Initialisation des événements
-    document.addEventListener("DOMContentLoaded", () => {
-      const saveConfigBtn = document.getElementById("save-config-btn");
-      const prevBtn = document.getElementById("prev-btn");
-      const nextBtn = document.getElementById("next-btn");
-      const refreshBtn = document.getElementById("refresh-btn");
-      const editConfigBtn = document.getElementById("edit-config-btn");
-      const disconnectBtn = document.getElementById("disconnect-btn");
-
-      // Masquage initial des boutons
-      prevBtn.style.display = "none";
-      nextBtn.style.display = "none";
-
-      // Événement sur le bouton "Enregistrer"
-      saveConfigBtn.addEventListener("click", (event) => {
-        event.preventDefault();
-        const apiKey = document.getElementById("api-key-input").value.trim();
-        const databaseId = document.getElementById("database-id-input").value.trim();
-
-        if (apiKey && databaseId) {
-          saveConfig(apiKey, databaseId);
-        } else {
-          alert("Veuillez remplir tous les champs.");
-        }
-      });
-
-      // Événement sur le bouton "Rafraîchir"
-      refreshBtn.addEventListener("click", () => {
-        console.log("Rafraîchissement du widget.");
-        loadPage(currentPage);
-      });
-
-      // Événement sur le bouton "Précédent"
-      prevBtn.addEventListener("click", () => {
-        if (currentPage > 1) {
-          currentPage--;
-          loadPage(currentPage);
-        }
-      });
-
-      // Événement sur le bouton "Suivant"
-      nextBtn.addEventListener("click", () => {
-        currentPage++;
-        loadPage(currentPage);
-      });
-
-      disconnectBtn.addEventListener("click", () => {
-        disconnect();
-      });
-
-      // Événement sur le bouton "Modifier"
-      editConfigBtn.addEventListener("click", () => {
-        showConfig();
-      });
-    });
-
-      // Charge la première page si l'utilisateur est déjà configuré
-      const storedApiKey = localStorage.getItem("api_key");
-      const storedDatabaseId = localStorage.getItem("database_id");
-      if (storedApiKey && storedDatabaseId) {
-        hideConfig(storedApiKey, storedDatabaseId);
-        loadPage(1);
-      };
-  </script>
+         <!-- Conteneur de configuration -->
+        <div class="config-container">
+          <h3>Configuration Notion</h3>
+          <form id="config-form"></form>
+          <!-- Zone de configuration -->
+          <div id="config-form">
+            <label for="api-key-input">Clé API Notion :</label>
+            <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
+            <label for="database-id-input">ID de la base de données :</label>
+            <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
+            <button id="save-config-btn" class="btn">Enregistrer</button>
+          </div>
+          <!-- Zone masquée après enregistrement -->
+          <div id="config-summary" style="display: none;">
+            <p>Clé API Notion : <span id="masked-api-key">********</span></p>
+            <p>ID de la base de données : <span id="masked-database-id">********</span></p>
+            <button id="edit-config-btn" class="btn" onclick="editConfig()">Modifier</button>
+          </form>
+        </div>
+      </div>
+      <script src="https://widget.artyzan-agency.com/static/script.js" defer></script>
 </body>
 </html>
