@@ -99,7 +99,7 @@ input:focus {
 
 /* Conteneur principal */
 .widget-container {
-  width: 400px; /* Ajuste la largeur selon ton besoin */
+  width: 350px; /* Ajuste la largeur selon ton besoin */
   margin: 0 auto;
   background-color: #ffffff;
   border: 1px solid #ddd;
