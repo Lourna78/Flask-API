@@ -209,6 +209,7 @@ input:focus {
 
 /* Style commun des boutons */
 .btn {
+  flex: 1; /* Les boutons prennent tous le même espace disponible */
   width: 100px; /* Largeur fixe pour uniformiser */
   padding: 10px 0; /* Ajuste le padding vertical pour équilibrer */
   background-color: #f0f0f0;
@@ -220,6 +221,11 @@ input:focus {
   cursor: pointer;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center; /* Centre le texte dans le bouton */
+}
+
+.btn + .btn {
+  margin-left: 10px; /* Ajoute un petit espacement entre les boutons */
 }
 
 .btn:hover {
