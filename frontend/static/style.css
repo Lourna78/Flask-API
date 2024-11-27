@@ -133,10 +133,12 @@ input:focus {
 /* Conteneur de la grille */
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Colonnes adaptatives */
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Colonnes adaptatives */
   gap: 2px; /* Espacement très réduit entre les images */
-  padding: 0; /* Supprime les marges autour de la grille */
+  padding: 10px; /* Ajoute un espacement autour de la grille */
   box-sizing: border-box; /* Inclut les bordures dans la taille totale */
+  max-width: 95%; /* Réduit la largeur globale de la grille pour laisser un espace sur les côtés */
+  margin: 0 auto; /* Centre la grille */
 }
 
 /* Style des items de la grille */
@@ -199,10 +201,9 @@ input:focus {
   display: flex;
   justify-content: space-between; /* Espacement entre les boutons */
   align-items: center;
-  margin-top: 15px;
-  margin-bottom: 15px; /* Espacement en dessous */
+  margin: 20px auto; /* Ajoute un espacement vertical au-dessus et en dessous */
   padding: 0 20px; /* Ajoute le même padding latéral que le .config-container */
-  max-width: 320px; /* Assure la même largeur maximale */
+  max-width: 95%; /* Aligne avec la largeur de la grille */
   margin: 0 auto; /* Centre horizontalement comme le .config-container */
 }
 
