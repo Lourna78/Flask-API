@@ -199,8 +199,9 @@ input:focus {
   display: flex;
   justify-content: space-between; /* Espacement entre les boutons */
   align-items: center;
-  margin-top: 15px;
-  padding: 0 20px; /* Espacement latéral pour éviter qu'ils soient trop près des bords */
+  margin-top: 10px;
+  margin-bottom: 10px; /* Ajoute une marge en bas pour séparer des images */
+  padding: 0 10px; /* Espacement latéral pour éviter qu'ils soient trop près des bords */
 }
 
 /* Style commun des boutons */
