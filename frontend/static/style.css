@@ -103,7 +103,7 @@ input:focus {
   margin: 0 auto;
   background-color: #ffffff;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
@@ -115,7 +115,7 @@ input:focus {
   width: 100%; /* S'adapte à des tailles plus petites */
   max-width: 320px; /* Largeur maximale */
   border: 1px solid #ddd; /* Bordure subtile */
-  border-radius: 8px; /* Coins arrondis */
+  border-radius: 5px; /* Coins arrondis */
   background-color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombre subtile */
 }
@@ -199,9 +199,11 @@ input:focus {
   display: flex;
   justify-content: space-between; /* Espacement entre les boutons */
   align-items: center;
-  margin-top: 10px;
-  margin-bottom: 10px; /* Ajoute une marge en bas pour séparer des images */
-  padding: 0 10px; /* Espacement latéral pour éviter qu'ils soient trop près des bords */
+  margin-top: 15px;
+  margin-bottom: 15px; /* Espacement en dessous */
+  padding: 0 20px; /* Ajoute le même padding latéral que le .config-container */
+  max-width: 320px; /* Assure la même largeur maximale */
+  margin: 0 auto; /* Centre horizontalement comme le .config-container */
 }
 
 /* Style commun des boutons */
