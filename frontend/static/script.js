@@ -121,11 +121,13 @@ function showConfig() {
   if (configContainer) {
     configContainer.innerHTML = `
       <h3>Configuration Notion</h3>
-      <label for="api-key-input">Clé API Notion :</label>
-      <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
-      <label for="database-id-input">ID de la base de données :</label>
-      <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
-      <button id="save-config-btn">Enregistrer</button>
+      <form id="config-form">
+        <label for="api-key-input">Clé API Notion :</label>
+        <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
+        <label for="database-id-input">ID de la base de données :</label>
+        <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
+        <button id="save-config-btn" class="btn">Enregistrer</button>
+      </form>
     `;
 
     // Ajoute l'événement au bouton "Enregistrer".
@@ -144,6 +146,8 @@ function showConfig() {
         }
       });
     }
+  } else {
+    console.error("Erreur : Impossible de trouver le conteneur de configuration.");
   }
 }
 
