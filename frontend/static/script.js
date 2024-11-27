@@ -11,14 +11,18 @@ function loadPage(page) {
     grid.innerHTML = "<p>Chargement du feed...</p>"; // Affiche un message de chargement.
   }
 
+  console.log(`Requête GET : /images?page=${page}&limit=${limit}`);
+
   fetch(`/images?page=${page}&limit=${limit}`)
     .then((response) => {
+      console.log("Réponse reçue pour /images :", response);
       if (!response.ok) {
         throw new Error("Erreur lors de la récupération des images.");
       }
       return response.json();
     })
     .then((data) => {
+      console.log("Données reçues pour /images :", data);
       if (grid) {
         grid.innerHTML = ""; // Réinitialise la grille.
 
@@ -41,6 +45,8 @@ function loadPage(page) {
       // Active ou désactive les boutons de navigation en fonction des pages disponibles.
       const prevBtn = document.getElementById("prev-btn");
       const nextBtn = document.getElementById("next-btn");
+
+      console.log(`Pages disponibles : ${data.page}/${data.pages}`); // Log des pages disponibles.
 
       if (prevBtn) prevBtn.disabled = data.page <= 1;
       if (nextBtn) nextBtn.disabled = data.page >= data.pages;
