@@ -97,6 +97,7 @@ def get_images():
         # Récupère les paramètres de pagination
         page = int(request.args.get('page', 1))  # Page actuelle (par défaut : 1)
         limit = int(request.args.get('limit', 12))  # Nombre d'images par page (par défaut : 12)
+        print(f"Requête reçue - Page: {page}, Limit: {limit}")
 
         # Utiliser la fonction fetch_image_urls avec les clés dynamiques
         image_urls = fetch_image_urls(api_key, database_id)

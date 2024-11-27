@@ -48,7 +48,7 @@ function loadPage(page) {
     .catch((error) => {
       console.error("Erreur lors de la récupération des données :", error);
       if (grid) {
-        grid.innerHTML = "<p>Une erreur est survenue. Veuillez réessayer.</p>";
+        grid.innerHTML = `<p>Une erreur est survenue (${error.message}). Veuillez réessayer.</p>`;
       }
     });
 }
@@ -63,6 +63,10 @@ function saveConfig(apiKey, databaseId) {
   if (grid) {
     grid.innerHTML = "<p>Chargement...</p>"; // Indique à l'utilisateur que la sauvegarde est en cours.
   }
+    // Ajoute les logs ici pour vérifier les valeurs récupérées
+    console.log("Clé API envoyée :", apiKey);
+    console.log("ID de base envoyé :", databaseId);
+    
   return fetch("/config", {
     method: "POST",
     headers: {
@@ -85,7 +89,7 @@ function saveConfig(apiKey, databaseId) {
     .catch((error) => {
       console.error("Erreur lors de la sauvegarde :", error);
       if (grid) {
-        grid.innerHTML = "<p>Une erreur est survenue. Veuillez réessayer.</p>";
+        grid.innerHTML = `<p>Une erreur est survenue (${error.message}). Veuillez réessayer.</p>`;
       }
     });
 }
