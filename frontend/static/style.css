@@ -100,8 +100,7 @@ input:focus {
 /* Conteneur principal */
 .widget-container {
   width: 350px; /* Ajuste la largeur selon ton besoin */
-  margin: 20px auto;
-  padding: 0; /* Supprime le padding si nécessaire */
+  margin: 0 auto;
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 10px;
@@ -111,10 +110,10 @@ input:focus {
 
 /* Conteneur de configuration */
 .config-container {
-  margin: 20px auto; /* Ajoute une marge en haut/bas et centre horizontalement */
+  margin: 20px auto;
   padding: 20px;
-  width: 300px; /* Test avec une largeur fixe */
-  max-width: 320px; /* Largeur maximale du conteneur */
+  width: 100%; /* S'adapte à des tailles plus petites */
+  max-width: 320px; /* Largeur maximale */
   border: 1px solid #ddd; /* Bordure subtile */
   border-radius: 5px; /* Coins arrondis */
   background-color: #ffffff;
@@ -138,7 +137,7 @@ input:focus {
   gap: 2px; /* Espacement très réduit entre les images */
   padding: 10px; /* Ajoute un espacement autour de la grille */
   box-sizing: border-box; /* Inclut les bordures dans la taille totale */
-  max-width: calc(100% - 40px); /* Réduit la largeur totale de 40px pour prendre en compte les marges de 20px de .widget-container */
+  max-width: 95%; /* Réduit la largeur globale de la grille pour laisser un espace sur les côtés */
   margin: 0 auto; /* Centre la grille */
 }
 
