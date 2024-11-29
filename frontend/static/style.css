@@ -111,10 +111,10 @@ input:focus {
 
 /* Conteneur de configuration */
 .config-container {
-  margin: 20px auto;
+  margin: 20px auto; /* Ajoute une marge en haut/bas et centre horizontalement */
   padding: 20px;
-  width: calc(100% - 40px); /* Même logique pour aligner avec les marges */
-  max-width: 320px; /* Largeur maximale */
+  width: calc(100% - 40px); /* Largeur ajustée pour compenser les marges horizontales */
+  max-width: 320px; /* Largeur maximale du conteneur */
   border: 1px solid #ddd; /* Bordure subtile */
   border-radius: 5px; /* Coins arrondis */
   background-color: #ffffff;
