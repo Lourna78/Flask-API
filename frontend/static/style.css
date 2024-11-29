@@ -100,7 +100,7 @@ input:focus {
 /* Conteneur principal */
 .widget-container {
   width: 350px; /* Ajuste la largeur selon ton besoin */
-  margin: 0 auto;
+  margin: 20px;
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 10px;
@@ -110,7 +110,7 @@ input:focus {
 
 /* Conteneur de configuration */
 .config-container {
-  margin: 20px auto;
+  margin: 20px;
   padding: 20px;
   width: 100%; /* S'adapte à des tailles plus petites */
   max-width: 320px; /* Largeur maximale */
