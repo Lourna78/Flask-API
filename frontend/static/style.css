@@ -109,18 +109,18 @@ input:focus {
   align-items: center;
   width: 100px;
   height: 40px; /* Ajuste la hauteur */
-  margin: 15px auto 0; /* Espace en haut du bouton et centrage horizontal */
-  padding: 8px 20px; /* Ajuste le padding pour plus de confort */
+  margin: 20px auto 15px; /* Uniformise les marges hautes et basses */
+  padding: 10px 20px; /* Donne plus de confort avec un padding ajusté */
   background-color: #f7f7f7;
   border: 1px solid #e0e0e0;
-  border-radius: 4px; /* Coins arrondis */
+  border-radius: 6px; /* Coins arrondis */
   font-size: 14px;
   font-weight: 500; /* Rendre le texte légèrement plus visible */
   color: #333; /* Texte plus visible */
   text-align: center; /* Centre le texte horizontalement */
-  line-height: normal; /* Assure un espacement vertical correct */
+  line-height: 1.2; /* Réduit l’espacement vertical pour un aspect plus compact */
   cursor: pointer;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 #config-form button:hover {
@@ -171,13 +171,11 @@ input:focus {
 .config-container {
   margin-top: 5px; /* Supprime l'espace entre le titre et le widget */
   margin: 40px auto; /* Centrer le conteneur et ajouter de l'espace autour */
-  padding: 15px 10px; /* Réduit l'espace interne */
+  padding: 15px 10px 30px; /* Réduit l'espace interne */
   width: 890%; /* Réduit la largeur à 70% du conteneur parent */
   max-width: 300px; /* Limite maximale de la largeur */
   border: 1px solid #e3e3e3; /* Bordure subtile */
   border-radius: 8px; /* Coins arrondis */
-  border-left: 3px solid #4CAF50; /* Exemple de surlignage pour un effet "Notion" */
-  padding-left: 15px; /* Ajoute de l'espace autour */
   background-color: #ffffff; /* Fond blanc */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre subtile */
   display: flex;
