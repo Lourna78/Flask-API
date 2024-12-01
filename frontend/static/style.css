@@ -96,6 +96,7 @@ input:focus {
 #config-form {
   display: flex;
   flex-direction: column; /* Assure que tout est aligné verticalement */
+  align-items: center; /* Centre horizontalement tout le contenu */
   gap: 15px; /* Espacement cohérent entre les champs */
 }
 
@@ -126,12 +127,15 @@ input:focus {
 }
 
 #config-form label {
-  margin-bottom: 5px; /* Réduit l'espacement entre le label et l'input */
+  text-align: center; /* Centre le texte des labels */
+  margin-bottom: 5px; /* Réduit légèrement l'espacement sous les labels */
 }
 
-/* Champs de texte */
 #config-form input {
-  margin-bottom: 20px;  /* Ajoute un espacement plus large entre les inputs */
+  width: 80%; /* Réduit la largeur à un pourcentage cohérent */
+  max-width: 300px; /* Limite la taille maximale */
+  margin-bottom: 15px; /* Uniformise l'espacement entre les inputs */
+  padding: 5px 10px; /* Ajoute de l'espace intérieur pour un meilleur design */
 }
 
 .hidden {
