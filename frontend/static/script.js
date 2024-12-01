@@ -22,7 +22,7 @@ function loadPage(page) {
       return response.json();
     })
     .then((data) => {
-      console.log("Données reçues pour /images :", data);
+      console.log("Données récupérées :", data);
       if (grid) {
         grid.innerHTML = ""; // Réinitialise la grille.
 
@@ -183,52 +183,58 @@ function hideConfig() {
   }
 }
 
-// Initialisation des événements.
+// Initialisation des événements
 document.addEventListener("DOMContentLoaded", () => {
-  // Ton code principal ici
+  console.log("DOM entièrement chargé et analysé.");
 
+  // Gestion du bouton 'Enregistrer'
   const saveConfigBtn = document.getElementById("save-config-btn");
   if (saveConfigBtn) {
-      console.log("Bouton 'Enregistrer' détecté.");
-      saveConfigBtn.addEventListener("click", () => {
-          console.log("Bouton 'Enregistrer' cliqué !");
-          const apiKey = document.getElementById("api-key-input")?.value;
-          const databaseId = document.getElementById("database-id-input")?.value;
+    console.log("'Enregistrer' trouvé, ajout de l'événement.");
+    saveConfigBtn.addEventListener("click", (event) => {
+      console.log("Bouton 'Enregistrer' cliqué !");
+      event.preventDefault(); // Empêche la soumission par défaut du formulaire
 
-          if (apiKey && databaseId) {
-              saveConfig(apiKey, databaseId); // Appelle la fonction pour sauvegarder la configuration
-          } else {
-              alert("Veuillez remplir tous les champs.");
-          }
-      });
+      // Appelle la fonction de validation et sauvegarde
+      const apiKey = document.getElementById("api-key-input")?.value;
+      const databaseId = document.getElementById("database-id-input")?.value;
+
+      if (apiKey && databaseId) {
+        validateAndSaveConfig(apiKey, databaseId); // Appelle la validation et la sauvegarde
+      } else {
+        alert("Veuillez remplir tous les champs.");
+      }
+    });
   } else {
-      console.error("Bouton 'Enregistrer' non trouvé dans le DOM.");
+    console.error("Bouton 'Enregistrer' non trouvé dans le DOM !");
   }
 
-  // Initialisation des autres événements, comme les boutons de navigation
-  const prevBtn = document.getElementById("prev-btn");
-  const nextBtn = document.getElementById("next-btn");
-  const refreshBtn = document.getElementById("refresh-btn");
+  // Ajout d'autres événements pour la navigation (précédent, suivant, refresh)
+  const buttons = {
+    prev: document.getElementById("prev-btn"),
+    next: document.getElementById("next-btn"),
+    refresh: document.getElementById("refresh-btn"),
+  };
 
-  if (prevBtn) {
-      prevBtn.addEventListener("click", () => {
-          if (currentPage > 1) {
-              currentPage--;
-              loadPage(currentPage);
-          }
-      });
+  if (buttons.prev) {
+    buttons.prev.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadPage(currentPage);
+      }
+    });
   }
 
-  if (nextBtn) {
-      nextBtn.addEventListener("click", () => {
-          currentPage++;
-          loadPage(currentPage);
-      });
+  if (buttons.next) {
+    buttons.next.addEventListener("click", () => {
+      currentPage++;
+      loadPage(currentPage);
+    });
   }
 
-  if (refreshBtn) {
-      refreshBtn.addEventListener("click", () => {
-          loadPage(currentPage); // Recharge la page actuelle
-      });
+  if (buttons.refresh) {
+    buttons.refresh.addEventListener("click", () => {
+      loadPage(currentPage); // Recharge la page actuelle
+    });
   }
 });

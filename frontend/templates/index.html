@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Instagram Feed Preview</title>
-  <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css?v=1.35">
+  <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css?v=<%= new Date().getTime() %>">
 </head>
 <body>
     <div class="widget-container">
@@ -38,13 +38,13 @@
             <button id="save-config-btn" class="btn">Enregistrer</button>
           </div>
           <!-- Zone masquée après enregistrement -->
-          <div id="config-summary" style="display: none;">
+          <div id="config-summary"></div>
             <p>Clé API : <span id="masked-api-key">********</span></p>
             <p>ID data base : <span id="masked-database-id">********</span></p>
             <button id="edit-config-btn" class="btn" onclick="editConfig()">Modifier</button>
           </form>
         </div>
       </div>
-      <script src="https://widget.artyzan-agency.com/static/script.js?v=1.35" defer></script>
+      <script src="https://widget.artyzan-agency.com/static/script.js?v=<%= new Date().getTime() %>" defer></script>
 </body>
 </html>

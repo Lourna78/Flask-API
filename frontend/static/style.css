@@ -154,6 +154,10 @@ input {
   gap: 15px; /* Espacement cohérent entre les champs */
 }
 
+#config-summary {
+  display: none;
+}
+
 /* Bouton Enregistrer */
 #config-form button {
   font-family: 'Inter', sans-serif;
