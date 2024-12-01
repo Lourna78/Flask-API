@@ -84,9 +84,22 @@ input:focus {
   gap: 15px; /* Espacement cohérent entre les champs */
 }
 
+/* Bouton Enregistrer */
 #config-form button {
-  display: block;
-  margin: 0 auto; /* Centre horizontalement le bouton */
+  margin: 15px auto 0; /* Espace en haut du bouton et centrage horizontal */
+  padding: 8px 20px; /* Ajuste le padding pour plus de confort */
+  background-color: #f4f4f4; /* Fond léger */
+  border: 1px solid #ddd; /* Bordure subtile */
+  border-radius: 5px; /* Coins arrondis */
+  font-size: 14px;
+  color: #333; /* Texte plus visible */
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#config-form button:hover {
+  background-color: #eaeaea; /* Change légèrement la couleur au survol */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Accentue l’ombre au survol */
 }
 
 #config-form label {
@@ -123,14 +136,14 @@ input:focus {
 
 /* Conteneur de configuration */
 .config-container {
-  margin: 0px auto; /* Centrer le conteneur et ajouter de l'espace autour */
-  padding: 20px; /* Espace interne entre le contenu et les bordures */
-  width: 80%; /* Réduit la largeur à 70% du conteneur parent */
-  max-width: 250px; /* Limite maximale de la largeur */
-  border: 1px solid #ddd; /* Bordure subtile */
-  border-radius: 5px; /* Coins arrondis */
+  margin: 40px auto; /* Centrer le conteneur et ajouter de l'espace autour */
+  padding: 20px 15px; /* Espace interne entre le contenu et les bordures */
+  width: 890%; /* Réduit la largeur à 70% du conteneur parent */
+  max-width: 300px; /* Limite maximale de la largeur */
+  border: 1px solid #e3e3e3; /* Bordure subtile */
+  border-radius: 8px; /* Coins arrondis */
   background-color: #ffffff; /* Fond blanc */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombre subtile */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre subtile */
   display: flex;
   flex-direction: column; /* Aligne les éléments verticalement */
   align-items: center; /* Centre les éléments à l'intérieur */
