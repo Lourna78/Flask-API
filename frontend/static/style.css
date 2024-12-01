@@ -4,7 +4,7 @@
 
 /* Style général */
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Inter', sans-serif; /* Notion utilise souvent des polices modernes et lisibles */
   margin: 0;
   padding: 0;
   display: flex;
@@ -12,6 +12,7 @@ body {
   align-items: center;
   height: 100vh;
   background-color: #f8f9fa;
+  color: #2e2e2e; /* Couleur de texte légèrement grisée */
 }
 
 input:focus {
@@ -102,16 +103,17 @@ input:focus {
 
 /* Bouton Enregistrer */
 #config-form button {
+  font-family: 'Inter', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100px;
   height: 40px; /* Ajuste la hauteur */
   margin: 15px auto 0; /* Espace en haut du bouton et centrage horizontal */
-  padding: 10px 20px; /* Ajuste le padding pour plus de confort */
-  background-color: #f4f4f4; /* Fond léger */
-  border: 1px solid #ddd; /* Bordure subtile */
-  border-radius: 5px; /* Coins arrondis */
+  padding: 8px 20px; /* Ajuste le padding pour plus de confort */
+  background-color: #f7f7f7;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px; /* Coins arrondis */
   font-size: 14px;
   font-weight: 500; /* Rendre le texte légèrement plus visible */
   color: #333; /* Texte plus visible */
@@ -122,7 +124,7 @@ input:focus {
 }
 
 #config-form button:hover {
-  background-color: #eaeaea; /* Change légèrement la couleur au survol */
+  background-color: #ebebeb; /* Subtil changement de fond au survol */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Accentue l’ombre au survol */
 }
 
@@ -132,10 +134,13 @@ input:focus {
 }
 
 #config-form input {
-  width: 80%; /* Réduit la largeur à un pourcentage cohérent */
+  border: 1px solid #e0e0e0; /* Bordure douce et subtile */
+  border-radius: 4px; /* Coins légèrement arrondis */
+  width: 100%; /* S'adapte à l'espace disponible */
   max-width: 300px; /* Limite la taille maximale */
   margin-bottom: 15px; /* Uniformise l'espacement entre les inputs */
-  padding: 5px 10px; /* Ajoute de l'espace intérieur pour un meilleur design */
+  padding: 8px 10px; /* Ajoute de l'espace intérieur pour un meilleur design */
+  box-sizing: border-box;
 }
 
 .hidden {
@@ -151,7 +156,7 @@ input:focus {
   width: 350px; /* Ajuste la largeur selon ton besoin */
   margin: 0 auto;
   background-color: #ffffff;
-  border: 1px solid #ddd;
+  border: none; /* Supprime les bordures */
   border-radius: 10px;
   overflow: hidden;
   box-shadow: non !important; /* Supprime l'ombre */
@@ -164,13 +169,15 @@ input:focus {
 
 /* Conteneur de configuration */
 .config-container {
-  margin-top: 10px; /* Réduit l'espace entre le titre et le conteneur de configuration */
+  margin-top: 5px; /* Supprime l'espace entre le titre et le widget */
   margin: 40px auto; /* Centrer le conteneur et ajouter de l'espace autour */
-  padding: 20px 15px; /* Espace interne entre le contenu et les bordures */
+  padding: 15px 10px; /* Réduit l'espace interne */
   width: 890%; /* Réduit la largeur à 70% du conteneur parent */
   max-width: 300px; /* Limite maximale de la largeur */
   border: 1px solid #e3e3e3; /* Bordure subtile */
   border-radius: 8px; /* Coins arrondis */
+  border-left: 3px solid #4CAF50; /* Exemple de surlignage pour un effet "Notion" */
+  padding-left: 15px; /* Ajoute de l'espace autour */
   background-color: #ffffff; /* Fond blanc */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre subtile */
   display: flex;
@@ -312,5 +319,16 @@ input:focus {
   .grid-container {
     grid-template-columns: 1fr; /* Une seule colonne si l'écran est vraiment étroit */
     gap: 8px; /* Réduit l'espacement pour s'adapter */
+  }
+}
+
+@media (max-width: 600px) {
+  .widget-container {
+      width: 100%;
+      padding: 10px;
+  }
+
+  .config-container {
+      width: 100%;
   }
 }

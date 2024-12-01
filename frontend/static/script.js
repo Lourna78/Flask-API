@@ -132,9 +132,9 @@ function showConfig() {
     configContainer.innerHTML = `
       <h3>Configuration Notion</h3>
       <form id="config-form">
-        <label for="api-key-input">Clé API Notion :</label>
+        <label for="api-key-input">Clé API :</label>
         <input type="text" id="api-key-input" placeholder="Entrez la clé API">
-        <label for="database-id-input">ID de la base de données :</label>
+        <label for="database-id-input">ID data base :</label>
         <input type="text" id="database-id-input" placeholder="Entrez l'ID">
         <button id="save-config-btn" class="btn">Enregistrer</button>
       </form>
