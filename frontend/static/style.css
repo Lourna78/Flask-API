@@ -108,11 +108,14 @@ input:focus {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
+.widget-container > .config-container {
+  margin-top: 30px; /* Ajoute un espacement au-dessus du conteneur de configuration */
+}
+
 /* Conteneur de configuration */
 .config-container {
-  margin: 20px auto;
-  padding: 20px;
-  padding: 0 20px;
+  margin: 20px auto; /* Ajoute une marge verticale et centre horizontalement */
+  padding: 20px; /* Espace interne entre le contenu et les bordures */
   width: 100%; /* S'adapte à des tailles plus petites */
   max-width: 320px; /* Largeur maximale */
   border: 1px solid #ddd; /* Bordure subtile */
