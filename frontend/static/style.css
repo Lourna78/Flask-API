@@ -67,7 +67,7 @@ input:focus {
   padding: 5px 10px;
   margin-bottom: 15px;
   border: 1px solid #ddd;
-  border-radius: 3px;
+  border-radius: 5px;
   box-sizing: border-box;
 }
 
@@ -112,6 +112,7 @@ input:focus {
 .config-container {
   margin: 20px auto;
   padding: 20px;
+  padding: 0 20px;
   width: 100%; /* S'adapte à des tailles plus petites */
   max-width: 320px; /* Largeur maximale */
   border: 1px solid #ddd; /* Bordure subtile */
