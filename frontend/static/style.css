@@ -30,7 +30,7 @@ input:focus {
   text-align: center;
   font-size: 28px;
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Réduit l'espace entre le titre et le conteneur */
   line-height: 1.4; /* Espacement entre les lignes */
   color: #333;
 }
@@ -127,8 +127,8 @@ input:focus {
 }
 
 #config-form label {
-  text-align: center; /* Centre le texte des labels */
-  margin-bottom: 5px; /* Réduit légèrement l'espacement sous les labels */
+  text-align: left; /* Centre le texte des labels */
+  margin-bottom: 3px; /* Réduit légèrement l'espacement sous les labels */
 }
 
 #config-form input {
@@ -155,6 +155,7 @@ input:focus {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: non !important; /* Supprime l'ombre */
+  padding: 0; /* Supprime le padding supplémentaire autour */
 }
 
 .widget-container > .config-container {
@@ -163,6 +164,7 @@ input:focus {
 
 /* Conteneur de configuration */
 .config-container {
+  margin-top: 10px; /* Réduit l'espace entre le titre et le conteneur de configuration */
   margin: 40px auto; /* Centrer le conteneur et ajouter de l'espace autour */
   padding: 20px 15px; /* Espace interne entre le contenu et les bordures */
   width: 890%; /* Réduit la largeur à 70% du conteneur parent */
