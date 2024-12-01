@@ -28,8 +28,8 @@ input:focus {
 .widget-title,
 .config-title {
   text-align: center;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 700;
   margin-bottom: 20px;
   color: #333;
 }
@@ -48,12 +48,20 @@ input:focus {
 }
 
 /* Titre de la section configuration */
-.config-container h3 {
+.config-container h2 {
   text-align: center;
-  font-size: 18px; /* Taille réduite */
+  font-size: 24px; /* Taille réduite */
   font-weight: 600; /* Moins gras */
-  margin-bottom: 20px; /* Ajouter plus d'espace entre les champs */
+  margin-bottom: 15px; /* Ajouter plus d'espace entre les champs */
   color: #333;
+}
+
+/* Sous-titres pour les labels (H3) */
+.config-container h3 {
+  font-size: 16px; /* Taille plus petite */
+  font-weight: 500; /* Police normale */
+  color: #555; /* Couleur gris doux */
+  margin-bottom: 5px; /* Espacement entre le label et l'input */
 }
 
 /* -------------------------
@@ -87,12 +95,15 @@ input:focus {
 /* Bouton Enregistrer */
 #config-form button {
   margin: 15px auto 0; /* Espace en haut du bouton et centrage horizontal */
-  padding: 8px 20px; /* Ajuste le padding pour plus de confort */
+  padding: 10px 20px; /* Ajuste le padding pour plus de confort */
   background-color: #f4f4f4; /* Fond léger */
   border: 1px solid #ddd; /* Bordure subtile */
   border-radius: 5px; /* Coins arrondis */
   font-size: 14px;
+  font-weight: 500; /* Rendre le texte légèrement plus visible */
   color: #333; /* Texte plus visible */
+  text-align: center; /* Centre le texte horizontalement */
+  line-height: normal; /* Assure un espacement vertical correct */
   cursor: pointer;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
