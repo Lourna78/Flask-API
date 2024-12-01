@@ -77,6 +77,11 @@ input:focus {
    3. Formulaires
 ------------------------- */
 
+input {
+  margin: 0 auto; /* Centre les champs horizontalement */
+  display: block; /* Assure un alignement correct */
+}
+
 /* Style pour le conteneur des inputs */
 .input-container {
   position: relative;
@@ -223,11 +228,11 @@ input:focus {
 
 /* Conteneur de configuration */
 .config-container {
-  margin-top: 5px; /* Supprime l'espace entre le titre et le widget */
+  margin-top: 15px; /* Réduit l'espacement en haut */
   margin: 40px auto; /* Centrer le conteneur et ajouter de l'espace autour */
   padding: 15px 10px 30px; /* Réduit l'espace interne */
   width: 890%; /* Réduit la largeur à 70% du conteneur parent */
-  max-width: 300px; /* Limite maximale de la largeur */
+  max-width: 3280px; /* Limite maximale de la largeur */
   border: 1px solid #e3e3e3; /* Bordure subtile */
   border-radius: 8px; /* Coins arrondis */
   background-color: #ffffff; /* Fond blanc */

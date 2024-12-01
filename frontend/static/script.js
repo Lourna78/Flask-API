@@ -64,6 +64,8 @@ function loadPage(page) {
  * @param {string} apiKey - Clé API de l'utilisateur.
  * @param {string} databaseId - ID de la base de données Notion.
  */
+
+
 function saveConfig(apiKey, databaseId) {
   console.log("saveConfig appelée !");
   console.log("Clé API envoyée :", apiKey);
@@ -89,25 +91,25 @@ function saveConfig(apiKey, databaseId) {
       return response.json();
     })
     .then(() => {
-      alert("Configuration sauvegardée !");
+      alert("Configuration sauvegardée avec succès !");
       hideConfig(); // Masque la configuration après sauvegarde.
       loadPage(1); // Recharge la première page.
-
-       // Affiche les boutons une fois la configuration réussie
-      const buttonContainer = document.querySelector(".button-container");
-      if (buttonContainer) {
-        console.log("Affichage des boutons après configuration.");
-        buttonContainer.classList.remove("hidden");
-      } else {
-        console.error("Impossible de trouver le conteneur des boutons.");
-      }
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la sauvegarde :", error);
-      if (grid) {
-        grid.innerHTML = `<p>Une erreur est survenue (${error.message}). Veuillez réessayer.</p>`;
-      }
-    });
+    // Affiche les boutons une fois la configuration réussie
+    const buttonContainer = document.querySelector(".button-container");
+    if (buttonContainer) {
+      console.log("Affichage des boutons après configuration.");
+      buttonContainer.classList.remove("hidden");
+    } else {
+      console.error("Impossible de trouver le conteneur des boutons.");
+    }
+  })
+  .catch((error) => {
+    console.error("Erreur lors de la sauvegarde :", error);
+    if (grid) {
+      grid.innerHTML = `<p>Une erreur est survenue (${error.message}). Veuillez réessayer.</p>`;
+    }
+    alert(`Erreur lors de la sauvegarde : ${error.message}`);
+  });
 }
 
 /**
@@ -185,50 +187,92 @@ function hideConfig() {
 
 // Initialisation des événements.
 document.addEventListener("DOMContentLoaded", () => {
-  // Ton code principal ici
-
   const saveConfigBtn = document.getElementById("save-config-btn");
   if (saveConfigBtn) {
-      console.log("Bouton 'Enregistrer' détecté.");
-      saveConfigBtn.addEventListener("click", () => {
-          console.log("Bouton 'Enregistrer' cliqué !");
-          const apiKey = document.getElementById("api-key-input")?.value;
-          const databaseId = document.getElementById("database-id-input")?.value;
-
-          if (apiKey && databaseId) {
-              saveConfig(apiKey, databaseId); // Appelle la fonction pour sauvegarder la configuration
-          } else {
-              alert("Veuillez remplir tous les champs.");
-          }
-      });
+    console.log("Bouton 'Enregistrer' détecté.");
+    saveConfigBtn.addEventListener("click", (event) => {
+      console.log("Bouton 'Enregistrer' cliqué !");
+      event.preventDefault(); // Empêche la soumission du formulaire
+      validateAndSaveConfig();
+    });
   } else {
-      console.error("Bouton 'Enregistrer' non trouvé dans le DOM.");
-  }
-
-  // Initialisation des autres événements, comme les boutons de navigation
-  const prevBtn = document.getElementById("prev-btn");
-  const nextBtn = document.getElementById("next-btn");
-  const refreshBtn = document.getElementById("refresh-btn");
-
-  if (prevBtn) {
-      prevBtn.addEventListener("click", () => {
-          if (currentPage > 1) {
-              currentPage--;
-              loadPage(currentPage);
-          }
-      });
-  }
-
-  if (nextBtn) {
-      nextBtn.addEventListener("click", () => {
-          currentPage++;
-          loadPage(currentPage);
-      });
-  }
-
-  if (refreshBtn) {
-      refreshBtn.addEventListener("click", () => {
-          loadPage(currentPage); // Recharge la page actuelle
-      });
+    console.error("Bouton 'Enregistrer' non trouvé dans le DOM.");
   }
 });
+
+
+/**
+ * Fonction pour activer/désactiver le chargement.
+ * @param {boolean} isLoading - Active ou désactive l'état de chargement.
+ */
+function toggleLoading(isLoading) {
+  const saveConfigBtn = document.getElementById("save-config-btn");
+  if (saveConfigBtn) {
+    saveConfigBtn.disabled = isLoading;
+    saveConfigBtn.textContent = isLoading ? "Chargement..." : "Enregistrer";
+  }
+}
+
+function validateAndSaveConfig() {
+  const apiKeyInput = document.getElementById("api-key-input");
+  const databaseIdInput = document.getElementById("database-id-input");
+
+  const apiKey = apiKeyInput?.value.trim();
+  const databaseId = databaseIdInput?.value.trim();
+
+  if (!apiKey || !databaseId) {
+    if (!apiKey) apiKeyInput.style.border = "1px solid red";
+    if (!databaseId) databaseIdInput.style.border = "1px solid red";
+    return;
+  }
+
+  // Réinitialise les bordures en cas de succès
+  apiKeyInput.style.border = "";
+  databaseIdInput.style.border = "";
+
+  console.log("Validation réussie. Sauvegarde en cours...");
+  toggleLoading(true);
+  saveConfig(apiKey, databaseId)
+    .then(() => {
+      alert("Configuration sauvegardée avec succès !");
+      hideConfig(); // Masque la configuration
+      loadPage(1); // Recharge la première page
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la sauvegarde :", error);
+      alert(`Erreur : ${error.message}. Veuillez vérifier vos informations.`);
+    })
+    .finally(() => {
+      toggleLoading(false);
+    });
+}
+
+
+// Initialisation des autres événements, comme les boutons de navigation
+const buttons = {
+  prev: document.getElementById("prev-btn"),
+  next: document.getElementById("next-btn"),
+  refresh: document.getElementById("refresh-btn"),
+};
+
+if (buttons.prev) {
+  buttons.prev.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      loadPage(currentPage);
+    }
+  });
+}
+
+if (buttons.next) {
+  buttons.next.addEventListener("click", () => {
+    currentPage++;
+    loadPage(currentPage);
+  });
+}
+
+if (buttons.refresh) {
+  buttons.refresh.addEventListener("click", () => {
+    loadPage(currentPage);
+  });
+}
