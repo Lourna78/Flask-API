@@ -133,9 +133,9 @@ function showConfig() {
       <h3>Configuration Notion</h3>
       <form id="config-form">
         <label for="api-key-input">Clé API Notion :</label>
-        <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
+        <input type="text" id="api-key-input" placeholder="Entrez la clé API">
         <label for="database-id-input">ID de la base de données :</label>
-        <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
+        <input type="text" id="database-id-input" placeholder="Entrez l'ID">
         <button id="save-config-btn" class="btn">Enregistrer</button>
       </form>
     `;

@@ -34,6 +34,11 @@ input:focus {
   color: #333;
 }
 
+/* Pour ajouter un saut de ligne dans le titre */
+.widget-title br {
+  display: block;
+}
+
 .widget-header {
   text-align: center;
   margin: 10px;
@@ -53,6 +58,7 @@ input:focus {
   font-size: 24px; /* Taille réduite */
   font-weight: 600; /* Moins gras */
   margin-bottom: 15px; /* Ajouter plus d'espace entre les champs */
+  margin-top: 10px; /* Réduit la distance par rapport au widget */
   color: #333;
 }
 
@@ -94,6 +100,11 @@ input:focus {
 
 /* Bouton Enregistrer */
 #config-form button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 40px; /* Ajuste la hauteur */
   margin: 15px auto 0; /* Espace en haut du bouton et centrage horizontal */
   padding: 10px 20px; /* Ajuste le padding pour plus de confort */
   background-color: #f4f4f4; /* Fond léger */
@@ -138,7 +149,7 @@ input:focus {
   border: 1px solid #ddd;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: none; /* Supprime l'ombre */
 }
 
 .widget-container > .config-container {
