@@ -125,8 +125,8 @@ input:focus {
 .config-container {
   margin: 0px auto; /* Centrer le conteneur et ajouter de l'espace autour */
   padding: 20px; /* Espace interne entre le contenu et les bordures */
-  width: 90%; /* Réduit la largeur à 70% du conteneur parent */
-  max-width: 300px; /* Limite maximale de la largeur */
+  width: 85%; /* Réduit la largeur à 70% du conteneur parent */
+  max-width: 275px; /* Limite maximale de la largeur */
   border: 1px solid #ddd; /* Bordure subtile */
   border-radius: 5px; /* Coins arrondis */
   background-color: #ffffff; /* Fond blanc */
