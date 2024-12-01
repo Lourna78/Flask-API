@@ -98,6 +98,10 @@ input:focus {
   margin-bottom: 20px;  /* Ajoute un espacement plus large entre les inputs */
 }
 
+.hidden {
+  display: none;
+}
+
 /* -------------------------
    4. Conteneurs principaux
 ------------------------- */

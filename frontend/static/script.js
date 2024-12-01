@@ -91,7 +91,13 @@ function saveConfig(apiKey, databaseId) {
       alert("Configuration sauvegardée !");
       hideConfig(); // Masque la configuration après sauvegarde.
       loadPage(1); // Recharge la première page.
-    })
+
+       // Affiche les boutons une fois la configuration réussie
+       const buttonContainer = document.querySelector(".button-container");
+       if (buttonContainer) {
+         buttonContainer.classList.remove("hidden");
+       }
+     })
     .catch((error) => {
       console.error("Erreur lors de la sauvegarde :", error);
       if (grid) {
