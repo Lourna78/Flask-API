@@ -68,6 +68,7 @@ function saveConfig(apiKey, databaseId) {
   console.log("saveConfig appelée !");
   console.log("Clé API envoyée :", apiKey);
   console.log("ID de base envoyé :", databaseId);
+
   const grid = document.getElementById("grid");
   if (grid) {
     grid.innerHTML = "<p>Chargement...</p>"; // Indique à l'utilisateur que la sauvegarde est en cours.
@@ -93,11 +94,14 @@ function saveConfig(apiKey, databaseId) {
       loadPage(1); // Recharge la première page.
 
        // Affiche les boutons une fois la configuration réussie
-       const buttonContainer = document.querySelector(".button-container");
-       if (buttonContainer) {
-         buttonContainer.classList.remove("hidden");
-       }
-     })
+      const buttonContainer = document.querySelector(".button-container");
+      if (buttonContainer) {
+        console.log("Affichage des boutons après configuration.");
+        buttonContainer.classList.remove("hidden");
+      } else {
+        console.error("Impossible de trouver le conteneur des boutons.");
+      }
+    })
     .catch((error) => {
       console.error("Erreur lors de la sauvegarde :", error);
       if (grid) {
