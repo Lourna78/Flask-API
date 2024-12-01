@@ -31,6 +31,7 @@ input:focus {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 20px;
+  line-height: 1.4; /* Espacement entre les lignes */
   color: #333;
 }
 
@@ -57,8 +58,8 @@ input:focus {
   text-align: center;
   font-size: 24px; /* Taille réduite */
   font-weight: 600; /* Moins gras */
-  margin-bottom: 15px; /* Ajouter plus d'espace entre les champs */
-  margin-top: 10px; /* Réduit la distance par rapport au widget */
+  margin-bottom: 10px; /* Réduit l'espace sous le titre */
+  margin-top: 10px; /* Ajuste l'espacement avec le widget */
   color: #333;
 }
 
@@ -149,7 +150,7 @@ input:focus {
   border: 1px solid #ddd;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: none; /* Supprime l'ombre */
+  box-shadow: non !important; /* Supprime l'ombre */
 }
 
 .widget-container > .config-container {
