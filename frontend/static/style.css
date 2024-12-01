@@ -29,10 +29,11 @@ input:focus {
 .widget-title,
 .config-title {
   text-align: center;
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 10px; /* Réduit l'espace entre le titre et le conteneur */
+  font-size: 20px; /* Ajuste à une taille plus petite */
+  font-weight: 600;
+  margin-bottom: 20px; /* Réduit l'espace entre le titre et le conteneur */
   line-height: 1.4; /* Espacement entre les lignes */
+  text-align: center;
   color: #333;
 }
 
@@ -332,6 +333,32 @@ input:focus {
   padding: 0 20px; /* Ajoute le même padding latéral que le .config-container */
   max-width: 95%; /* Aligne avec la largeur de la grille */
   margin: 0 auto; /* Centre horizontalement comme le .config-container */
+}
+
+#save-config-btn {
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 40px;
+  margin: 0 auto;
+  padding: 10px 0; /* Ajuste le padding vertical pour équilibrer */
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 8px; /* Coins arrondis */
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center; /* Centre le texte dans le bouton */
+}
+
+#save-config-btn:hover {
+  background-color: #e0e0e0; /* Fond légèrement plus foncé */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Accentue l'ombre */
 }
 
 /* Style commun des boutons */
