@@ -133,12 +133,18 @@ input:focus {
   margin-bottom: 3px; /* Réduit légèrement l'espacement sous les labels */
 }
 
+/* Ajustement spécifique pour espacement vertical */
+#config-form label:first-of-type {
+  margin-top: 15px; /* Ajoute un espace entre "Configuration Widget" et "Clé API" */
+}
+
 #config-form input {
   border: 1px solid #e0e0e0; /* Bordure douce et subtile */
   border-radius: 4px; /* Coins légèrement arrondis */
   width: 100%; /* S'adapte à l'espace disponible */
   max-width: 300px; /* Limite la taille maximale */
-  margin-bottom: 15px; /* Uniformise l'espacement entre les inputs */
+  margin-top: -5px; /* Rapproche les inputs de leurs labels respectifs */
+  margin-bottom: 10px; /* Ajuste l'espace entre les inputs */
   padding: 8px 10px; /* Ajoute de l'espace intérieur pour un meilleur design */
   box-sizing: border-box;
 }
@@ -183,10 +189,21 @@ input:focus {
   align-items: center; /* Centre les éléments à l'intérieur */
 }
 
+.config-container .config-input {
+  margin-bottom: 15px; /* Espace sous chaque input */
+}
+
 .config-container p {
   font-size: 14px; /* Réduit la taille de la police */
   margin-bottom: 10px; /* Ajuste l'espacement sous chaque ligne */
   color: #333; /* Optionnel : ajuste la couleur si nécessaire */
+}
+
+/* Ajustement des espacements dans la configuration */
+.config-container label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 5px; /* Réduit l'espace entre le label et son input */
 }
 
 /* -------------------------
