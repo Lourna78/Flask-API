@@ -84,6 +84,11 @@ input:focus {
   gap: 15px; /* Espacement cohérent entre les champs */
 }
 
+#config-form button {
+  display: block;
+  margin: 0 auto; /* Centre horizontalement le bouton */
+}
+
 #config-form label {
   margin-bottom: 5px; /* Réduit l'espacement entre le label et l'input */
 }
@@ -114,13 +119,13 @@ input:focus {
 
 /* Conteneur de configuration */
 .config-container {
-  margin: 20px auto; /* Ajoute une marge verticale et centre horizontalement */
-  padding: 20px; /* Espace interne entre le contenu et les bordures */
-  width: 80%; /* S'adapte à des tailles plus petites */
-  max-width: 300px; /* Largeur maximale */
+  margin: 20px auto; /* Centrer le conteneur et ajouter de l'espace autour */
+  padding: 15px; /* Espace interne entre le contenu et les bordures */
+  width: 70%; /* Réduit la largeur à 70% du conteneur parent */
+  max-width: 250px; /* Limite maximale de la largeur */
   border: 1px solid #ddd; /* Bordure subtile */
   border-radius: 5px; /* Coins arrondis */
-  background-color: #ffffff;
+  background-color: #ffffff; /* Fond blanc */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombre subtile */
 }
 
