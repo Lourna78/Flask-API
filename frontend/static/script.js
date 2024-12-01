@@ -2,6 +2,156 @@ let currentPage = 1; // Page actuelle
 const limit = 12; // Nombre d'images par page
 
 /**
+ * Fonction pour afficher la configuration initiale.
+ */
+function showConfig() {
+  const configContainer = document.querySelector(".config-container");
+  if (configContainer) {
+    configContainer.innerHTML = `
+      <h3>Configuration Notion</h3>
+      <form id="config-form">
+        <label for="api-key-input">Clé API Notion :</label>
+        <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
+        <label for="database-id-input">ID de la base de données :</label>
+        <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
+        <button id="save-config-btn" class="btn">Enregistrer</button>
+      </form>
+    `;
+
+    // Ajoute l'événement au bouton "Enregistrer".
+    const saveConfigBtn = document.getElementById("save-config-btn");
+    if (saveConfigBtn) {
+      console.log("Bouton 'Enregistrer' détecté.");
+      saveConfigBtn.addEventListener("click", () => {
+        console.log("Bouton 'Enregistrer' cliqué !");
+        const apiKey = document.getElementById("api-key-input")?.value;
+        const databaseId = document.getElementById("database-id-input")?.value;
+
+        if (apiKey && databaseId) {
+          saveConfig(apiKey, databaseId);
+        } else {
+          alert("Veuillez remplir tous les champs.");
+        }
+      });
+    }
+  } else {
+    console.error("Erreur : Impossible de trouver le conteneur de configuration.");
+  }
+}
+
+function validateAndSaveConfig() {
+  const apiKeyInput = document.getElementById("api-key-input");
+  const databaseIdInput = document.getElementById("database-id-input");
+
+  if (!apiKeyInput || !databaseIdInput) {
+    console.error("Impossible de trouver les champs de configuration.");
+    return;
+  }
+
+  const apiKey = apiKeyInput?.value.trim();
+  const databaseId = databaseIdInput?.value.trim();
+
+  if (!apiKey || !databaseId) {
+    if (!apiKey) apiKeyInput.style.border = "1px solid red"; // Bordure rouge si champ vide
+    if (!databaseId) databaseIdInput.style.border = "1px solid red";
+    alert("Veuillez remplir tous les champs."); // Alerte si les champs ne sont pas remplis
+    return;
+  }
+
+  // Réinitialise les bordures en cas de succès
+  apiKeyInput.style.border = "";
+  databaseIdInput.style.border = "";
+
+  console.log("Validation réussie. Sauvegarde en cours...");
+  toggleLoading(true); // Désactive le bouton et affiche un état de chargement
+  saveConfig(apiKey, databaseId)
+    .then(() => {
+      console.log("Configuration sauvegardée !");
+      alert("Configuration sauvegardée avec succès !");
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la sauvegarde :", error);
+      alert(`Erreur : ${error.message}`);
+    })
+    .finally(() => {
+      toggleLoading(false); // Réactive le bouton
+    });
+}
+
+// Écouteur d'événement pour le bouton "Enregistrer"
+document.getElementById("save-config-btn").addEventListener("click", (event) => {
+  event.preventDefault(); // Empêche la soumission par défaut
+  console.log("Bouton 'Enregistrer' cliqué !");
+  validateAndSaveConfig(); // Appelle la fonction de validation et sauvegarde
+});
+
+
+/**
+ * Fonction pour sauvegarder la configuration utilisateur.
+ * @param {string} apiKey - Clé API de l'utilisateur.
+ * @param {string} databaseId - ID de la base de données Notion.
+ */
+function saveConfig(apiKey, databaseId) {
+  console.log("saveConfig appelée !");
+  console.log("Clé API envoyée :", apiKey);
+  console.log("ID de base envoyé :", databaseId);
+
+  const grid = document.getElementById("grid");
+  if (grid) {
+    grid.innerHTML = "<p>Chargement...</p>"; // Indique à l'utilisateur que la sauvegarde est en cours.
+  }
+
+  return fetch("/config", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      api_key: apiKey.trim(),
+      database_id: databaseId.trim(),
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) throw new Error("Erreur lors de la sauvegarde de la configuration.");
+      return response.json();
+    })
+    .then(() => {
+      alert("Configuration sauvegardée !");
+      document.getElementById('config-summary').style.display = 'block';
+      hideConfig(); // Masque la configuration après sauvegarde.
+      loadPage(1); // Recharge la première page.
+
+       // Affiche les boutons une fois la configuration réussie
+      const buttonContainer = document.querySelector(".button-container");
+      if (buttonContainer) {
+        console.log("Affichage des boutons après configuration.");
+        buttonContainer.classList.remove;
+      } else {
+        console.error("Impossible de trouver le conteneur des boutons.");
+      }
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la sauvegarde :", error);
+      if (grid) {
+        grid.innerHTML = `<p>Une erreur est survenue (${error.message}). Veuillez réessayer.</p>`;
+      }
+    });
+}
+
+/**
+ * Fonction pour réinitialiser la grille.
+ * Affiche un message demandant de configurer le widget.
+ */
+function resetGrid() {
+  const grid = document.getElementById("grid");
+  if (grid) {
+    grid.innerHTML = "<p>Configurez votre widget.</p>";
+  } else {
+    console.error("Erreur : L'élément 'grid' n'existe pas dans le DOM.");
+  }
+}
+
+/**
  * Fonction pour charger une page spécifique.
  * @param {number} page - Numéro de la page à charger.
  */
@@ -57,108 +207,6 @@ function loadPage(page) {
         grid.innerHTML = `<p>Une erreur est survenue (${error.message}). Veuillez réessayer.</p>`;
       }
     });
-}
-
-/**
- * Fonction pour sauvegarder la configuration utilisateur.
- * @param {string} apiKey - Clé API de l'utilisateur.
- * @param {string} databaseId - ID de la base de données Notion.
- */
-function saveConfig(apiKey, databaseId) {
-  console.log("saveConfig appelée !");
-  console.log("Clé API envoyée :", apiKey);
-  console.log("ID de base envoyé :", databaseId);
-
-  const grid = document.getElementById("grid");
-  if (grid) {
-    grid.innerHTML = "<p>Chargement...</p>"; // Indique à l'utilisateur que la sauvegarde est en cours.
-  }
-
-  return fetch("/config", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      api_key: apiKey.trim(),
-      database_id: databaseId.trim(),
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) throw new Error("Erreur lors de la sauvegarde de la configuration.");
-      return response.json();
-    })
-    .then(() => {
-      alert("Configuration sauvegardée !");
-      hideConfig(); // Masque la configuration après sauvegarde.
-      loadPage(1); // Recharge la première page.
-
-       // Affiche les boutons une fois la configuration réussie
-      const buttonContainer = document.querySelector(".button-container");
-      if (buttonContainer) {
-        console.log("Affichage des boutons après configuration.");
-        buttonContainer.classList.remove("hidden");
-      } else {
-        console.error("Impossible de trouver le conteneur des boutons.");
-      }
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la sauvegarde :", error);
-      if (grid) {
-        grid.innerHTML = `<p>Une erreur est survenue (${error.message}). Veuillez réessayer.</p>`;
-      }
-    });
-}
-
-/**
- * Fonction pour réinitialiser la grille.
- * Affiche un message demandant de configurer le widget.
- */
-function resetGrid() {
-  const grid = document.getElementById("grid");
-  if (grid) {
-    grid.innerHTML = "<p>Configurez votre widget.</p>";
-  } else {
-    console.error("Erreur : L'élément 'grid' n'existe pas dans le DOM.");
-  }
-}
-
-/**
- * Fonction pour afficher la configuration initiale.
- */
-function showConfig() {
-  const configContainer = document.querySelector(".config-container");
-  if (configContainer) {
-    configContainer.innerHTML = `
-      <h3>Configuration Notion</h3>
-      <form id="config-form">
-        <label for="api-key-input">Clé API Notion :</label>
-        <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
-        <label for="database-id-input">ID de la base de données :</label>
-        <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
-        <button id="save-config-btn" class="btn">Enregistrer</button>
-      </form>
-    `;
-
-    // Ajoute l'événement au bouton "Enregistrer".
-    const saveConfigBtn = document.getElementById("save-config-btn");
-    if (saveConfigBtn) {
-      console.log("Bouton 'Enregistrer' détecté.");
-      saveConfigBtn.addEventListener("click", () => {
-        console.log("Bouton 'Enregistrer' cliqué !");
-        const apiKey = document.getElementById("api-key-input")?.value;
-        const databaseId = document.getElementById("database-id-input")?.value;
-
-        if (apiKey && databaseId) {
-          saveConfig(apiKey, databaseId);
-        } else {
-          alert("Veuillez remplir tous les champs.");
-        }
-      });
-    }
-  } else {
-    console.error("Erreur : Impossible de trouver le conteneur de configuration.");
-  }
 }
 
 
