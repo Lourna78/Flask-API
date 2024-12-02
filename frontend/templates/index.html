@@ -4,32 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Instagram Feed Preview</title>
-  <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css?v=1.39>">
+  <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css?v=1.40">
 </head>
 <body>
     <div class="widget-container">
-        <!-- Titre du widget -->
         <h1 class="widget-title">Widget Preview<br>Feed Instagram</h1>
-        <!-- Ligne avec les trois boutons -->
         <div class="button-container hidden">
           <button id="prev-btn" class="btn">Précédent</button>
           <button id="refresh-btn" class="btn">Rafraîchir</button>
           <button id="next-btn" class="btn">Suivant</button>
         </div>
-        <!-- Conteneur de la grille -->
         <div id="grid" class="grid-container">
-          <!-- Les images seront insérées dynamiquement ici -->
         </div>
-         <!-- Conteneur de configuration -->
         <div class="config-container">
           <h2 class="config-title">Configuration Widget</h2>
           <form id="config-form"></form>
-          <!-- Zone de configuration -->
           <div class="input-container">
             <input type="password" id="api-key" placeholder=" " required>
             <label for="api-key">Clé API</label>
           </div>
-          
           <div class="input-container">
             <input type="password" id="database-id" placeholder=" " required>
             <label for="database-id">ID data base</label>
@@ -37,7 +30,9 @@
           <div class="button-container">
             <button id="save-config-btn" class="btn">Enregistrer</button>
           </div>
-          <!-- Zone masquée après enregistrement -->
+          <div class="config-container">
+            <p>Chargement de la configuration...</p>
+          </div>
           <div id="config-summary"></div>
             <p>Clé API : <span id="masked-api-key">********</span></p>
             <p>ID data base : <span id="masked-database-id">********</span></p>
@@ -45,6 +40,6 @@
           </form>
         </div>
       </div>
-      <script src="https://widget.artyzan-agency.com/static/script.js?v=1.39>" defer></script>
+      <script src="https://widget.artyzan-agency.com/static/script.js?v=1.40" defer></script>
 </body>
 </html>
