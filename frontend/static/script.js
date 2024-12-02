@@ -201,29 +201,41 @@ function loadPage(page) {
 
   fetch(`/images?page=${page}&limit=${limit}`)
     .then((response) => {
-      console.log("Réponse brute :", response);
       if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des images.");
+        throw new Error("Erreur lors de la récupération des données.");
       }
-      return response.json();
+      return response.json(); // Convertit la réponse en JSON
     })
     .then((data) => {
-      if (grid) {
-        grid.innerHTML = ""; // Réinitialise la grille.
+      console.log("Données récupérées :", data); // Vérifie si 'data' est bien défini
 
-        // Ajoute les images reçues
-        data.images.forEach((url) => {
-          const div = document.createElement("div");
-          div.className = "grid-item";
-          div.style.backgroundImage = `url(${url})`;
-          grid.appendChild(div);
-        });
+      if (grid) {
+        grid.innerHTML = ""; // Réinitialise la grille
+
+        // Ajoute les images
+        if (data.images && data.images.length > 0) {
+          data.images.forEach((url) => {
+            const div = document.createElement("div");
+            div.className = "grid-item";
+            div.style.backgroundImage = `url(${url})`;
+            grid.appendChild(div);
+          });
+        } else {
+          grid.innerHTML = "<p>Aucune image trouvée.</p>";
+        }
       }
+
+      // Active/désactive les boutons de navigation
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
+
+      if (prevBtn) prevBtn.disabled = data.page <= 1;
+      if (nextBtn) nextBtn.disabled = data.page >= data.pages;
     })
     .catch((error) => {
       console.error("Erreur lors de la récupération des données :", error);
       if (grid) {
-        grid.innerHTML = `<p>Une erreur est survenue (${error.message}). Veuillez réessayer.</p>`;
+        grid.innerHTML = `<p>Erreur : ${error.message}</p>`;
       }
     });
 }
@@ -234,15 +246,6 @@ for (let i = data.images.length; i < limit; i++) {
   emptyDiv.className = "grid-item empty";
   grid.appendChild(emptyDiv);
 }
-
-// **Active ou désactive les boutons de navigation**
-const prevBtn = document.getElementById("prev-btn");
-const nextBtn = document.getElementById("next-btn");
-
-console.log(`Pages disponibles : ${data.page}/${data.pages}`); // Log des pages disponibles.
-
-if (prevBtn) prevBtn.disabled = data.page <= 1;
-if (nextBtn) nextBtn.disabled = data.page >= data.pages;
 
 // Initialisation des événements
 document.addEventListener("DOMContentLoaded", () => {
