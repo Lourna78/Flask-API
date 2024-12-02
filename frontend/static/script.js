@@ -1,6 +1,8 @@
 let currentPage = 1; // Page actuelle
 const limit = 12; // Nombre d'images par page
 
+console.log("Le script JS fonctionne correctement !");
+
 /**
  * Fonction pour afficher la configuration initiale.
  */
