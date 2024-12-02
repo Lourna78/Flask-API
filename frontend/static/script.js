@@ -220,6 +220,13 @@ function loadPage(page) {
             div.style.backgroundImage = `url(${url})`;
             grid.appendChild(div);
           });
+
+          // Complète avec des cases vides si nécessaire
+          for (let i = data.images.length; i < limit; i++) {
+            const emptyDiv = document.createElement("div");
+            emptyDiv.className = "grid-item empty";
+            grid.appendChild(emptyDiv);
+          }
         } else {
           grid.innerHTML = "<p>Aucune image trouvée.</p>";
         }
@@ -238,13 +245,6 @@ function loadPage(page) {
         grid.innerHTML = `<p>Erreur : ${error.message}</p>`;
       }
     });
-}
-
-// Complète avec des cases vides si nécessaire.
-for (let i = data.images.length; i < limit; i++) {
-  const emptyDiv = document.createElement("div");
-  emptyDiv.className = "grid-item empty";
-  grid.appendChild(emptyDiv);
 }
 
 // Initialisation des événements
