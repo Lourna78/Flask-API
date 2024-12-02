@@ -235,7 +235,7 @@ input {
   margin-top: 15px; /* Réduit l'espacement en haut */
   margin: 40px auto; /* Centrer le conteneur et ajouter de l'espace autour */
   padding: 15px 10px 30px; /* Réduit l'espace interne */
-  width: 890%; /* Réduit la largeur à 70% du conteneur parent */
+  width: 80%; /* Réduit la largeur à 80% du conteneur parent */
   max-width: 3280px; /* Limite maximale de la largeur */
   border: 1px solid #e3e3e3; /* Bordure subtile */
   border-radius: 8px; /* Coins arrondis */
