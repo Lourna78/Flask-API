@@ -12,10 +12,10 @@ function showConfig() {
     configContainer.innerHTML = `
       <h3>Configuration Notion</h3>
       <form id="config-form">
-        <label for="api-key-input">Clé API Notion :</label>
-        <input type="text" id="api-key-input" placeholder="Entrez votre clé API">
-        <label for="database-id-input">ID de la base de données :</label>
-        <input type="text" id="database-id-input" placeholder="Entrez l'ID de la base">
+        <label for="apiKeyField">Clé API Notion :</label>
+        <input type="text" id="apiKeyField" placeholder="Entrez votre clé API">
+        <label for="databaseIdField">ID de la base de données :</label>
+        <input type="text" id="databaseIdField" placeholder="Entrez l'ID de la base">
         <button id="save-config-btn" class="btn">Enregistrer</button>
       </form>
     `;
@@ -26,8 +26,8 @@ function showConfig() {
       console.log("Bouton 'Enregistrer' détecté.");
       saveConfigBtn.addEventListener("click", () => {
         console.log("Bouton 'Enregistrer' cliqué !");
-        const apiKey = document.getElementById("api-key-input")?.value;
-        const databaseId = document.getElementById("database-id-input")?.value;
+        const apiKey = document.getElementById("apiKeyField")?.value;
+        const databaseId = document.getElementById("databaseidField")?.value;
 
         if (apiKey && databaseId) {
           saveConfig(apiKey, databaseId);
@@ -42,27 +42,27 @@ function showConfig() {
 }
 
 function validateAndSaveConfig() {
-  const apiKeyInput = document.getElementById("api-key-input");
-  const databaseIdInput = document.getElementById("database-id-input");
+  const apiKeyField = document.getElementById("apiKey");
+  const databaseIdField = document.getElementById("databaseId");
 
-  if (!apiKeyInput || !databaseIdInput) {
+  if (!apiKeyField || !databaseIdField) {
     console.error("Impossible de trouver les champs de configuration.");
     return;
   }
 
-  const apiKey = apiKeyInput?.value.trim();
-  const databaseId = databaseIdInput?.value.trim();
+  const apiKey = apiKeyField?.value.trim();
+  const databaseId = databaseIdField?.value.trim();
 
   if (!apiKey || !databaseId) {
-    if (!apiKey) apiKeyInput.style.border = "1px solid red"; // Bordure rouge si champ vide
-    if (!databaseId) databaseIdInput.style.border = "1px solid red";
+    if (!apiKey) apiKeyField.style.border = "1px solid red"; // Bordure rouge si champ vide
+    if (!databaseId) databaseIdField.style.border = "1px solid red";
     alert("Veuillez remplir tous les champs."); // Alerte si les champs ne sont pas remplis
     return;
   }
 
   // Réinitialise les bordures en cas de succès
-  apiKeyInput.style.border = "";
-  databaseIdInput.style.border = "";
+  apiKeyField.style.border = "";
+  databaseIdField.style.border = "";
 
   console.log("Validation réussie. Sauvegarde en cours...");
   toggleLoading(true); // Désactive le bouton et affiche un état de chargement
@@ -235,6 +235,8 @@ function hideConfig() {
 
 // Initialisation des événements
 document.addEventListener("DOMContentLoaded", () => {
+  const apiKeyField = document.getElementById('apiKey');
+  const databaseIdField = document.getElementById('databaseId');
   console.log("DOM entièrement chargé et analysé.");
 
   // Gestion du bouton 'Enregistrer'
@@ -246,8 +248,8 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault(); // Empêche la soumission par défaut du formulaire
 
       // Appelle la fonction de validation et sauvegarde
-      const apiKey = document.getElementById("api-key-input")?.value;
-      const databaseId = document.getElementById("database-id-input")?.value;
+      const apiKey = document.getElementById("apiKeyField")?.value;
+      const databaseId = document.getElementById("databaseIdField")?.value;
 
       if (apiKey && databaseId) {
         validateAndSaveConfig(apiKey, databaseId); // Appelle la validation et la sauvegarde

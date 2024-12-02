@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Instagram Feed Preview</title>
-  <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css?v=1.32">
+  <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css?v=1.45">
 </head>
 <body>
     <div class="widget-container">
@@ -19,20 +19,20 @@
 
          <!-- Conteneur de configuration -->
         <div class="config-container">
-          <h2>Configuration Widget</h2>
+          <h3>Configuration Widget</h3>
           <form id="config-form"></form>
           <div class="input-container">
-            <input type="password" id="api-key" placeholder=" " required>
+            <input type="password" id="apiKey" placeholder="Entrez la clé API">
             <label for="api-key">Clé API</label>
           </div>
           <div class="input-container">
-            <input type="password" id="database-id" placeholder=" " required>
+            <input type="password" id="databaseId" placeholder="Entrez l'ID">
             <label for="database-id">ID data base</label>
           </div>
           <div class="button-container">
             <button id="save-config-btn" class="btn">Enregistrer</button>
           </div>
-          
+
           <!-- Zone masquée après enregistrement -->
           <div id="config-summary" style="display: none;">
             <p>Clé API : <span id="masked-api-key">********</span></p>
@@ -41,6 +41,6 @@
           </form>
         </div>
       </div>
-      <script src="https://widget.artyzan-agency.com/static/script.js?v=1.32" defer></script>
+      <script src="https://widget.artyzan-agency.com/static/script.js?v=1.45" defer></script>
 </body>
 </html>
