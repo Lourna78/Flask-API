@@ -1,3 +1,4 @@
+// Variables globales
 let currentPage = 1; // Page actuelle
 const limit = 12; // Nombre d'images par page
 
@@ -191,6 +192,8 @@ function resetGrid() {
  */
 function loadPage(page) {
   console.log("Appel de la fonction loadPage avec la page :", page);
+  console.log("Clé API actuelle :", apiKey);
+  console.log("ID de base actuel :", databaseId);
 
   const grid = document.getElementById("grid");
   if (grid) {
@@ -199,14 +202,26 @@ function loadPage(page) {
 
   console.log(`Requête GET : /images?page=${page}&limit=${limit}`);
 
-  fetch(`/images?page=${page}&limit=${limit}`)
+  if (
+    !Number.isInteger(page) ||
+    page < 1 ||
+    !Number.isInteger(limit) ||
+    limit < 1
+  ) {
+    console.error("Paramètres invalides pour la requête :", { page, limit });
+    return;
+  }
+
+  fetch(`https://widget.artyzan-agency.com/images?page=${page}&limit=${limit}`)
     .then((response) => {
       if (!response.ok) {
+        console.error("Erreur de réponse du serveur :", response);
         throw new Error("Erreur lors de la récupération des données.");
       }
       return response.json(); // Convertit la réponse en JSON
     })
     .then((data) => {
+      // Traitement des données
       console.log("Données récupérées :", data); // Vérifie si 'data' est bien défini
 
       if (grid) {
