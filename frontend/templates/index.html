@@ -6,34 +6,45 @@
     <title>Instagram Feed Preview</title>
     <link
       rel="stylesheet"
-      href="https://widget.artyzan-agency.com/static/style.css?v=1.47"
+      href="https://widget.artyzan-agency.com/static/style.css?v=1.49"
     />
   </head>
   <body>
     <div class="widget-container">
       <!-- Titre principal -->
       <h1 class="widget-title">Widget Preview<br />Feed Instagram</h1>
+
       <!-- Conteneur de la grille -->
       <div id="grid" class="grid-container">
         <!-- Les images seront insérées dynamiquement ici -->
       </div>
+
       <!-- Conteneur de configuration -->
       <div class="config-container">
         <h3>Configuration Widget</h3>
-        <form id="config-form"></form>
-        <div class="input-container">
-          <input type="password" id="apiKeyField" placeholder="Entrez la clé API" />
-          <label for="api-key">Clé API</label>
-        </div>
-        <div class="input-container">
-          <input type="password" id="databaseIdField" placeholder="Entrez l'ID" />
-          <label for="database-id">ID data base</label>
-        </div>
-        <div class="button-container">
-          <button id="save-config-btn" class="btn">Enregistrer</button>
-        </div>
+        <form id="config-form">
+          <div class="input-container">
+            <input
+              type="password"
+              id="apiKeyField"
+              placeholder="Entrez la clé API"
+            />
+            <label for="api-key">Clé API</label>
+          </div>
+          <div class="input-container">
+            <input
+              type="password"
+              id="databaseIdField"
+              placeholder="Entrez l'ID"
+            />
+            <label for="database-id">ID data base</label>
+          </div>
+          <div class="button-container">
+            <button id="save-config-btn" class="btn">Enregistrer</button>
+          </div>
+        </form>
       </div>
-    </form>
+
       <!-- Zone masquée après enregistrement -->
       <div id="config-summary" style="display: none">
         <p>Clé API : <span id="masked-api-key">********</span></p>
@@ -43,8 +54,10 @@
         </button>
       </div>
     </div>
+
     <script
-      src="https://widget.artyzan-agency.com/static/script.js?v=1.47"
-      defer></script>
+      src="https://widget.artyzan-agency.com/static/script.js?v=1.49"
+      defer
+    ></script>
   </body>
 </html>
