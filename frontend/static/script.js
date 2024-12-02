@@ -17,6 +17,7 @@ function toggleLoading(isLoading) {
   }
 }
 
+
 /**
  * Fonction pour valider et sauvegarder la configuration.
  * @param {string} apiKey - Clé API à valider.
@@ -50,6 +51,7 @@ function validateAndSaveConfig(apiKey, databaseId) {
       toggleLoading(false); // Désactive l'état de chargement
     });
 }
+
 
 /**
  * Fonction pour sauvegarder la configuration utilisateur.
@@ -102,76 +104,6 @@ function saveConfig(apiKey, databaseId) {
     });
 }
 
-/**
- * Fonction pour afficher la configuration initiale.
- */
-function showConfig() {
-  const configContainer = document.querySelector(".config-container");
-  if (configContainer) {
-    configContainer.innerHTML = `
-      <h3>Configuration Notion</h3>
-      <form id="config-form">
-        <label for="apiKeyField">Clé API Notion :</label>
-        <input type="text" id="apiKeyField" placeholder="Entrez votre clé API">
-        <label for="databaseIdField">ID de la base de données :</label>
-        <input type="text" id="databaseIdField" placeholder="Entrez l'ID de la base">
-        <button id="save-config-btn" class="btn">Enregistrer</button>
-      </form>
-    `;
-  } else {
-    console.error("Erreur : Impossible de trouver le conteneur de configuration.");
-  }
-}
-
-// Initialisation des événements
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM entièrement chargé et analysé.");
-
-  // Gestion du bouton Enregistrer
-  const saveConfigBtn = document.getElementById("save-config-btn");
-  if (saveConfigBtn) {
-    saveConfigBtn.addEventListener("click", (event) => {
-      event.preventDefault(); // Empêche la soumission par défaut
-      console.log("Bouton 'Enregistrer' cliqué !");
-      
-      const apiKey = document.getElementById("apiKeyField")?.value.trim();
-      const databaseId = document.getElementById("databaseIdField")?.value.trim();
-
-      validateAndSaveConfig(apiKey, databaseId); // Valide et sauvegarde
-    });
-  } else {
-    console.error("Bouton 'Enregistrer' non trouvé dans le DOM.");
-  }
-
-  // Gestion des boutons de navigation (prev, next, refresh)
-  const buttons = {
-    prev: document.getElementById("prev-btn"),
-    next: document.getElementById("next-btn"),
-    refresh: document.getElementById("refresh-btn"),
-  };
-
-  if (buttons.prev) {
-    buttons.prev.addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        loadPage(currentPage);
-      }
-    });
-  }
-
-  if (buttons.next) {
-    buttons.next.addEventListener("click", () => {
-      currentPage++;
-      loadPage(currentPage);
-    });
-  }
-
-  if (buttons.refresh) {
-    buttons.refresh.addEventListener("click", () => {
-      loadPage(currentPage); // Recharge la page actuelle
-    });
-  }
-});
 
 /**
  * Fonction pour afficher la configuration initiale.
@@ -300,3 +232,54 @@ function loadPage(page) {
       }
     });
 }
+
+
+// Initialisation des événements
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM entièrement chargé et analysé.");
+
+  // Gestion du bouton Enregistrer
+  const saveConfigBtn = document.getElementById("save-config-btn");
+  if (saveConfigBtn) {
+    saveConfigBtn.addEventListener("click", (event) => {
+      event.preventDefault(); // Empêche la soumission par défaut
+      console.log("Bouton 'Enregistrer' cliqué !");
+      
+      const apiKey = document.getElementById("apiKeyField")?.value.trim();
+      const databaseId = document.getElementById("databaseIdField")?.value.trim();
+
+      validateAndSaveConfig(apiKey, databaseId); // Valide et sauvegarde
+    });
+  } else {
+    console.error("Bouton 'Enregistrer' non trouvé dans le DOM.");
+  }
+
+  // Gestion des boutons de navigation (prev, next, refresh)
+  const buttons = {
+    prev: document.getElementById("prev-btn"),
+    next: document.getElementById("next-btn"),
+    refresh: document.getElementById("refresh-btn"),
+  };
+
+  if (buttons.prev) {
+    buttons.prev.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadPage(currentPage);
+      }
+    });
+  }
+
+  if (buttons.next) {
+    buttons.next.addEventListener("click", () => {
+      currentPage++;
+      loadPage(currentPage);
+    });
+  }
+
+  if (buttons.refresh) {
+    buttons.refresh.addEventListener("click", () => {
+      loadPage(currentPage); // Recharge la page actuelle
+    });
+  }
+});
