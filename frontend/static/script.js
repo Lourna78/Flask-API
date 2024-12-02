@@ -4,89 +4,52 @@ const limit = 12; // Nombre d'images par page
 console.log("Le script JS fonctionne correctement !");
 
 /**
- * Fonction pour afficher la configuration initiale.
+ * Fonction pour afficher ou masquer un état de chargement sur le bouton "Enregistrer".
+ * @param {boolean} isLoading - True pour afficher l'état de chargement, False pour le désactiver.
  */
-function showConfig() {
-  const configContainer = document.querySelector(".config-container");
-  if (configContainer) {
-    configContainer.innerHTML = `
-      <h3>Configuration Notion</h3>
-      <form id="config-form">
-        <label for="apiKeyField">Clé API Notion :</label>
-        <input type="text" id="apiKeyField" placeholder="Entrez votre clé API">
-        <label for="databaseIdField">ID de la base de données :</label>
-        <input type="text" id="databaseIdField" placeholder="Entrez l'ID de la base">
-        <button id="save-config-btn" class="btn">Enregistrer</button>
-      </form>
-    `;
-
-    // Ajoute l'événement au bouton "Enregistrer".
-    const saveConfigBtn = document.getElementById("save-config-btn");
-    if (saveConfigBtn) {
-      console.log("Bouton 'Enregistrer' détecté.");
-      saveConfigBtn.addEventListener("click", () => {
-        console.log("Bouton 'Enregistrer' cliqué !");
-        const apiKey = document.getElementById("apiKeyField")?.value;
-        const databaseId = document.getElementById("databaseidField")?.value;
-
-        if (apiKey && databaseId) {
-          saveConfig(apiKey, databaseId);
-        } else {
-          alert("Veuillez remplir tous les champs.");
-        }
-      });
-    }
+function toggleLoading(isLoading) {
+  const saveConfigBtn = document.getElementById("save-config-btn");
+  if (saveConfigBtn) {
+    saveConfigBtn.disabled = isLoading; // Désactive ou réactive le bouton
+    saveConfigBtn.textContent = isLoading ? "Chargement..." : "Enregistrer"; // Change le texte du bouton
   } else {
-    console.error("Erreur : Impossible de trouver le conteneur de configuration.");
+    console.error("Bouton 'Enregistrer' introuvable pour basculer l'état de chargement.");
   }
 }
 
-function validateAndSaveConfig() {
-  const apiKeyField = document.getElementById("apiKey");
-  const databaseIdField = document.getElementById("databaseId");
-
-  if (!apiKeyField || !databaseIdField) {
-    console.error("Impossible de trouver les champs de configuration.");
-    return;
-  }
-
-  const apiKey = apiKeyField?.value.trim();
-  const databaseId = databaseIdField?.value.trim();
-
+/**
+ * Fonction pour valider et sauvegarder la configuration.
+ * @param {string} apiKey - Clé API à valider.
+ * @param {string} databaseId - ID de la base à valider.
+ */
+function validateAndSaveConfig(apiKey, databaseId) {
   if (!apiKey || !databaseId) {
-    if (!apiKey) apiKeyField.style.border = "1px solid red"; // Bordure rouge si champ vide
-    if (!databaseId) databaseIdField.style.border = "1px solid red";
-    alert("Veuillez remplir tous les champs."); // Alerte si les champs ne sont pas remplis
+    // Marque les champs non remplis en rouge
+    if (!apiKey) document.getElementById("apiKeyField").style.border = "1px solid red";
+    if (!databaseId) document.getElementById("databaseIdField").style.border = "1px solid red";
+    alert("Veuillez remplir tous les champs."); // Message d'alerte utilisateur
     return;
   }
 
-  // Réinitialise les bordures en cas de succès
-  apiKeyField.style.border = "";
-  databaseIdField.style.border = "";
+  // Réinitialise les bordures si les champs sont remplis
+  document.getElementById("apiKeyField").style.border = "";
+  document.getElementById("databaseIdField").style.border = "";
 
   console.log("Validation réussie. Sauvegarde en cours...");
-  toggleLoading(true); // Désactive le bouton et affiche un état de chargement
+  toggleLoading(true); // Active l'état de chargement
   saveConfig(apiKey, databaseId)
     .then(() => {
-      console.log("Configuration sauvegardée !");
-      alert("Configuration sauvegardée avec succès !");
+      console.log("Configuration sauvegardée avec succès !");
+      alert("Configuration sauvegardée !");
     })
     .catch((error) => {
       console.error("Erreur lors de la sauvegarde :", error);
       alert(`Erreur : ${error.message}`);
     })
     .finally(() => {
-      toggleLoading(false); // Réactive le bouton
+      toggleLoading(false); // Désactive l'état de chargement
     });
 }
-
-// Écouteur d'événement pour le bouton "Enregistrer"
-document.getElementById("save-config-btn").addEventListener("click", (event) => {
-  event.preventDefault(); // Empêche la soumission par défaut
-  console.log("Bouton 'Enregistrer' cliqué !");
-  validateAndSaveConfig(); // Appelle la fonction de validation et sauvegarde
-});
-
 
 /**
  * Fonction pour sauvegarder la configuration utilisateur.
@@ -119,15 +82,14 @@ function saveConfig(apiKey, databaseId) {
     })
     .then(() => {
       alert("Configuration sauvegardée !");
-      document.getElementById('config-summary').style.display = 'block';
       hideConfig(); // Masque la configuration après sauvegarde.
       loadPage(1); // Recharge la première page.
 
-       // Affiche les boutons une fois la configuration réussie
+      // Affiche les boutons une fois la configuration réussie
       const buttonContainer = document.querySelector(".button-container");
       if (buttonContainer) {
         console.log("Affichage des boutons après configuration.");
-        buttonContainer.classList.remove;
+        buttonContainer.classList.remove("hidden");
       } else {
         console.error("Impossible de trouver le conteneur des boutons.");
       }
@@ -138,6 +100,136 @@ function saveConfig(apiKey, databaseId) {
         grid.innerHTML = `<p>Une erreur est survenue (${error.message}). Veuillez réessayer.</p>`;
       }
     });
+}
+
+/**
+ * Fonction pour afficher la configuration initiale.
+ */
+function showConfig() {
+  const configContainer = document.querySelector(".config-container");
+  if (configContainer) {
+    configContainer.innerHTML = `
+      <h3>Configuration Notion</h3>
+      <form id="config-form">
+        <label for="apiKeyField">Clé API Notion :</label>
+        <input type="text" id="apiKeyField" placeholder="Entrez votre clé API">
+        <label for="databaseIdField">ID de la base de données :</label>
+        <input type="text" id="databaseIdField" placeholder="Entrez l'ID de la base">
+        <button id="save-config-btn" class="btn">Enregistrer</button>
+      </form>
+    `;
+  } else {
+    console.error("Erreur : Impossible de trouver le conteneur de configuration.");
+  }
+}
+
+// Initialisation des événements
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM entièrement chargé et analysé.");
+
+  // Gestion du bouton Enregistrer
+  const saveConfigBtn = document.getElementById("save-config-btn");
+  if (saveConfigBtn) {
+    saveConfigBtn.addEventListener("click", (event) => {
+      event.preventDefault(); // Empêche la soumission par défaut
+      console.log("Bouton 'Enregistrer' cliqué !");
+      
+      const apiKey = document.getElementById("apiKeyField")?.value.trim();
+      const databaseId = document.getElementById("databaseIdField")?.value.trim();
+
+      validateAndSaveConfig(apiKey, databaseId); // Valide et sauvegarde
+    });
+  } else {
+    console.error("Bouton 'Enregistrer' non trouvé dans le DOM.");
+  }
+
+  // Gestion des boutons de navigation (prev, next, refresh)
+  const buttons = {
+    prev: document.getElementById("prev-btn"),
+    next: document.getElementById("next-btn"),
+    refresh: document.getElementById("refresh-btn"),
+  };
+
+  if (buttons.prev) {
+    buttons.prev.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadPage(currentPage);
+      }
+    });
+  }
+
+  if (buttons.next) {
+    buttons.next.addEventListener("click", () => {
+      currentPage++;
+      loadPage(currentPage);
+    });
+  }
+
+  if (buttons.refresh) {
+    buttons.refresh.addEventListener("click", () => {
+      loadPage(currentPage); // Recharge la page actuelle
+    });
+  }
+});
+
+/**
+ * Fonction pour afficher la configuration initiale.
+ */
+function showConfig() {
+  const configContainer = document.querySelector(".config-container");
+  if (configContainer) {
+    configContainer.innerHTML = `
+      <h3>Configuration Notion</h3>
+      <form id="config-form">
+        <label for="apiKeyField">Clé API Notion :</label>
+        <input type="text" id="apiKeyField" placeholder="Entrez votre clé API">
+        <label for="databaseIdField">ID de la base de données :</label>
+        <input type="text" id="databaseIdField" placeholder="Entrez l'ID de la base">
+        <button id="save-config-btn" class="btn">Enregistrer</button>
+      </form>
+    `;
+
+    // Ajoute l'événement au bouton "Enregistrer".
+    const saveConfigBtn = document.getElementById("save-config-btn");
+    if (saveConfigBtn) {
+      console.log("Bouton 'Enregistrer' détecté.");
+      saveConfigBtn.addEventListener("click", () => {
+        console.log("Bouton 'Enregistrer' cliqué !");
+        const apiKeyField = document.getElementById("apiKeyField")?.value;
+        const databaseIdField = document.getElementById("databaseIdField")?.value;
+
+        if (apiKeyField && databaseIdField) {
+          saveConfig(apiKeyField, databaseIdField);
+        } else {
+          alert("Veuillez remplir tous les champs.");
+        }
+      });
+    }
+  } else {
+    console.error("Erreur : Impossible de trouver le conteneur de configuration.");
+  }
+}
+
+/**
+ * Fonction pour masquer la configuration après sauvegarde.
+ */
+function hideConfig() {
+  const configContainer = document.querySelector(".config-container");
+  if (configContainer) {
+    configContainer.innerHTML = `
+      <h3>Configuration Notion</h3>
+      <p>Clé API Notion : ************</p>
+      <p>ID de la base de données : ************</p>
+      <button id="modify-config-btn">Modifier</button>
+    `;
+
+    // Ajoute l'événement au bouton "Modifier".
+    const modifyConfigBtn = document.getElementById("modify-config-btn");
+    if (modifyConfigBtn) {
+      modifyConfigBtn.addEventListener("click", showConfig);
+    }
+  }
 }
 
 /**
@@ -167,14 +259,12 @@ function loadPage(page) {
 
   fetch(`/images?page=${page}&limit=${limit}`)
     .then((response) => {
-      console.log("Réponse reçue pour /images :", response);
       if (!response.ok) {
         throw new Error("Erreur lors de la récupération des images.");
       }
       return response.json();
     })
     .then((data) => {
-      console.log("Données récupérées :", data);
       if (grid) {
         grid.innerHTML = ""; // Réinitialise la grille.
 
@@ -194,7 +284,7 @@ function loadPage(page) {
         }
       }
 
-      // Active ou désactive les boutons de navigation en fonction des pages disponibles.
+      // **Active ou désactive les boutons de navigation**
       const prevBtn = document.getElementById("prev-btn");
       const nextBtn = document.getElementById("next-btn");
 
@@ -210,83 +300,3 @@ function loadPage(page) {
       }
     });
 }
-
-
-/**
- * Fonction pour masquer la configuration après sauvegarde.
- */
-function hideConfig() {
-  const configContainer = document.querySelector(".config-container");
-  if (configContainer) {
-    configContainer.innerHTML = `
-      <h3>Configuration Notion</h3>
-      <p>Clé API Notion : ************</p>
-      <p>ID de la base de données : ************</p>
-      <button id="modify-config-btn">Modifier</button>
-    `;
-
-    // Ajoute l'événement au bouton "Modifier".
-    const modifyConfigBtn = document.getElementById("modify-config-btn");
-    if (modifyConfigBtn) {
-      modifyConfigBtn.addEventListener("click", showConfig);
-    }
-  }
-}
-
-// Initialisation des événements
-document.addEventListener("DOMContentLoaded", () => {
-  const apiKeyField = document.getElementById('apiKey');
-  const databaseIdField = document.getElementById('databaseId');
-  console.log("DOM entièrement chargé et analysé.");
-
-  // Gestion du bouton 'Enregistrer'
-  const saveConfigBtn = document.getElementById("save-config-btn");
-  if (saveConfigBtn) {
-    console.log("'Enregistrer' trouvé, ajout de l'événement.");
-    saveConfigBtn.addEventListener("click", (event) => {
-      console.log("Bouton 'Enregistrer' cliqué !");
-      event.preventDefault(); // Empêche la soumission par défaut du formulaire
-
-      // Appelle la fonction de validation et sauvegarde
-      const apiKey = document.getElementById("apiKeyField")?.value;
-      const databaseId = document.getElementById("databaseIdField")?.value;
-
-      if (apiKey && databaseId) {
-        validateAndSaveConfig(apiKey, databaseId); // Appelle la validation et la sauvegarde
-      } else {
-        alert("Veuillez remplir tous les champs.");
-      }
-    });
-  } else {
-    console.error("Bouton 'Enregistrer' non trouvé dans le DOM !");
-  }
-
-  // Ajout d'autres événements pour la navigation (précédent, suivant, refresh)
-  const buttons = {
-    prev: document.getElementById("prev-btn"),
-    next: document.getElementById("next-btn"),
-    refresh: document.getElementById("refresh-btn"),
-  };
-
-  if (buttons.prev) {
-    buttons.prev.addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        loadPage(currentPage);
-      }
-    });
-  }
-
-  if (buttons.next) {
-    buttons.next.addEventListener("click", () => {
-      currentPage++;
-      loadPage(currentPage);
-    });
-  }
-
-  if (buttons.refresh) {
-    buttons.refresh.addEventListener("click", () => {
-      loadPage(currentPage); // Recharge la page actuelle
-    });
-  }
-});
