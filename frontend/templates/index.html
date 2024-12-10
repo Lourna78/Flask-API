@@ -10,39 +10,19 @@
     />
   </head>
   <body>
-    <div class="widget-container">
-      <!-- Titre principal -->
-      <h1 class="widget-title">Widget Preview<br />Feed Instagram</h1>
-
-      <!-- Conteneur de la grille -->
-      <div id="grid" class="grid-container">
-        <!-- Les images seront insérées dynamiquement ici -->
-      </div>
-
-      <!-- Conteneur de configuration -->
-      <div class="config-container">
-        <h3>Configuration Widget</h3>
+      <div id="widget-setup">
+        <h1>Feed Instagram Preview</h1>
+        <p>Connectez votre base de données Notion :</p>
         <form id="config-form">
-          <div class="input-container">
-            <input
-              type="password"
-              id="apiKeyField"
-              placeholder="Entrez la clé API"
-            />
-            <label for="api-key">Clé API</label>
-          </div>
-          <div class="input-container">
-            <input
-              type="password"
-              id="databaseIdField"
-              placeholder="Entrez l'ID"
-            />
-            <label for="database-id">ID data base</label>
-          </div>
-          <div class="button-container">
-            <button id="save-config-btn" class="btn">Enregistrer</button>
-          </div>
+          <label for="apiKey">Clé API Notion :</label>
+          <input type="password" id="apiKey" placeholder="Entrez votre clé API" required />
+      
+          <label for="databaseId">ID de la base de données :</label>
+          <input type="text" id="databaseId" placeholder="Entrez l'ID de votre base" required />
+      
+          <button id="connect-btn">Connecter</button>
         </form>
+        <p id="error-msg" style="display: none; color: red;">Erreur : Vérifiez vos informations.</p>
       </div>
 
       <!-- Zone masquée après enregistrement -->
@@ -54,10 +34,11 @@
         </button>
       </div>
     </div>
-
     <script
       src="https://widget.artyzan-agency.com/static/script.js?v=1.54"
       defer
     ></script>
   </body>
 </html>
+
+
