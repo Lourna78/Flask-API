@@ -1,61 +1,56 @@
 let currentPage = 1; // Page actuelle
-const limit = 12; // Nombre d'images par page
+let apiKey = ""; // Clé API de l'utilisateur
+let databaseId = ""; // ID de la base Notion
+const limit = 12; // Nombre d'images affichées
 
 /**
  * Fonction pour charger une page spécifique.
  * @param {number} page - Numéro de la page à charger.
  */
-function loadPage(page) {
+function loadImages() {
   const grid = document.getElementById("grid");
-  if (grid) {
-    grid.innerHTML = "<p>Chargement du feed...</p>"; // Affiche un message de chargement.
-  }
 
-  console.log(`Requête GET : /images?page=${page}&limit=${limit}`);
+  // Affiche un état de chargement
+  if (grid) grid.innerHTML = "<p>Chargement des images...</p>";
 
-  fetch(`/images?page=${page}&limit=${limit}`)
+  fetch(`/proxy`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ apiKey, databaseId }),
+  })
     .then((response) => {
-      console.log("Réponse reçue pour /images :", response);
-      if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des images.");
-      }
+      if (!response.ok)
+        throw new Error("Erreur lors de la récupération des données.");
       return response.json();
     })
     .then((data) => {
-      console.log("Données reçues pour /images :", data);
-      if (grid) {
-        grid.innerHTML = ""; // Réinitialise la grille.
+      console.log("Images récupérées :", data);
 
-        // Ajoute les images reçues.
-        data.images.forEach((url) => {
+      // Réinitialise la grille
+      grid.innerHTML = "";
+
+      // Parcourt les images et les affiche
+      data.results.forEach((item) => {
+        const imageUrl =
+          item.properties["Fichiers et médias"]?.files[0]?.file?.url;
+        if (imageUrl) {
           const div = document.createElement("div");
           div.className = "grid-item";
-          div.style.backgroundImage = `url(${url})`;
+          div.style.backgroundImage = `url(${imageUrl})`;
           grid.appendChild(div);
-        });
-
-        // Complète avec des cases vides si nécessaire.
-        for (let i = data.images.length; i < limit; i++) {
-          const emptyDiv = document.createElement("div");
-          emptyDiv.className = "grid-item empty";
-          grid.appendChild(emptyDiv);
         }
+      });
+
+      // Complète avec des cases vides
+      for (let i = data.results.length; i < limit; i++) {
+        const emptyDiv = document.createElement("div");
+        emptyDiv.className = "grid-item empty";
+        grid.appendChild(emptyDiv);
       }
-
-      // Active ou désactive les boutons de navigation en fonction des pages disponibles.
-      const prevBtn = document.getElementById("prev-btn");
-      const nextBtn = document.getElementById("next-btn");
-
-      console.log(`Pages disponibles : ${data.page}/${data.pages}`); // Log des pages disponibles.
-
-      if (prevBtn) prevBtn.disabled = data.page <= 1;
-      if (nextBtn) nextBtn.disabled = data.page >= data.pages;
     })
     .catch((error) => {
-      console.error("Erreur lors de la récupération des données :", error);
-      if (grid) {
-        grid.innerHTML = `<p>Une erreur est survenue (${error.message}). Veuillez réessayer.</p>`;
-      }
+      console.error("Erreur :", error);
+      if (grid) grid.innerHTML = `<p>Erreur : ${error.message}</p>`;
     });
 }
 
@@ -64,51 +59,19 @@ function loadPage(page) {
  * @param {string} apiKey - Clé API de l'utilisateur.
  * @param {string} databaseId - ID de la base de données Notion.
  */
-function saveConfig(apiKey, databaseId) {
-  console.log("saveConfig appelée !");
-  console.log("Clé API envoyée :", apiKey);
-  console.log("ID de base envoyé :", databaseId);
+function saveConfig(apiKeyInput, databaseIdInput) {
+  apiKey = apiKeyInput.trim();
+  databaseId = databaseIdInput.trim();
 
-  const grid = document.getElementById("grid");
-  if (grid) {
-    grid.innerHTML = "<p>Chargement...</p>"; // Indique à l'utilisateur que la sauvegarde est en cours.
+  if (!apiKey || !databaseId) {
+    alert("Veuillez remplir tous les champs !");
+    return;
   }
 
-  return fetch("/config", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      api_key: apiKey.trim(),
-      database_id: databaseId.trim(),
-    }),
-  })
-    .then((response) => {
-      if (!response.ok)
-        throw new Error("Erreur lors de la sauvegarde de la configuration.");
-      return response.json();
-    })
-    .then(() => {
-      alert("Configuration sauvegardée !");
-      hideConfig(); // Masque la configuration après sauvegarde.
-      loadPage(1); // Recharge la première page.
+  console.log("Configuration sauvegardée :", { apiKey, databaseId });
 
-      // Affiche les boutons une fois la configuration réussie
-      const buttonContainer = document.querySelector(".button-container");
-      if (buttonContainer) {
-        console.log("Affichage des boutons après configuration.");
-        buttonContainer.classList.remove("hidden");
-      } else {
-        console.error("Impossible de trouver le conteneur des boutons.");
-      }
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la sauvegarde :", error);
-      if (grid) {
-        grid.innerHTML = `<p>Une erreur est survenue (${error.message}). Veuillez réessayer.</p>`;
-      }
-    });
+  // Appelle la fonction pour charger les images
+  loadImages();
 }
 
 /**
@@ -187,50 +150,17 @@ function hideConfig() {
 
 // Initialisation des événements.
 document.addEventListener("DOMContentLoaded", () => {
-  // Ton code principal ici
+  const connectButton = document.getElementById("save-config-btn");
 
-  const saveConfigBtn = document.getElementById("save-config-btn");
-  if (saveConfigBtn) {
-    console.log("Bouton 'Enregistrer' détecté.");
-    saveConfigBtn.addEventListener("click", () => {
-      console.log("Bouton 'Enregistrer' cliqué !");
-      const apiKey = document.getElementById("api-key-input")?.value;
-      const databaseId = document.getElementById("database-id-input")?.value;
-
-      if (apiKey && databaseId) {
-        saveConfig(apiKey, databaseId); // Appelle la fonction pour sauvegarder la configuration
-      } else {
-        alert("Veuillez remplir tous les champs.");
-      }
+  if (connectButton) {
+    connectButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      const apiKeyInput = document.getElementById("api-key-input").value;
+      const databaseIdInput =
+        document.getElementById("database-id-input").value;
+      saveConfig(apiKeyInput, databaseIdInput);
     });
   } else {
-    console.error("Bouton 'Enregistrer' non trouvé dans le DOM.");
-  }
-
-  // Initialisation des autres événements, comme les boutons de navigation
-  const prevBtn = document.getElementById("prev-btn");
-  const nextBtn = document.getElementById("next-btn");
-  const refreshBtn = document.getElementById("refresh-btn");
-
-  if (prevBtn) {
-    prevBtn.addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        loadPage(currentPage);
-      }
-    });
-  }
-
-  if (nextBtn) {
-    nextBtn.addEventListener("click", () => {
-      currentPage++;
-      loadPage(currentPage);
-    });
-  }
-
-  if (refreshBtn) {
-    refreshBtn.addEventListener("click", () => {
-      loadPage(currentPage); // Recharge la page actuelle
-    });
+    console.error("Bouton de connexion introuvable !");
   }
 });
