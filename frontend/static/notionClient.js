@@ -2,8 +2,8 @@
 export default class NotionClient {
   constructor() {
     this.STORAGE_KEY = "notion_credentials";
-    this.API_BASE_URL = "https://api.notion.com/v1";
-    this.NOTION_VERSION = "2022-06-28";
+    // Utilisez l'URL de votre backend Flask au lieu de l'API Notion directement
+    this.API_BASE_URL = ""; // L'URL vide utilisera le même domaine que le frontend
   }
 
   _encryptCredentials(apiKey, databaseId) {
@@ -32,119 +32,59 @@ export default class NotionClient {
     localStorage.removeItem(this.STORAGE_KEY);
   }
 
-  _getHeaders(apiKey) {
-    return {
-      Authorization: `Bearer ${apiKey}`,
-      "Notion-Version": this.NOTION_VERSION,
-      "Content-Type": "application/json",
-    };
-  }
-
-  async _handleNotionResponse(response) {
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Erreur API Notion:", {
-        status: response.status,
-        statusText: response.statusText,
-        details: errorText,
-      });
-
-      if (response.status === 401) {
-        throw new Error("Clé API invalide");
-      } else if (response.status === 404) {
-        throw new Error("Base de données non trouvée");
-      } else if (response.status === 403) {
-        throw new Error("Accès refusé - Vérifiez les permissions de la base");
-      } else {
-        throw new Error(`Erreur API Notion: ${response.status}`);
-      }
-    }
-    return response.json();
-  }
-
   async validateCredentials(apiKey, databaseId) {
     try {
       console.log("Validation des identifiants...");
-      const response = await fetch(
-        `${this.API_BASE_URL}/databases/${databaseId}`,
-        {
-          method: "GET",
-          headers: this._getHeaders(apiKey),
-          credentials: "omit",
-        }
-      );
+      const response = await fetch("/config", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ api_key: apiKey, database_id: databaseId }),
+      });
 
-      await this._handleNotionResponse(response);
-      console.log("Validation réussie");
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Erreur de validation");
+      }
+
       return true;
     } catch (error) {
       console.error("Erreur de validation:", error.message);
-      throw error;
+      return false;
     }
   }
 
   async fetchDatabaseContent(apiKey, databaseId) {
     try {
-      console.log("Récupération des données de la base...");
-      const response = await fetch(
-        `${this.API_BASE_URL}/databases/${databaseId}/query`,
-        {
-          method: "POST",
-          headers: this._getHeaders(apiKey),
-          credentials: "omit",
-          body: JSON.stringify({
-            page_size: 12,
-            sorts: [
-              {
-                property: "Date",
-                direction: "descending",
-              },
-            ],
-          }),
-        }
-      );
+      console.log("Récupération des données...");
+      const response = await fetch("/images", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-      const data = await this._handleNotionResponse(response);
-      return this._processNotionResponse(data);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Erreur de récupération des données");
+      }
+
+      const data = await response.json();
+      return this._processImages(data.images);
     } catch (error) {
       console.error("Erreur de récupération:", error);
       throw error;
     }
   }
 
-  _processNotionResponse(response) {
-    try {
-      if (!response.results || !Array.isArray(response.results)) {
-        console.error("Format de réponse invalide:", response);
-        return [];
-      }
-
-      return response.results
-        .map((page) => {
-          const fileProperty = Object.values(page.properties).find(
-            (prop) => prop.type === "files"
-          );
-          const dateProperty = Object.values(page.properties).find(
-            (prop) => prop.type === "date"
-          );
-
-          const imageUrl = fileProperty?.files[0]?.file?.url;
-          const date = dateProperty?.date?.start;
-
-          if (imageUrl && date) {
-            console.log("Page traitée:", { imageUrl, date });
-          }
-
-          return {
-            imageUrl: imageUrl || null,
-            date: date || null,
-            pageId: page.id,
-          };
-        })
-        .filter((item) => item.imageUrl && item.date);
-    } catch (error) {
-      console.error("Erreur lors du traitement des données:", error);
-      return [];
-    }
+  _processImages(images) {
+    return images.map((imageUrl, index) => ({
+      imageUrl,
+      date: new Date(Date.now() - index * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+      pageId: `image-${index}`,
+    }));
   }
 }
