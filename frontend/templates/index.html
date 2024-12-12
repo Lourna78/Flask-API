@@ -1,36 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Instagram Feed Preview</title>
-    <link rel="stylesheet" href="https://widget.artyzan-agency.com/static/style.css?v=1.54" />
+    <title>Instagram Feed Preview - Notion Widget</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-      <div id="widget-setup">
-        <h1>Feed Instagram Preview</h1>
-        <p>Connectez votre base de données Notion :</p>
-        <form id="config-form">
-          <label for="apiKey">Clé API Notion :</label>
-          <input type="password" id="apiKey" placeholder="Entrez votre clé API" required />
-          <label for="databaseId">ID de la base de données :</label>
-          <input type="text" id="databaseId" placeholder="Entrez l'ID de votre base" required />
-          <button id="connect-btn">Connecter</button>
+    <div class="container" id="app">
+      <div id="connection-screen">
+        <h2>Connectez votre base Notion</h2>
+        <form class="connection-form" id="notion-connection-form">
+          <div class="form-group">
+            <label for="api-key">Clé API Notion</label>
+            <input
+              type="text"
+              id="api-key"
+              name="api-key"
+              required
+              placeholder="Votre clé API Notion"
+            />
+          </div>
+          <div class="form-group">
+            <label for="database-id">ID de la base de données</label>
+            <input
+              type="text"
+              id="database-id"
+              name="database-id"
+              required
+              placeholder="Votre Database ID"
+            />
+          </div>
+          <div class="loading" id="loading-message">Connexion en cours...</div>
+          <button type="submit" class="btn">Connecter votre base</button>
+          <div id="error-message" class="error-message"></div>
         </form>
-        <p id="error-msg" style="display: none; color: red;">Erreur : Vérifiez vos informations.</p>
       </div>
 
-      <!-- Zone masquée après enregistrement -->
-      <div id="config-summary" style="display: none">
-        <p>Clé API : <span id="masked-api-key">********</span></p>
-        <p>ID data base : <span id="masked-database-id">********</span></p>
-        <button id="edit-config-btn" class="btn" onclick="editConfig()">
-          Modifier
-        </button>
+      <div id="feed-screen" style="display: none">
+        <div class="instagram-grid" id="instagram-grid">
+          <!-- Les cases du feed seront générées dynamiquement ici -->
+        </div>
+        <button class="btn refresh-btn" id="refresh-btn">Rafraîchir</button>
       </div>
     </div>
-    <script src="https://widget.artyzan-agency.com/static/script.js?v=1.54" defer></script>
+    <script type="module" src="notionClient.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>
-
-
