@@ -3,13 +3,7 @@ export default class NotionClient {
   constructor() {
     this.STORAGE_KEY = "notion_credentials";
     this.API_BASE_URL = "https://api.notion.com/v1";
-    this.PROXY_URL = "https://cors-anywhere.herokuapp.com/";
     this.NOTION_VERSION = "2022-06-28";
-  }
-
-  // Méthode pour construire l'URL avec le proxy
-  _buildProxyUrl(endpoint) {
-    return `${this.PROXY_URL}${this.API_BASE_URL}${endpoint}`;
   }
 
   _encryptCredentials(apiKey, databaseId) {
@@ -38,78 +32,79 @@ export default class NotionClient {
     localStorage.removeItem(this.STORAGE_KEY);
   }
 
-  // Headers pour l'API Notion
   _getHeaders(apiKey) {
     return {
       Authorization: `Bearer ${apiKey}`,
       "Notion-Version": this.NOTION_VERSION,
       "Content-Type": "application/json",
-      "X-Requested-With": "XMLHttpRequest", // Requis pour CORS Anywhere
     };
   }
 
-  // Validation des credentials
+  async _handleNotionResponse(response) {
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Erreur API Notion:", {
+        status: response.status,
+        statusText: response.statusText,
+        details: errorText,
+      });
+
+      if (response.status === 401) {
+        throw new Error("Clé API invalide");
+      } else if (response.status === 404) {
+        throw new Error("Base de données non trouvée");
+      } else if (response.status === 403) {
+        throw new Error("Accès refusé - Vérifiez les permissions de la base");
+      } else {
+        throw new Error(`Erreur API Notion: ${response.status}`);
+      }
+    }
+    return response.json();
+  }
+
   async validateCredentials(apiKey, databaseId) {
     try {
-      const headers = this._getHeaders(apiKey);
-      const proxyUrl = this._buildProxyUrl(`/databases/${databaseId}`);
+      console.log("Validation des identifiants...");
+      const response = await fetch(
+        `${this.API_BASE_URL}/databases/${databaseId}`,
+        {
+          method: "GET",
+          headers: this._getHeaders(apiKey),
+          credentials: "omit",
+        }
+      );
 
-      console.log("Tentative de connexion via proxy:", proxyUrl);
-
-      const response = await fetch(proxyUrl, {
-        method: "GET",
-        headers,
-        mode: "cors",
-      });
-
-      if (!response.ok) {
-        console.error("Erreur API:", response.status, response.statusText);
-        const errorData = await response.text();
-        console.error("Détails de l'erreur:", errorData);
-        return false;
-      }
-
-      const data = await response.json();
-      console.log("Réponse de validation:", data);
+      await this._handleNotionResponse(response);
+      console.log("Validation réussie");
       return true;
     } catch (error) {
-      console.error("Erreur de validation détaillée:", {
-        message: error.message,
-        name: error.name,
-        stack: error.stack,
-      });
-      throw new Error("Erreur de connexion à l'API Notion");
+      console.error("Erreur de validation:", error.message);
+      throw error;
     }
   }
 
-  // Récupération des données
   async fetchDatabaseContent(apiKey, databaseId) {
     try {
-      const headers = this._getHeaders(apiKey);
-      const proxyUrl = this._buildProxyUrl(`/databases/${databaseId}/query`);
+      console.log("Récupération des données de la base...");
+      const response = await fetch(
+        `${this.API_BASE_URL}/databases/${databaseId}/query`,
+        {
+          method: "POST",
+          headers: this._getHeaders(apiKey),
+          credentials: "omit",
+          body: JSON.stringify({
+            page_size: 12,
+            sorts: [
+              {
+                property: "Date",
+                direction: "descending",
+              },
+            ],
+          }),
+        }
+      );
 
-      console.log("Récupération des données via proxy:", proxyUrl);
-
-      const response = await fetch(proxyUrl, {
-        method: "POST",
-        headers,
-        mode: "cors",
-        body: JSON.stringify({
-          page_size: 12,
-          sorts: [
-            {
-              property: "Date",
-              direction: "descending",
-            },
-          ],
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await this._handleNotionResponse(response);
       return this._processNotionResponse(data);
     } catch (error) {
       console.error("Erreur de récupération:", error);
@@ -118,14 +113,14 @@ export default class NotionClient {
   }
 
   _processNotionResponse(response) {
-    if (!response.results || !Array.isArray(response.results)) {
-      console.error("Format de réponse invalide:", response);
-      return [];
-    }
+    try {
+      if (!response.results || !Array.isArray(response.results)) {
+        console.error("Format de réponse invalide:", response);
+        return [];
+      }
 
-    return response.results
-      .map((page) => {
-        try {
+      return response.results
+        .map((page) => {
           const fileProperty = Object.values(page.properties).find(
             (prop) => prop.type === "files"
           );
@@ -136,18 +131,20 @@ export default class NotionClient {
           const imageUrl = fileProperty?.files[0]?.file?.url;
           const date = dateProperty?.date?.start;
 
-          console.log("Traitement de la page:", { imageUrl, date });
+          if (imageUrl && date) {
+            console.log("Page traitée:", { imageUrl, date });
+          }
 
           return {
             imageUrl: imageUrl || null,
             date: date || null,
             pageId: page.id,
           };
-        } catch (error) {
-          console.error("Erreur de traitement de la page:", error);
-          return null;
-        }
-      })
-      .filter((item) => item && item.imageUrl && item.date);
+        })
+        .filter((item) => item.imageUrl && item.date);
+    } catch (error) {
+      console.error("Erreur lors du traitement des données:", error);
+      return [];
+    }
   }
 }
