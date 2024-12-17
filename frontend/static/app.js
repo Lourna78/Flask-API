@@ -12,23 +12,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const refreshBtn = document.getElementById("refresh-btn");
   const loadingMessage = document.getElementById("loading-message");
 
+  // URL par défaut pour l'image placeholder
+  const DEFAULT_IMAGE =
+    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNFNUU3RUIiLz48dGV4dCB4PSI1MCIgeT0iNTAiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZmlsbD0iIzZCN0NCMCI+SW1hZ2U8L3RleHQ+PC9zdmc+";
+
+  let isLoading = false;
+
   const showError = (message) => {
     errorMessage.textContent = message;
     errorMessage.style.display = "block";
   };
 
   const showLoading = () => {
+    isLoading = true;
     loadingMessage.classList.add("active");
     errorMessage.textContent = "";
   };
 
   const hideLoading = () => {
+    isLoading = false;
     loadingMessage.classList.remove("active");
   };
 
   // Gestion de la soumission du formulaire
   connectionForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (isLoading) return;
 
     try {
       showLoading();
@@ -39,24 +48,17 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error("Veuillez remplir tous les champs");
       }
 
-      console.log("Tentative de connexion à Notion...");
       const isValid = await notionClient.validateCredentials(
         apiKey,
         databaseId
       );
-
       if (!isValid) {
-        throw new Error(
-          "Identifiants Notion invalides. Vérifiez votre clé API et l'ID de la base."
-        );
+        throw new Error("Identifiants Notion invalides");
       }
 
-      console.log("Connexion réussie, sauvegarde des credentials...");
       notionClient.saveCredentials(apiKey, databaseId);
-
       connectionScreen.style.display = "none";
       feedScreen.style.display = "block";
-
       await loadInstagramFeed();
     } catch (error) {
       console.error("Erreur de connexion:", error);
@@ -67,26 +69,23 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   async function loadInstagramFeed() {
+    if (isLoading) return;
+
     try {
+      showLoading();
       const credentials = notionClient.getCredentials();
       if (!credentials) {
         throw new Error("Aucun identifiant trouvé");
       }
 
-      showLoading();
-      const { apiKey, databaseId } = credentials;
-      const images = await notionClient.fetchDatabaseContent(
-        apiKey,
-        databaseId
-      );
-
+      const images = await notionClient.fetchDatabaseContent();
       if (!images || images.length === 0) {
-        throw new Error("Aucune image trouvée dans la base de données");
+        throw new Error("Aucune image trouvée");
       }
 
       displayImages(images);
     } catch (error) {
-      console.error("Erreur de chargement du feed:", error);
+      console.error("Erreur de chargement:", error);
       showError(error.message);
 
       if (error.message.includes("401") || error.message.includes("403")) {
@@ -106,46 +105,65 @@ document.addEventListener("DOMContentLoaded", () => {
       const gridItem = document.createElement("div");
       gridItem.classList.add("grid-item");
 
-      const imgElement = document.createElement("img");
-      imgElement.src = image.imageUrl;
-      imgElement.alt = "Feed Instagram";
-      imgElement.onerror = () => {
-        imgElement.src = "placeholder.png"; // Image de remplacement en cas d'erreur
+      const container = document.createElement("div");
+      container.classList.add("image-container");
+
+      const img = document.createElement("img");
+      img.alt = "Feed Instagram";
+      img.loading = "lazy"; // Chargement paresseux
+
+      // Pré-charger l'image pour vérifier si elle est valide
+      const testImg = new Image();
+      testImg.onload = () => {
+        img.src = image.imageUrl;
       };
+      testImg.onerror = () => {
+        img.src = DEFAULT_IMAGE;
+      };
+      testImg.src = image.imageUrl;
 
-      const dateElement = document.createElement("div");
-      dateElement.classList.add("date-badge");
-      dateElement.textContent = formatDate(image.date);
+      const date = document.createElement("div");
+      date.classList.add("date-badge");
+      date.textContent = formatDate(image.date);
 
-      gridItem.appendChild(imgElement);
-      gridItem.appendChild(dateElement);
+      container.appendChild(img);
+      gridItem.appendChild(container);
+      gridItem.appendChild(date);
       instagramGrid.appendChild(gridItem);
     });
 
-    // Ajout des cases vides
-    for (let i = images.length; i < 12; i++) {
-      const emptyGridItem = document.createElement("div");
-      emptyGridItem.classList.add("grid-item");
-      instagramGrid.appendChild(emptyGridItem);
+    // Ajouter des cases vides si nécessaire
+    const remainingSlots = 12 - images.length;
+    for (let i = 0; i < remainingSlots; i++) {
+      const emptyItem = document.createElement("div");
+      emptyItem.classList.add("grid-item", "empty");
+      instagramGrid.appendChild(emptyItem);
     }
   }
 
   function formatDate(dateString) {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString("fr-FR", {
+      if (isNaN(date.getTime())) throw new Error("Date invalide");
+
+      return new Intl.DateTimeFormat("fr-FR", {
         day: "numeric",
         month: "short",
-      });
+      }).format(date);
     } catch {
-      return "Date invalide";
+      return "";
     }
   }
 
-  // Gestion du bouton de rafraîchissement
-  refreshBtn.addEventListener("click", loadInstagramFeed);
+  // Éviter les clics multiples rapides
+  let refreshTimeout;
+  refreshBtn.addEventListener("click", () => {
+    if (isLoading) return;
+    clearTimeout(refreshTimeout);
+    refreshTimeout = setTimeout(loadInstagramFeed, 300);
+  });
 
-  // Vérification initiale des credentials
+  // Chargement initial
   const initialCredentials = notionClient.getCredentials();
   if (initialCredentials) {
     connectionScreen.style.display = "none";
