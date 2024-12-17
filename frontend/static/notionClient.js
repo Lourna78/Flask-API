@@ -2,8 +2,6 @@
 export default class NotionClient {
   constructor() {
     this.STORAGE_KEY = "notion_credentials";
-    // Utilisez l'URL de votre backend Flask au lieu de l'API Notion directement
-    this.API_BASE_URL = ""; // L'URL vide utilisera le même domaine que le frontend
   }
 
   _encryptCredentials(apiKey, databaseId) {
@@ -35,19 +33,25 @@ export default class NotionClient {
   async validateCredentials(apiKey, databaseId) {
     try {
       console.log("Validation des identifiants...");
+      // Utiliser le endpoint de votre backend au lieu de l'API Notion directement
       const response = await fetch("/config", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ api_key: apiKey, database_id: databaseId }),
+        body: JSON.stringify({
+          api_key: apiKey,
+          database_id: databaseId,
+        }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Erreur de validation");
+        throw new Error(data.error || "Erreur de validation des identifiants");
       }
 
+      console.log("Validation réussie");
       return true;
     } catch (error) {
       console.error("Erreur de validation:", error.message);
@@ -58,6 +62,7 @@ export default class NotionClient {
   async fetchDatabaseContent(apiKey, databaseId) {
     try {
       console.log("Récupération des données...");
+      // Utiliser le endpoint de votre backend pour récupérer les images
       const response = await fetch("/images", {
         method: "GET",
         headers: {
@@ -65,12 +70,12 @@ export default class NotionClient {
         },
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Erreur de récupération des données");
+        throw new Error(data.error || "Erreur de récupération des données");
       }
 
-      const data = await response.json();
       return this._processImages(data.images);
     } catch (error) {
       console.error("Erreur de récupération:", error);
@@ -79,12 +84,19 @@ export default class NotionClient {
   }
 
   _processImages(images) {
-    return images.map((imageUrl, index) => ({
-      imageUrl,
-      date: new Date(Date.now() - index * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0],
-      pageId: `image-${index}`,
-    }));
+    if (!Array.isArray(images)) {
+      console.error("Format de données invalide:", images);
+      return [];
+    }
+
+    return images
+      .map((imageData, index) => {
+        return {
+          imageUrl: imageData.url,
+          date: imageData.date,
+          pageId: `image-${index}`,
+        };
+      })
+      .filter((item) => item.imageUrl && item.date);
   }
 }
