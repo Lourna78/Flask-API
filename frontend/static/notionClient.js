@@ -2,7 +2,7 @@
 export default class NotionClient {
   constructor() {
     this.STORAGE_KEY = "notion_credentials";
-    // Vérifier et nettoyer le localStorage au démarrage
+    this.BASE_URL = window.location.origin; // URL de base dynamique
     this.clearInvalidCredentials();
   }
 
@@ -32,11 +32,13 @@ export default class NotionClient {
     }
     const encrypted = this._encryptCredentials(apiKey, databaseId);
     try {
-      localStorage.clear(); // Nettoyer d'abord tout le localStorage
+      localStorage.clear();
       localStorage.setItem(this.STORAGE_KEY, encrypted);
       console.log("Credentials sauvegardés avec succès");
+      return true;
     } catch (e) {
       console.error("Erreur lors de la sauvegarde des credentials:", e);
+      return false;
     }
   }
 
@@ -87,7 +89,7 @@ export default class NotionClient {
       const data = await response.json();
 
       if (!response.ok) {
-        this.clearCredentials(); // Nettoyer en cas d'erreur
+        const data = await response.json();
         throw new Error(data.error || "Erreur de validation");
       }
 
@@ -110,24 +112,23 @@ export default class NotionClient {
         );
       }
 
-      const response = await fetch("/images", {
+      const response = await fetch(`${this.BASE_URL}/images`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${credentials.apiKey}`,
         },
-        cache: "no-store", // Désactiver le cache
+        cache: "no-store",
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Erreur de récupération des données");
+        throw new Error("Erreur lors de la récupération des données");
       }
 
       const data = await response.json();
       return this._processImages(data.images);
     } catch (error) {
       console.error("Erreur de récupération:", error);
-      // Si l'erreur est liée aux credentials, les nettoyer
       if (error.message.includes("Configuration utilisateur manquante")) {
         this.clearCredentials();
       }

@@ -87,44 +87,36 @@ def save_config():
 
 
 
-# Endpoint pour récupérer les images avec pagination
+# Endpoint pour récupérer les images
 @app.route('/images', methods=['GET'])
 def get_images():
     try:
-        # Récupérer les paramètres utilisateur
+        # Récupérer les paramètres utilisateur depuis la configuration globale
         api_key = user_config.get("api_key")
         database_id = user_config.get("database_id")
+
+        # Log pour débug
+        print("Configuration actuelle:", {
+            "api_key": "***" if api_key else None,
+            "database_id": database_id
+        })
+
         if not api_key or not database_id:
-            print("Configuration utilisateur manquante.")
-            return jsonify({"error": "Configuration utilisateur manquante. Veuillez sauvegarder vos paramètres."}), 400
+            return jsonify({
+                "error": "Configuration utilisateur manquante. Veuillez sauvegarder vos paramètres."
+            }), 400
 
-        # Récupère les paramètres de pagination
-        page = int(request.args.get('page', 1))  # Page actuelle (par défaut : 1)
-        limit = int(request.args.get('limit', 12))  # Nombre d'images par page (par défaut : 12)
-        print(f"Requête reçue - Page: {page}, Limit: {limit}")
+        # Récupérer les images
+        images = fetch_image_urls(api_key, database_id)
+        
+        if isinstance(images, dict) and "error" in images:
+            return jsonify({"error": images["error"]}), 500
 
-        # Utiliser la fonction fetch_image_urls avec les clés dynamiques
-        image_urls = fetch_image_urls(api_key, database_id)
-
-        if isinstance(image_urls, dict) and "error" in image_urls:
-            print("Erreur lors de la récupération des images :", image_urls["error"])
-            return jsonify({"error": image_urls["error"]}), 500
-
-        # Trier par date descendante
-        image_urls.sort(key=lambda x: x.get('date', ""), reverse=True)
-
-        # Calcul pour la pagination
-        start = (page - 1) * limit
-        end = start + limit
-        paginated_images = image_urls[start:end]
-
-        print(f"Images renvoyées pour la page {page} :", paginated_images)
-
+        print(f"Images récupérées: {len(images)}")
+        
         return jsonify({
-            "images": [image["url"] for image in paginated_images],
-            "total": len(image_urls),  # Nombre total d'images
-            "page": page,
-            "pages": (len(image_urls) + limit - 1) // limit  # Nombre total de pages
+            "images": images,
+            "total": len(images)
         })
 
     except Exception as e:
