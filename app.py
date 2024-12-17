@@ -13,7 +13,7 @@ app = Flask(
 # Améliorons la configuration CORS pour être plus spécifique
 CORS(app, resources={
     r"/*": {
-        "origins": "*",
+        "origins": ["https://widget.artyzan-agency.com"],  # Remplace * par ton sous-dom
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"]
     }

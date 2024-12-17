@@ -67,15 +67,17 @@ export default class NotionClient {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${credentials.apiKey}`,
         },
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || "Erreur de récupération des données");
+        const error = await response.json();
+        throw new Error(error.error || "Erreur de récupération des données");
       }
 
+      const data = await response.json();
+      console.log("Données reçues:", data);
       return this._processImages(data.images);
     } catch (error) {
       console.error("Erreur de récupération:", error);
@@ -90,13 +92,11 @@ export default class NotionClient {
     }
 
     return images
-      .map((imageData, index) => {
-        return {
-          imageUrl: imageData.url,
-          date: imageData.date,
-          pageId: `image-${index}`,
-        };
-      })
-      .filter((item) => item.imageUrl && item.date);
+      .map((imageUrl, index) => ({
+        imageUrl,
+        date: new Date().toISOString().split("T")[0], // Fallback date
+        pageId: `image-${index}`,
+      }))
+      .filter((item) => item.imageUrl);
   }
 }
