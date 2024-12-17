@@ -2,6 +2,15 @@
 export default class NotionClient {
   constructor() {
     this.STORAGE_KEY = "notion_credentials";
+    // Vérifier et nettoyer le localStorage au démarrage
+    this.clearInvalidCredentials();
+  }
+
+  clearInvalidCredentials() {
+    const credentials = this.getCredentials();
+    if (credentials && (!credentials.apiKey || !credentials.databaseId)) {
+      this.clearCredentials();
+    }
   }
 
   _encryptCredentials(apiKey, databaseId) {
@@ -17,17 +26,47 @@ export default class NotionClient {
   }
 
   saveCredentials(apiKey, databaseId) {
+    if (!apiKey || !databaseId) {
+      this.clearCredentials();
+      throw new Error("API Key et Database ID sont requis");
+    }
     const encrypted = this._encryptCredentials(apiKey, databaseId);
-    localStorage.setItem(this.STORAGE_KEY, encrypted);
+    try {
+      localStorage.clear(); // Nettoyer d'abord tout le localStorage
+      localStorage.setItem(this.STORAGE_KEY, encrypted);
+      console.log("Credentials sauvegardés avec succès");
+    } catch (e) {
+      console.error("Erreur lors de la sauvegarde des credentials:", e);
+    }
   }
 
   getCredentials() {
-    const encrypted = localStorage.getItem(this.STORAGE_KEY);
-    return encrypted ? this._decryptCredentials(encrypted) : null;
+    try {
+      const encrypted = localStorage.getItem(this.STORAGE_KEY);
+      if (!encrypted) {
+        console.log("Aucun credential trouvé");
+        return null;
+      }
+      const credentials = this._decryptCredentials(encrypted);
+      if (!credentials || !credentials.apiKey || !credentials.databaseId) {
+        console.log("Credentials invalides ou incomplets");
+        this.clearCredentials();
+        return null;
+      }
+      return credentials;
+    } catch (e) {
+      console.error("Erreur lors de la récupération des credentials:", e);
+      return null;
+    }
   }
 
   clearCredentials() {
-    localStorage.removeItem(this.STORAGE_KEY);
+    try {
+      localStorage.clear();
+      console.log("Credentials effacés avec succès");
+    } catch (e) {
+      console.error("Erreur lors de la suppression des credentials:", e);
+    }
   }
 
   async validateCredentials(apiKey, databaseId) {
@@ -48,39 +87,50 @@ export default class NotionClient {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Erreur de validation des identifiants");
+        this.clearCredentials(); // Nettoyer en cas d'erreur
+        throw new Error(data.error || "Erreur de validation");
       }
 
-      console.log("Validation réussie");
       return true;
     } catch (error) {
-      console.error("Erreur de validation:", error.message);
-      return false;
+      console.error("Erreur de validation:", error);
+      this.clearCredentials();
+      throw error;
     }
   }
 
   async fetchDatabaseContent(apiKey, databaseId) {
     try {
       console.log("Récupération des données...");
-      // Utiliser le endpoint de votre backend pour récupérer les images
+      const credentials = this.getCredentials();
+
+      if (!credentials) {
+        throw new Error(
+          "Configuration utilisateur manquante. Veuillez vous reconnecter."
+        );
+      }
+
       const response = await fetch("/images", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${credentials.apiKey}`,
         },
+        cache: "no-store", // Désactiver le cache
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Erreur de récupération des données");
+        const data = await response.json();
+        throw new Error(data.error || "Erreur de récupération des données");
       }
 
       const data = await response.json();
-      console.log("Données reçues:", data);
       return this._processImages(data.images);
     } catch (error) {
       console.error("Erreur de récupération:", error);
+      // Si l'erreur est liée aux credentials, les nettoyer
+      if (error.message.includes("Configuration utilisateur manquante")) {
+        this.clearCredentials();
+      }
       throw error;
     }
   }
