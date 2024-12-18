@@ -140,24 +140,35 @@ export default class NotionClient {
 
     return images
       .map((image, index) => {
-        // Log pour déboguer la structure des données
         console.log("Traitement de l'image:", image);
 
-        let imageUrl;
-        if (typeof image === "string") {
-          imageUrl = image;
-        } else if (image.url) {
-          imageUrl = image.url;
-        } else if (image.file && image.file.url) {
-          imageUrl = image.file.url;
-        } else {
-          console.error("Format d'image non valide:", image);
+        // Validation et extraction de l'URL
+        if (!image.url) {
+          console.error("URL manquante pour l'image:", image);
           return null;
         }
 
+        // Validation et formatage de la date
+        let formattedDate = null;
+        if (image.date) {
+          try {
+            const date = new Date(image.date);
+            if (!isNaN(date.getTime())) {
+              formattedDate = date.toISOString().split("T")[0];
+            }
+          } catch (e) {
+            console.error("Erreur de formatage de date:", e);
+          }
+        }
+
+        // Si pas de date valide, utiliser la date actuelle
+        if (!formattedDate) {
+          formattedDate = new Date().toISOString().split("T")[0];
+        }
+
         return {
-          imageUrl,
-          date: image.date || new Date().toISOString().split("T")[0],
+          imageUrl: image.url,
+          date: formattedDate,
           pageId: image.id || `image-${index}`,
         };
       })

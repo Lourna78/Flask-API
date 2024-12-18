@@ -143,14 +143,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function formatDate(dateString) {
     try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) throw new Error("Date invalide");
+      if (!dateString) return "";
 
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        console.error("Date invalide:", dateString);
+        return "";
+      }
+
+      // Formatage personnalisé pour correspondre à "5 nov" ou "Nov 5"
       return new Intl.DateTimeFormat("fr-FR", {
         day: "numeric",
         month: "short",
-      }).format(date);
-    } catch {
+      })
+        .format(date)
+        .replace(".", ""); // Supprime le point après l'abréviation du mois
+    } catch (e) {
+      console.error("Erreur de formatage de date:", e);
       return "";
     }
   }

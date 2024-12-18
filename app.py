@@ -33,45 +33,68 @@ def fetch_image_urls(api_key, database_id):
         "Notion-Version": "2022-06-28",
     }
     notion_url = f"https://api.notion.com/v1/databases/{database_id}/query"
-
+    
     try:
-        print(f"Requête envoyée : {notion_url}")
-        response = requests.post(notion_url, headers=headers)
-        print("Status code:", response.status_code)
+        body = {
+            "sorts": [{
+                "property": "Date",
+                "direction": "descending"
+            }],
+            "page_size": 12
+        }
+        
+        response = requests.post(notion_url, headers=headers, json=body)
         
         if not response.ok:
-            print("Erreur Notion:", response.text)
-            return {"error": f"Erreur Notion: {response.status_code}"}
-        
-        data = response.json()
-        results = data.get("results", [])
-
+            print(f"Erreur Notion API: {response.status_code}")
+            print(f"Réponse: {response.text}")
+            return {"error": f"Erreur API Notion ({response.status_code})"}
+            
         data = response.json()
         results = data.get("results", [])
         
         image_urls = []
         for page in results:
             try:
-                files = page.get("properties", {}).get("Fichiers et médias", {}).get("files", [])
-                date = page.get("properties", {}).get("Date", {}).get("date", {}).get("start", "")
+                # Extraction de la date
+                date_property = page.get("properties", {}).get("Date", {})
+                date = date_property.get("date", {})
+                if date:
+                    date = date.get("start", "")
+                
+                # Extraction des fichiers médias
+                files_property = page.get("properties", {}).get("Fichiers et médias", {})
+                files = files_property.get("files", [])
                 
                 for file in files:
-                    if file.get("type") in ["file", "external"]:
-                        url = file.get("file", {}).get("url") or file.get("external", {}).get("url")
-                        if url:
-                            image_urls.append({
-                                "url": url,
-                                "date": date,
-                                "id": page.get("id", "")
-                            })
+                    if not file:
+                        continue
+                        
+                    file_type = file.get("type")
+                    if file_type == "file":
+                        url = file.get("file", {}).get("url")
+                    elif file_type == "external":
+                        url = file.get("external", {}).get("url")
+                    else:
+                        continue
+                        
+                    if url and date:
+                        image_urls.append({
+                            "url": url,
+                            "date": date,
+                            "id": page.get("id", "")
+                        })
+                        print(f"Image ajoutée: URL={url}, Date={date}")
+                        
             except Exception as e:
                 print(f"Erreur lors du traitement d'une page: {str(e)}")
                 continue
 
+        print(f"Total images trouvées: {len(image_urls)}")
         return image_urls
 
     except Exception as e:
-        print("Erreur lors de la requête:", str(e))
+        print(f"Erreur lors de la requête Notion: {str(e)}")
         return {"error": str(e)}
 
 @app.before_request
