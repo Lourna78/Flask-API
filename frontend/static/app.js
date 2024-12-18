@@ -99,63 +99,62 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function displayImages(images) {
-    console.log("Images reçues pour affichage:", images); // Log pour débug
     instagramGrid.innerHTML = "";
 
-    images.forEach((image, index) => {
-      // Vérifier que nous avons une URL valide
-      const imageUrl =
-        typeof image.imageUrl === "string" ? image.imageUrl : null;
-      if (!imageUrl) {
-        console.error("URL d'image manquante ou invalide:", image);
-        return;
-      }
+    if (!Array.isArray(images) || images.length === 0) {
+      // Message d'information si pas d'images
+      const emptyMessage = document.createElement("div");
+      emptyMessage.className = "empty-message";
+      emptyMessage.textContent = "Aucune image trouvée dans la base de données";
+      instagramGrid.appendChild(emptyMessage);
+      return;
+    }
 
+    // Affichage des images
+    images.forEach((image) => {
       const gridItem = document.createElement("div");
-      gridItem.classList.add("grid-item");
+      gridItem.className = "grid-item";
 
-      const imgContainer = document.createElement("div");
-      imgContainer.classList.add("image-container");
+      if (image.imageUrl) {
+        const imgContainer = document.createElement("div");
+        imgContainer.className = "image-container";
 
-      const imgElement = document.createElement("img");
-      imgElement.alt = "Feed Instagram";
-      imgElement.loading = "lazy";
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.alt = "Preview Instagram";
 
-      // Préchargement de l'image
-      const preloadImg = new Image();
-      preloadImg.onload = () => {
-        imgElement.src = imageUrl;
-        imgContainer.classList.add("loaded");
-      };
-      preloadImg.onerror = () => {
-        console.error("Erreur de chargement de l'image:", imageUrl);
-        imgContainer.classList.add("error");
-        // Utiliser une image par défaut en cas d'erreur
-        imgElement.src = `data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100' height='100' fill='%23f3f4f6'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='14' fill='%236b7280' text-anchor='middle' alignment-baseline='middle'%3EImage%3C/text%3E%3C/svg%3E`;
-      };
+        // Préchargement de l'image
+        const preloadImg = new Image();
+        preloadImg.onload = () => {
+          img.src = image.imageUrl;
+          imgContainer.classList.add("loaded");
+        };
+        preloadImg.onerror = () => {
+          imgContainer.classList.add("error");
+        };
+        preloadImg.src = image.imageUrl;
 
-      try {
-        preloadImg.src = imageUrl;
-      } catch (e) {
-        console.error("Erreur avec l'URL de l'image:", e);
+        // Badge de date
+        const dateElement = document.createElement("div");
+        dateElement.className = "date-badge";
+        dateElement.textContent = formatDate(image.date);
+
+        imgContainer.appendChild(img);
+        gridItem.appendChild(imgContainer);
+        gridItem.appendChild(dateElement);
+      } else {
+        // Placeholder pour les cases vides
+        gridItem.classList.add("empty");
       }
 
-      const dateElement = document.createElement("div");
-      dateElement.classList.add("date-badge");
-      const formattedDate = formatDate(image.date);
-      dateElement.textContent = formattedDate || "Date non disponible";
-
-      imgContainer.appendChild(imgElement);
-      gridItem.appendChild(imgContainer);
-      gridItem.appendChild(dateElement);
       instagramGrid.appendChild(gridItem);
     });
 
-    // Ajouter les cases vides
+    // Ajouter des cases vides pour compléter la grille 3x4
     const remainingSlots = 12 - images.length;
     for (let i = 0; i < remainingSlots; i++) {
       const emptyItem = document.createElement("div");
-      emptyItem.classList.add("grid-item", "empty");
+      emptyItem.className = "grid-item empty";
       instagramGrid.appendChild(emptyItem);
     }
   }

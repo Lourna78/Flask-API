@@ -27,6 +27,7 @@ user_config = {
 
 # Fonction pour récupérer les images et leurs dates depuis Notion
 def fetch_image_urls(api_key, database_id):
+    # Headers pour l'API Notion
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
@@ -39,73 +40,48 @@ def fetch_image_urls(api_key, database_id):
         body = {
             "sorts": [{
                 "property": "Date",
-                "direction": "descending"
+                "direction": "descending"  # Tri par date décroissante
             }],
-            "page_size": 12
+            "page_size": 12  # Limite à 12 images pour la grille 3x4
         }
 
-        print(f"Envoi requête à Notion: {notion_url}")
         response = requests.post(notion_url, headers=headers, json=body)
         
         if not response.ok:
-            print(f"Erreur Notion: {response.status_code}")
-            print(f"Réponse: {response.text}")
-            return {"error": f"Erreur Notion: {response.status_code}"}
+            print(f"Erreur Notion {response.status_code}:", response.text)
+            return {"error": f"Impossible de se connecter à cette base. Vérifiez vos identifiants ou consultez le guide."}
 
         data = response.json()
         results = data.get("results", [])
-        
-        print(f"Nombre de résultats reçus: {len(results)}")
-        
-        image_urls = []
+
+        print("Nombre de résultats reçus:", len(results))  # Debug log
+
+        formatted_images = []
         for page in results:
-            try:
-                # Récupération de la propriété "Fichiers et médias"
-                files_property = page.get("properties", {}).get("Fichiers et médias", {})
-                
-                # Log pour debug
-                print(f"Propriété fichiers trouvée: {files_property}")
-                
-                # Récupération des fichiers
-                files = files_property.get("files", [])
-                
-                # Récupération de la date
-                date_property = page.get("properties", {}).get("Date", {})
-                date = date_property.get("date", {}).get("start") if date_property else None
-                
-                print(f"Date trouvée: {date}")
+            # Récupération de la propriété "Fichiers et médias"
+            media_files = page.get("properties", {}).get("Fichiers et médias", {}).get("files", [])
+            date = page.get("properties", {}).get("Date", {}).get("date", {}).get("start")
 
-                # Traitement de chaque fichier
-                for file in files:
-                    if not file:
-                        continue
-                    
-                    # Gestion des deux types possibles : fichier uploadé ou externe
-                    file_url = None
-                    if file.get("type") == "file":
-                        file_url = file.get("file", {}).get("url")
-                    elif file.get("type") == "external":
-                        file_url = file.get("external", {}).get("url")
-                    
-                    if file_url and date:
-                        image_data = {
-                            "imageUrl": file_url,  # Changé de "url" à "imageUrl"
-                            "date": date
-                        }
-                        image_urls.append(image_data)
-                        print(f"Image ajoutée: {image_data}")
-                        print(f"Image URL ajoutée : {file_url}, Date : {date}")
+            for file in media_files:
+                if file.get("type") == "file":
+                    url = file.get("file", {}).get("url")
+                elif file.get("type") == "external":
+                    url = file.get("external", {}).get("url")
+                else:
+                    continue
 
-            except Exception as e:
-                print(f"Erreur traitement page: {str(e)}")
-                continue
+                if url and date:
+                    formatted_images.append({
+                        "imageUrl": url,
+                        "date": date
+                    })
+                    print(f"Image ajoutée - URL: {url}, Date: {date}")  # Debug log
 
-        print(f"Total images traitées: {len(image_urls)}")
-        return image_urls
+        return formatted_images
 
     except Exception as e:
-        print(f"Erreur générale: {str(e)}")
-        return {"error": str(e)}
+        print("Erreur lors de la récupération:", str(e))
+        return {"error": "Impossible de récupérer les données. Veuillez réessayer."}
 
 @app.before_request
 def log_request_info():

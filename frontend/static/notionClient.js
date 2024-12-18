@@ -15,6 +15,7 @@ export default class NotionClient {
     }
   }
 
+  // Stockage sécurisé des credentials
   _encryptCredentials(apiKey, databaseId) {
     return btoa(JSON.stringify({ apiKey, databaseId }));
   }
@@ -62,7 +63,8 @@ export default class NotionClient {
   clearCredentials() {
     localStorage.removeItem(this.STORAGE_KEY);
   }
-
+  
+  // Validation des credentials avec l'API
   async validateCredentials(apiKey, databaseId) {
     try {
       console.log("Validation des identifiants...");
