@@ -64,20 +64,25 @@ export default class NotionClient {
   // Validation des credentials avec l'API
   async validateCredentials(apiKey, databaseId) {
     try {
-      console.log("Validation des identifiants...");
+      console.log("Tentative de validation avec:", {
+        apiKey: "***" + apiKey.slice(-4),
+        databaseId
+    });
+
       // Utiliser le endpoint de votre backend au lieu de l'API Notion directement
-      const response = await fetch("/config", {
-        method: "POST",
+      const response = await fetch(`${this.BASE_URL}/config`, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          api_key: apiKey,
-          database_id: databaseId,
-        }),
+            api_key: apiKey,
+            database_id: databaseId
+        })
       });
 
       const data = await response.json();
+      console.log("Réponse de validation:", data);
 
       if (!response.ok) {
         throw new Error(data.error || "Erreur de validation");
@@ -85,9 +90,8 @@ export default class NotionClient {
 
       return true;
     } catch (error) {
-      console.error("Erreur de validation:", error);
-      this.clearCredentials();
-      throw error;
+        console.error("Erreur de validation:", error);
+        throw error;
     }
   }
 

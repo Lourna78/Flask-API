@@ -90,24 +90,59 @@ def log_request_info():
 # Endpoint pour sauvegarder la configuration utilisateur
 @app.route('/config', methods=['POST'])
 def save_config():
-    global user_config
     try:
-        data = request.json
-        user_config["api_key"] = data.get("api_key").strip()  # Supprime les espaces éventuels
-        user_config["database_id"] = data.get("database_id").strip()
-
-        print(f"Configuration utilisateur mise à jour : {user_config}")
-
-        # Test immédiat de la configuration
-        test_result = fetch_image_urls(user_config["api_key"], user_config["database_id"])
-        if "error" in test_result:
-            print(f"Erreur lors du test de connexion : {test_result['error']}")
-            return jsonify({"error": "Configuration incorrecte : " + test_result["error"]}), 400
+        # Log pour débug
+        print("Données reçues:", request.json)
         
-        return jsonify({"message": "Configuration sauvegardée avec succès"}), 200
+        data = request.json
+        if not data:
+            return jsonify({
+                "error": "Données manquantes"
+            }), 400
+
+        api_key = data.get("api_key")
+        database_id = data.get("database_id")
+
+        if not api_key or not database_id:
+            return jsonify({
+                "error": "Clé API et ID de base de données requis"
+            }), 400
+
+        # Test immédiat de la configuration avec l'API Notion
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Notion-Version": "2022-06-28",
+            "Content-Type": "application/json"
+        }
+
+        # Tester l'accès à la base de données
+        test_url = f"https://api.notion.com/v1/databases/{database_id}"
+        response = requests.get(test_url, headers=headers)
+        
+        print("Réponse Notion:", response.status_code)
+        print("Contenu:", response.text)
+
+        if not response.ok:
+            return jsonify({
+                "error": f"Erreur de connexion à Notion: {response.status_code}"
+            }), 400
+
+        # Si tout va bien, sauvegarder la configuration
+        global user_config
+        user_config = {
+            "api_key": api_key,
+            "database_id": database_id
+        }
+
+        return jsonify({
+            "message": "Configuration sauvegardée avec succès"
+        }), 200
+
     except Exception as e:
-        print("Erreur lors de la sauvegarde de la configuration :", e)
-        return jsonify({"error": str(e)}), 500
+        print("Erreur lors de la configuration:", str(e))
+        return jsonify({
+            "error": str(e)
+        }), 500
 
 
 
