@@ -101,7 +101,7 @@ export default class NotionClient {
         throw new Error("Configuration manquante");
       }
 
-      const response = await fetch(`${this.BASE_URL}/images`, {
+      const response = await fetch("https://widget.artyzan-agency.com/images", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -144,11 +144,18 @@ export default class NotionClient {
           return null;
         }
 
-        // Vérification et extraction de l'URL
+        // Vérification et extraction de l'URLconsole.log("Données reçues depuis l'API :", images);
+        console.log("Données reçues depuis l'API :", images);
         const imageUrl = image.imageUrl || image.url;
+        console.log("Vérification URL :", imageUrl, "Objet complet :", image);
         if (!imageUrl || typeof imageUrl !== "string") {
           console.error("URL invalide pour l'image:", image);
           return null;
+        }
+
+        if (!formattedDate) {
+          formattedDate = new Date().toISOString().split("T")[0];
+          console.warn("Date invalide détectée pour l'image :", image);
         }
 
         // Validation et formatage de la date

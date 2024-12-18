@@ -94,6 +94,7 @@ def fetch_image_urls(api_key, database_id):
                         }
                         image_urls.append(image_data)
                         print(f"Image ajoutée: {image_data}")
+                        print(f"Image URL ajoutée : {file_url}, Date : {date}")
 
             except Exception as e:
                 print(f"Erreur traitement page: {str(e)}")

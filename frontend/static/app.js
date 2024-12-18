@@ -104,9 +104,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     images.forEach((image, index) => {
       // Vérifier que nous avons une URL valide
-      const imageUrl = image.imageUrl;
-      if (!imageUrl || typeof imageUrl !== "string") {
-        console.error("URL d'image invalide:", image);
+      const imageUrl =
+        typeof image.imageUrl === "string" ? image.imageUrl : null;
+      if (!imageUrl) {
+        console.error("URL d'image manquante ou invalide:", image);
         return;
       }
 
