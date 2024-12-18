@@ -93,7 +93,7 @@ export default class NotionClient {
         console.error("Erreur de validation:", error);
         throw error;
     }
-  }
+}
 
   async fetchDatabaseContent() {
     try {
@@ -156,11 +156,6 @@ export default class NotionClient {
           return null;
         }
 
-        if (!formattedDate) {
-          formattedDate = new Date().toISOString().split("T")[0];
-          console.warn("Date invalide détectée pour l'image :", image);
-        }
-
         // Validation et formatage de la date
         let formattedDate = null;
         try {
@@ -177,6 +172,7 @@ export default class NotionClient {
         // Si pas de date valide, utiliser la date actuelle
         if (!formattedDate) {
           formattedDate = new Date().toISOString().split("T")[0];
+          console.warn("Date invalide détectée pour l'image :", image);
         }
 
         return {
