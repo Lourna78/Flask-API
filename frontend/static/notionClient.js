@@ -147,17 +147,10 @@ export default class NotionClient {
           return null;
         }
 
-        // Vérification et extraction de l'URLconsole.log("Données reçues depuis l'API :", images);
-        console.log("Données reçues depuis l'API :", images);
-        const imageUrl = image.imageUrl || image.url;
-        console.log("Vérification URL :", imageUrl, "Objet complet :", image);
-        if (!imageUrl || typeof imageUrl !== "string") {
-          console.error("URL invalide pour l'image:", image);
-          return null;
-        }
-
         // Validation et formatage de la date
         let formattedDate = null;
+
+        // Extraction et formatage de la date
         try {
           if (image.date) {
             const date = new Date(image.date);
@@ -173,6 +166,15 @@ export default class NotionClient {
         if (!formattedDate) {
           formattedDate = new Date().toISOString().split("T")[0];
           console.warn("Date invalide détectée pour l'image :", image);
+        }
+
+        // Vérification et extraction de l'URL
+        console.log("Données reçues depuis l'API :", images);
+        const imageUrl = image.imageUrl || image.url;
+        console.log("Vérification URL :", imageUrl, "Objet complet :", image);
+        if (!imageUrl || typeof imageUrl !== "string") {
+          console.error("URL invalide pour l'image:", image);
+          return null;
         }
 
         return {
