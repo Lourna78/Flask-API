@@ -59,6 +59,8 @@ def fetch_image_urls(api_key, database_id):
         images = []
         for page in results:
             try:
+                # Log pour voir les détails de la page
+                print(f"Page traitée: {page}")
                 files = page.get("properties", {}).get("Fichiers et médias", {}).get("files", [])
                 date = page.get("properties", {}).get("Date", {}).get("date", {}).get("start")
 
@@ -69,9 +71,15 @@ def fetch_image_urls(api_key, database_id):
                     elif file.get("type") == "external":
                         url = file.get("external", {}).get("url")
 
-                    if url:
+                    # Log pour voir l'URL et la date
+                    print(f"URL d'image: {url}, Date: {date}")
+
+                    if url and date:
+                             # Log chaque image pour debug
+                        print(f"URL d'image: {url}, Date: {date}, ID: {page.get('id')}")
+        
                         images.append({
-                            "url": url,  # Sera converti en imageUrl plus tard
+                            "url": url,
                             "date": date,
                             "id": page.get("id")
                         })
@@ -158,6 +166,8 @@ def get_images():
             "database_id": user_config.get("database_id")
         })
 
+        print(f"JSON final envoyé au frontend: {result}")
+
         # Vérifier les paramètres utilisateur
         api_key = user_config.get("api_key")
         database_id = user_config.get("database_id")
@@ -189,10 +199,13 @@ def get_images():
 
         print(f"Nombre d'images formatées: {len(formatted_images)}")
 
-        return jsonify({
+        # Structure finale pour le frontend
+        result = {
             "images": formatted_images,
             "total": len(formatted_images)
-        }), 200
+        }
+
+        return jsonify(result), 200
 
     except Exception as e:
         print(f"Erreur dans /images: {str(e)}")
