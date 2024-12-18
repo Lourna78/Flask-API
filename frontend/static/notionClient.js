@@ -139,11 +139,28 @@ export default class NotionClient {
     }
 
     return images
-      .map((image) => ({
-        imageUrl: image.url || image,
-        date: image.date || new Date().toISOString().split("T")[0],
-        pageId: image.id || `image-${Math.random().toString(36).substring(7)}`,
-      }))
-      .filter((item) => item.imageUrl);
+      .map((image, index) => {
+        // Log pour déboguer la structure des données
+        console.log("Traitement de l'image:", image);
+
+        let imageUrl;
+        if (typeof image === "string") {
+          imageUrl = image;
+        } else if (image.url) {
+          imageUrl = image.url;
+        } else if (image.file && image.file.url) {
+          imageUrl = image.file.url;
+        } else {
+          console.error("Format d'image non valide:", image);
+          return null;
+        }
+
+        return {
+          imageUrl,
+          date: image.date || new Date().toISOString().split("T")[0],
+          pageId: image.id || `image-${index}`,
+        };
+      })
+      .filter((item) => item && item.imageUrl);
   }
 }

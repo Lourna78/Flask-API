@@ -37,27 +37,42 @@ def fetch_image_urls(api_key, database_id):
     try:
         print(f"Requête envoyée : {notion_url}")
         response = requests.post(notion_url, headers=headers)
-        print("Réponse de Notion :", response.status_code, response.text)  # Ajout pour débogage
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        print("Erreur lors de la requête vers l'API Notion :", e)
+        print("Status code:", response.status_code)
+        
+        if not response.ok:
+            print("Erreur Notion:", response.text)
+            return {"error": f"Erreur Notion: {response.status_code}"}
+        
+        data = response.json()
+        results = data.get("results", [])
+
+        data = response.json()
+        results = data.get("results", [])
+        
+        image_urls = []
+        for page in results:
+            try:
+                files = page.get("properties", {}).get("Fichiers et médias", {}).get("files", [])
+                date = page.get("properties", {}).get("Date", {}).get("date", {}).get("start", "")
+                
+                for file in files:
+                    if file.get("type") in ["file", "external"]:
+                        url = file.get("file", {}).get("url") or file.get("external", {}).get("url")
+                        if url:
+                            image_urls.append({
+                                "url": url,
+                                "date": date,
+                                "id": page.get("id", "")
+                            })
+            except Exception as e:
+                print(f"Erreur lors du traitement d'une page: {str(e)}")
+                continue
+
+        return image_urls
+
+    except Exception as e:
+        print("Erreur lors de la requête:", str(e))
         return {"error": str(e)}
-
-    data = response.json()
-    results = data.get("results", [])
-
-    image_urls = []
-    for page in results:
-        print("Page reçue :", page)
-        files = page.get("properties", {}).get("Fichiers et médias", {}).get("files", [])
-        for file in files:
-            if file["type"] in ["file", "external"]:
-                url = file["file"]["url"] if file["type"] == "file" else file["external"]["url"]
-                date = page.get("properties", {}).get("Date", {}).get("date", {}).get("start", "Inconnue")
-                image_urls.append({"url": url, "date": date})
-
-    print("Images récupérées :", image_urls)
-    return image_urls
 
 @app.before_request
 def log_request_info():
