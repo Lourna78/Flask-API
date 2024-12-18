@@ -28,13 +28,11 @@ export default class NotionClient {
   saveCredentials(apiKey, databaseId) {
     if (!apiKey || !databaseId) {
       this.clearCredentials();
-      throw new Error("API Key et Database ID sont requis");
+      return false;
     }
-    const encrypted = this._encryptCredentials(apiKey, databaseId);
     try {
-      localStorage.clear();
+      const encrypted = this._encryptCredentials(apiKey, databaseId);
       localStorage.setItem(this.STORAGE_KEY, encrypted);
-      console.log("Credentials sauvegardés avec succès");
       return true;
     } catch (e) {
       console.error("Erreur lors de la sauvegarde des credentials:", e);
@@ -45,30 +43,22 @@ export default class NotionClient {
   getCredentials() {
     try {
       const encrypted = localStorage.getItem(this.STORAGE_KEY);
-      if (!encrypted) {
-        console.log("Aucun credential trouvé");
-        return null;
-      }
+      if (!encrypted) return null;
+
       const credentials = this._decryptCredentials(encrypted);
       if (!credentials || !credentials.apiKey || !credentials.databaseId) {
-        console.log("Credentials invalides ou incomplets");
         this.clearCredentials();
         return null;
       }
       return credentials;
-    } catch (e) {
-      console.error("Erreur lors de la récupération des credentials:", e);
+    } catch {
+      this.clearCredentials();
       return null;
     }
   }
 
   clearCredentials() {
-    try {
-      localStorage.clear();
-      console.log("Credentials effacés avec succès");
-    } catch (e) {
-      console.error("Erreur lors de la suppression des credentials:", e);
-    }
+    localStorage.removeItem(this.STORAGE_KEY);
   }
 
   async validateCredentials(apiKey, databaseId) {
@@ -112,26 +102,32 @@ export default class NotionClient {
         );
       }
 
+      console.log("Récupération des données...");
       const response = await fetch(`${this.BASE_URL}/images`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${credentials.apiKey}`,
+          "Cache-Control": "no-cache",
         },
-        cache: "no-store",
       });
 
       if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des données");
+        const data = await response.json();
+        if (response.status === 401 || response.status === 403) {
+          this.clearCredentials();
+        }
+        throw new Error(data.error || "Erreur serveur");
       }
 
       const data = await response.json();
+      if (!data.images) {
+        throw new Error("Format de données invalide");
+      }
+
       return this._processImages(data.images);
     } catch (error) {
       console.error("Erreur de récupération:", error);
-      if (error.message.includes("Configuration utilisateur manquante")) {
-        this.clearCredentials();
-      }
       throw error;
     }
   }
@@ -143,10 +139,10 @@ export default class NotionClient {
     }
 
     return images
-      .map((imageUrl, index) => ({
-        imageUrl,
-        date: new Date().toISOString().split("T")[0], // Fallback date
-        pageId: `image-${index}`,
+      .map((image) => ({
+        imageUrl: image.url || image,
+        date: image.date || new Date().toISOString().split("T")[0],
+        pageId: image.id || `image-${Math.random().toString(36).substring(7)}`,
       }))
       .filter((item) => item.imageUrl);
   }

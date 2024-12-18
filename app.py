@@ -104,24 +104,34 @@ def get_images():
         if not api_key or not database_id:
             return jsonify({
                 "error": "Configuration utilisateur manquante. Veuillez sauvegarder vos paramètres."
-            }), 400
+            }), 401
 
         # Récupérer les images
         images = fetch_image_urls(api_key, database_id)
-        
+        # Si une erreur est retournée
         if isinstance(images, dict) and "error" in images:
             return jsonify({"error": images["error"]}), 500
-
-        print(f"Images récupérées: {len(images)}")
         
+        # Si aucune image n'est trouvée
+        if not images:
+            return jsonify({
+                "images": [],
+                "total": 0,
+                "message": "Aucune image trouvée"
+            }), 200
+
         return jsonify({
             "images": images,
-            "total": len(images)
-        })
+            "total": len(images),
+            "message": "Images récupérées avec succès"
+        }), 200
 
     except Exception as e:
-        print("Erreur lors de la récupération des images :", str(e))
-        return jsonify({"error": "Une erreur est survenue lors de la récupération des images."}), 500
+        print("Erreur:", str(e))
+        return jsonify({
+            "error": "Erreur lors de la récupération des images",
+            "details": str(e)
+        }), 500
 
 
 # Route pour servir l'index.html
