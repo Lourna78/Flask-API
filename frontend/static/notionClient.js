@@ -1,8 +1,10 @@
+Untitled;
+
 // Classe pour gérer l'interaction avec l'API Notion
 export default class NotionClient {
   constructor() {
     this.STORAGE_KEY = "notion_credentials";
-    this.BASE_URL = window.location.origin; // URL de base dynamique
+    this.BASE_URL = window.location.origin;
     this.clearInvalidCredentials();
   }
 
@@ -79,7 +81,6 @@ export default class NotionClient {
       const data = await response.json();
 
       if (!response.ok) {
-        const data = await response.json();
         throw new Error(data.error || "Erreur de validation");
       }
 
@@ -91,18 +92,15 @@ export default class NotionClient {
     }
   }
 
-  async fetchDatabaseContent(apiKey, databaseId) {
+  async fetchDatabaseContent() {
     try {
       console.log("Récupération des données...");
       const credentials = this.getCredentials();
 
       if (!credentials) {
-        throw new Error(
-          "Configuration utilisateur manquante. Veuillez vous reconnecter."
-        );
+        throw new Error("Configuration manquante");
       }
 
-      console.log("Récupération des données...");
       const response = await fetch(`${this.BASE_URL}/images`, {
         method: "GET",
         headers: {
@@ -113,14 +111,12 @@ export default class NotionClient {
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        if (response.status === 401 || response.status === 403) {
-          this.clearCredentials();
-        }
-        throw new Error(data.error || "Erreur serveur");
+        throw new Error("Erreur lors de la récupération des données");
       }
 
       const data = await response.json();
+      console.log("Données reçues:", data); // Log pour débug
+
       if (!data.images) {
         throw new Error("Format de données invalide");
       }
@@ -139,7 +135,7 @@ export default class NotionClient {
     }
 
     return images
-      .map((image, index) => {
+      .map((image) => {
         console.log("Traitement de l'image:", image);
 
         // Validation et extraction de l'URL
@@ -150,15 +146,15 @@ export default class NotionClient {
 
         // Validation et formatage de la date
         let formattedDate = null;
-        if (image.date) {
-          try {
+        try {
+          if (image.date) {
             const date = new Date(image.date);
             if (!isNaN(date.getTime())) {
               formattedDate = date.toISOString().split("T")[0];
             }
-          } catch (e) {
-            console.error("Erreur de formatage de date:", e);
           }
+        } catch (e) {
+          console.error("Erreur de formatage de date:", e);
         }
 
         // Si pas de date valide, utiliser la date actuelle
@@ -169,7 +165,7 @@ export default class NotionClient {
         return {
           imageUrl: image.url,
           date: formattedDate,
-          pageId: image.id || `image-${index}`,
+          pageId: image.id || `image-${Math.random().toString(36).slice(2)}`,
         };
       })
       .filter((item) => item && item.imageUrl);

@@ -99,40 +99,58 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function displayImages(images) {
+    console.log("Images reçues pour affichage:", images); // Log pour débug
     instagramGrid.innerHTML = "";
 
-    images.forEach((image) => {
+    images.forEach((image, index) => {
+      // Vérifier que nous avons une URL valide
+      const imageUrl = image.imageUrl;
+      if (!imageUrl || typeof imageUrl !== "string") {
+        console.error("URL d'image invalide:", image);
+        return;
+      }
+
       const gridItem = document.createElement("div");
       gridItem.classList.add("grid-item");
 
-      const container = document.createElement("div");
-      container.classList.add("image-container");
+      const imgContainer = document.createElement("div");
+      imgContainer.classList.add("image-container");
 
-      const img = document.createElement("img");
-      img.alt = "Feed Instagram";
-      img.loading = "lazy"; // Chargement paresseux
+      const imgElement = document.createElement("img");
+      imgElement.alt = "Feed Instagram";
+      imgElement.loading = "lazy";
 
-      // Pré-charger l'image pour vérifier si elle est valide
-      const testImg = new Image();
-      testImg.onload = () => {
-        img.src = image.imageUrl;
+      // Préchargement de l'image
+      const preloadImg = new Image();
+      preloadImg.onload = () => {
+        imgElement.src = imageUrl;
+        imgContainer.classList.add("loaded");
       };
-      testImg.onerror = () => {
-        img.src = DEFAULT_IMAGE;
+      preloadImg.onerror = () => {
+        console.error("Erreur de chargement de l'image:", imageUrl);
+        imgContainer.classList.add("error");
+        // Utiliser une image par défaut en cas d'erreur
+        imgElement.src = `data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100' height='100' fill='%23f3f4f6'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='14' fill='%236b7280' text-anchor='middle' alignment-baseline='middle'%3EImage%3C/text%3E%3C/svg%3E`;
       };
-      testImg.src = image.imageUrl;
 
-      const date = document.createElement("div");
-      date.classList.add("date-badge");
-      date.textContent = formatDate(image.date);
+      try {
+        preloadImg.src = imageUrl;
+      } catch (e) {
+        console.error("Erreur avec l'URL de l'image:", e);
+      }
 
-      container.appendChild(img);
-      gridItem.appendChild(container);
-      gridItem.appendChild(date);
+      const dateElement = document.createElement("div");
+      dateElement.classList.add("date-badge");
+      const formattedDate = formatDate(image.date);
+      dateElement.textContent = formattedDate || "Date non disponible";
+
+      imgContainer.appendChild(imgElement);
+      gridItem.appendChild(imgContainer);
+      gridItem.appendChild(dateElement);
       instagramGrid.appendChild(gridItem);
     });
 
-    // Ajouter des cases vides si nécessaire
+    // Ajouter les cases vides
     const remainingSlots = 12 - images.length;
     for (let i = 0; i < remainingSlots; i++) {
       const emptyItem = document.createElement("div");
