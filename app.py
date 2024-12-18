@@ -129,15 +129,9 @@ def save_config():
 @app.route('/images', methods=['GET'])
 def get_images():
     try:
-        # Récupérer les paramètres utilisateur depuis la configuration globale
+        # Récupérer les paramètres utilisateur
         api_key = user_config.get("api_key")
         database_id = user_config.get("database_id")
-
-        # Log pour débug
-        print("Configuration actuelle:", {
-            "api_key": "***" if api_key else None,
-            "database_id": database_id
-        })
 
         if not api_key or not database_id:
             return jsonify({
@@ -150,26 +144,24 @@ def get_images():
         if isinstance(images, dict) and "error" in images:
             return jsonify({"error": images["error"]}), 500
         
-        # Si aucune image n'est trouvée
-        if not images:
-            return jsonify({
-                "images": [],
-                "total": 0,
-                "message": "Aucune image trouvée"
-            }), 200
+                # S'assurer que les images sont dans le bon format
+        formatted_images = []
+        for img in images:
+            if isinstance(img, dict):
+                formatted_images.append({
+                    "imageUrl": img.get("url", ""),  # Changé de "url" à "imageUrl"
+                    "date": img.get("date", ""),
+                    "id": img.get("id", "")
+                })
 
         return jsonify({
-            "images": images,
-            "total": len(images),
-            "message": "Images récupérées avec succès"
+            "images": formatted_images,
+            "total": len(formatted_images)
         }), 200
 
     except Exception as e:
-        print("Erreur:", str(e))
-        return jsonify({
-            "error": "Erreur lors de la récupération des images",
-            "details": str(e)
-        }), 500
+        print(f"Erreur: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 
 # Route pour servir l'index.html
