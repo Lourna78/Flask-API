@@ -138,9 +138,16 @@ export default class NotionClient {
       .map((image) => {
         console.log("Traitement de l'image:", image);
 
-        // Validation et extraction de l'URL
-        if (!image.url) {
-          console.error("URL manquante pour l'image:", image);
+        // Vérification que image est un objet
+        if (!image || typeof image !== "object") {
+          console.error("Format d'image invalide:", image);
+          return null;
+        }
+
+        // Vérification et extraction de l'URL
+        const imageUrl = image.imageUrl || image.url;
+        if (!imageUrl || typeof imageUrl !== "string") {
+          console.error("URL invalide pour l'image:", image);
           return null;
         }
 
