@@ -1,11 +1,8 @@
-Untitled;
-
 // Classe pour gérer l'interaction avec l'API Notion
 export default class NotionClient {
   constructor() {
     this.STORAGE_KEY = "notion_credentials";
     this.BASE_URL = window.location.origin;
-    this.clearInvalidCredentials();
   }
 
   clearInvalidCredentials() {
@@ -63,7 +60,7 @@ export default class NotionClient {
   clearCredentials() {
     localStorage.removeItem(this.STORAGE_KEY);
   }
-  
+
   // Validation des credentials avec l'API
   async validateCredentials(apiKey, databaseId) {
     try {
