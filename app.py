@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, render_template
-from flask_cors import CORS
+from flask_cors import CORS # type: ignore
 from flask import send_from_directory
 import requests
 import os
@@ -27,61 +27,65 @@ user_config = {
 
 # Fonction pour récupérer les images et leurs dates depuis Notion
 def fetch_image_urls(api_key, database_id):
-    # Headers pour l'API Notion
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-        "Notion-Version": "2022-06-28",
-    }
-    notion_url = f"https://api.notion.com/v1/databases/{database_id}/query"
-
     try:
-        # Corps de la requête pour trier par date
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "Notion-Version": "2022-06-28",
+        }
+        
+        notion_url = f"https://api.notion.com/v1/databases/{database_id}/query"
+        
         body = {
-            "sorts": [{
-                "property": "Date",
-                "direction": "descending"  # Tri par date décroissante
-            }],
-            "page_size": 12  # Limite à 12 images pour la grille 3x4
+            "sorts": [{"property": "Date", "direction": "descending"}],
+            "page_size": 12
         }
 
-        response = requests.post(notion_url, headers=headers, json=body)
-        
+        print(f"Requête Notion vers: {notion_url}")
+        response = requests.post(
+            notion_url,
+            headers=headers,
+            json=body
+        )
+
+        print(f"Réponse Notion: Status {response.status_code}")
         if not response.ok:
-            print(f"Erreur Notion {response.status_code}:", response.text)
-            return {"error": f"Impossible de se connecter à cette base. Vérifiez vos identifiants ou consultez le guide."}
+            print(f"Erreur Notion: {response.text}")
+            return {"error": "Erreur lors de la récupération des données Notion"}
 
         data = response.json()
         results = data.get("results", [])
 
-        print("Nombre de résultats reçus:", len(results))  # Debug log
-
-        formatted_images = []
+        images = []
         for page in results:
-            # Récupération de la propriété "Fichiers et médias"
-            media_files = page.get("properties", {}).get("Fichiers et médias", {}).get("files", [])
-            date = page.get("properties", {}).get("Date", {}).get("date", {}).get("start")
+            try:
+                files = page.get("properties", {}).get("Fichiers et médias", {}).get("files", [])
+                date = page.get("properties", {}).get("Date", {}).get("date", {}).get("start")
 
-            for file in media_files:
-                if file.get("type") == "file":
-                    url = file.get("file", {}).get("url")
-                elif file.get("type") == "external":
-                    url = file.get("external", {}).get("url")
-                else:
-                    continue
+                for file in files:
+                    url = None
+                    if file.get("type") == "file":
+                        url = file.get("file", {}).get("url")
+                    elif file.get("type") == "external":
+                        url = file.get("external", {}).get("url")
 
-                if url and date:
-                    formatted_images.append({
-                        "imageUrl": url,
-                        "date": date
-                    })
-                    print(f"Image ajoutée - URL: {url}, Date: {date}")  # Debug log
+                    if url:
+                        images.append({
+                            "url": url,  # Sera converti en imageUrl plus tard
+                            "date": date,
+                            "id": page.get("id")
+                        })
 
-        return formatted_images
+            except Exception as e:
+                print(f"Erreur traitement page: {e}")
+                continue
+
+        print(f"Images trouvées: {len(images)}")
+        return images
 
     except Exception as e:
-        print("Erreur lors de la récupération:", str(e))
-        return {"error": "Impossible de récupérer les données. Veuillez réessayer."}
+        print(f"Erreur fetch_image_urls: {str(e)}")
+        return {"error": str(e)}
 
 @app.before_request
 def log_request_info():
@@ -144,13 +148,17 @@ def save_config():
             "error": str(e)
         }), 500
 
-
-
 # Endpoint pour récupérer les images
 @app.route('/images', methods=['GET'])
 def get_images():
     try:
-        # Récupérer les paramètres utilisateur
+        # Debug logs
+        print("Configuration actuelle:", {
+            "api_key": "***" if user_config.get("api_key") else None,
+            "database_id": user_config.get("database_id")
+        })
+
+        # Vérifier les paramètres utilisateur
         api_key = user_config.get("api_key")
         database_id = user_config.get("database_id")
 
@@ -161,11 +169,15 @@ def get_images():
 
         # Récupérer les images
         images = fetch_image_urls(api_key, database_id)
+        
+        # Log pour debug
+        print("Images récupérées:", images)
+
         # Si une erreur est retournée
         if isinstance(images, dict) and "error" in images:
             return jsonify({"error": images["error"]}), 500
-        
-                # S'assurer que les images sont dans le bon format
+
+        # S'assurer que les images sont dans le bon format
         formatted_images = []
         for img in images:
             if isinstance(img, dict):
@@ -175,13 +187,15 @@ def get_images():
                     "id": img.get("id", "")
                 })
 
+        print(f"Nombre d'images formatées: {len(formatted_images)}")
+
         return jsonify({
             "images": formatted_images,
             "total": len(formatted_images)
         }), 200
 
     except Exception as e:
-        print(f"Erreur: {str(e)}")
+        print(f"Erreur dans /images: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
