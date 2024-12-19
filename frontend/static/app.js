@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const notionClient = new NotionClient();
 
   // Éléments du DOM
+  const disconnectBtn = document.getElementById("disconnect-btn");
   const connectionForm = document.getElementById("notion-connection-form");
   const errorMessage = document.getElementById("error-message");
   const connectionScreen = document.getElementById("connection-screen");
@@ -210,6 +211,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isLoading) return;
     clearTimeout(refreshTimeout);
     refreshTimeout = setTimeout(loadInstagramFeed, 300);
+  });
+
+  // Ajouter ici la gestion du bouton déconnexion
+  disconnectBtn.addEventListener("click", () => {
+    // Effacer les credentials
+    notionClient.clearCredentials();
+
+    // Retourner à l'écran de connexion
+    connectionScreen.style.display = "block";
+    feedScreen.style.display = "none";
+
+    // Vider le formulaire
+    document.getElementById("api-key").value = "";
+    document.getElementById("database-id").value = "";
+
+    // Vider la grille
+    instagramGrid.innerHTML = "";
   });
 
   // Chargement initial

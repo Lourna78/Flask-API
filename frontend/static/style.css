@@ -118,9 +118,20 @@ body {
   opacity: 0.9;
 }
 
+.disconnect-btn {
+  margin: 1rem auto;
+  display: block;
+  background-color: var(--accent-color);
+}
+
+.disconnect-btn:hover {
+  opacity: 0.9;
+}
+
 .refresh-btn {
   margin: 1rem auto;
   display: block;
+  margin-bottom: 0.5rem;
 }
 
 /* Messages et états */
