@@ -28,6 +28,7 @@ user_config = {
 # Fonction pour récupérer les images et leurs dates depuis Notion
 def fetch_image_urls(api_key, database_id):
     try:
+        print("\n=== Début fetch_image_urls ===")
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
@@ -35,64 +36,69 @@ def fetch_image_urls(api_key, database_id):
         }
         
         notion_url = f"https://api.notion.com/v1/databases/{database_id}/query"
+        print(f"🌐 URL Notion: {notion_url}")
         
         body = {
             "sorts": [{"property": "Date", "direction": "descending"}],
             "page_size": 12
         }
+        print("📝 Body de la requête:", body)
 
-        print(f"Requête Notion vers: {notion_url}")
-        response = requests.post(
-            notion_url,
-            headers=headers,
-            json=body
-        )
-
-        print(f"Réponse Notion: Status {response.status_code}")
+        response = requests.post(notion_url, headers=headers, json=body)
+        print(f"📥 Réponse Notion: Status {response.status_code}")
+        
         if not response.ok:
-            print(f"Erreur Notion: {response.text}")
-            return {"error": "Erreur lors de la récupération des données Notion"}
+            error_content = response.text
+            print(f"❌ Erreur Notion: {error_content}")
+            return {"error": f"Erreur Notion ({response.status_code}): {error_content}"}
 
         data = response.json()
         results = data.get("results", [])
+        print(f"\n📦 Nombre de résultats: {len(results)}")
 
         images = []
-        for page in results:
+        for index, page in enumerate(results):
             try:
-                # Log pour voir les détails de la page
-                print(f"Page traitée: {page}")
+                print(f"\n🔄 Traitement page {index + 1}")
                 files = page.get("properties", {}).get("Fichiers et médias", {}).get("files", [])
                 date = page.get("properties", {}).get("Date", {}).get("date", {}).get("start")
+                
+                print(f"📅 Date trouvée: {date}")
+                print(f"📷 Nombre de fichiers: {len(files)}")
 
-                for file in files:
+                for file_index, file in enumerate(files):
                     url = None
                     if file.get("type") == "file":
                         url = file.get("file", {}).get("url")
+                        type_str = "file"
                     elif file.get("type") == "external":
                         url = file.get("external", {}).get("url")
-
-                    # Log pour voir l'URL et la date
-                    print(f"URL d'image: {url}, Date: {date}")
+                        type_str = "external"
+                    else:
+                        type_str = "unknown"
+                    
+                    print(f"   Fichier {file_index + 1}: Type={type_str}, URL={'✅' if url else '❌'}")
 
                     if url and date:
-                             # Log chaque image pour debug
-                        print(f"URL d'image: {url}, Date: {date}, ID: {page.get('id')}")
-        
                         images.append({
                             "url": url,
                             "date": date,
-                            "id": page.get("id")
+                            "id": f"{page.get('id')}_{file_index}"
                         })
+                        print(f"   ✅ Image ajoutée")
 
             except Exception as e:
-                print(f"Erreur traitement page: {e}")
+                print(f"❌ Erreur traitement page {index + 1}: {str(e)}")
                 continue
 
-        print(f"Images trouvées: {len(images)}")
+        print(f"\n📤 Total images trouvées: {len(images)}")
+        print("=== Fin fetch_image_urls ===\n")
         return images
 
     except Exception as e:
-        print(f"Erreur fetch_image_urls: {str(e)}")
+        print(f"\n❌ Erreur générale fetch_image_urls: {str(e)}")
+        import traceback
+        print("Stacktrace:", traceback.format_exc())
         return {"error": str(e)}
 
 @app.before_request
@@ -160,57 +166,64 @@ def save_config():
 @app.route('/images', methods=['GET'])
 def get_images():
     try:
-        # Debug logs
+        print("\n=== Début de la requête /images ===")
+        print("Headers reçus:", dict(request.headers))
+    
+        # Debug logs pour la configuration
         print("Configuration actuelle:", {
             "api_key": "***" if user_config.get("api_key") else None,
             "database_id": user_config.get("database_id")
         })
 
-        print(f"JSON final envoyé au frontend: {result}")
-
-        # Vérifier les paramètres utilisateur
+        # Vérification des credentials
         api_key = user_config.get("api_key")
         database_id = user_config.get("database_id")
 
         if not api_key or not database_id:
+            print("❌ Credentials manquants")
             return jsonify({
-                "error": "Configuration utilisateur manquante. Veuillez sauvegarder vos paramètres."
+                "error": "Configuration utilisateur manquante"
             }), 401
 
         # Récupérer les images
+        print("\n📥 Récupération des images via fetch_image_urls...")
         images = fetch_image_urls(api_key, database_id)
         
-        # Log pour debug
-        print("Images récupérées:", images)
+       # Debug des images reçues
+        print(f"\n📦 Images brutes reçues: {len(images) if isinstance(images, list) else 'Error'}")
 
-        # Si une erreur est retournée
         if isinstance(images, dict) and "error" in images:
+            print(f"❌ Erreur retournée par fetch_image_urls: {images['error']}")
             return jsonify({"error": images["error"]}), 500
 
-        # S'assurer que les images sont dans le bon format
+     # Formatage des images
         formatted_images = []
-        for img in images:
+        print("\n🔄 Début du formatage des images")
+        for i, img in enumerate(images):
             if isinstance(img, dict):
-                formatted_images.append({
-                    "imageUrl": img.get("url", ""),  # Changé de "url" à "imageUrl"
+                formatted_img = {
+                    "imageUrl": img.get("url", ""),
                     "date": img.get("date", ""),
-                    "id": img.get("id", "")
-                })
+                    "id": img.get("id", str(i))
+                }
+                formatted_images.append(formatted_img)
+                print(f"✅ Image {i+1} formatée: {formatted_img}")
 
-        print(f"Nombre d'images formatées: {len(formatted_images)}")
-
-        # Structure finale pour le frontend
         result = {
             "images": formatted_images,
             "total": len(formatted_images)
         }
 
+        print(f"\n📤 Envoi de {len(formatted_images)} images au frontend")
+        print("=== Fin de la requête /images ===\n")
+        
         return jsonify(result), 200
 
     except Exception as e:
-        print(f"Erreur dans /images: {str(e)}")
+        print(f"\n❌ Erreur dans /images: {str(e)}")
+        import traceback
+        print("Stacktrace:", traceback.format_exc())
         return jsonify({"error": str(e)}), 500
-
 
 # Route pour servir l'index.html
 @app.route('/')
