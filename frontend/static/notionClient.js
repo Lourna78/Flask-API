@@ -141,47 +141,43 @@ export default class NotionClient {
       .map((image) => {
         console.log("Traitement de l'image:", image);
 
-        // Vérification que image est un objet
-        if (!image || typeof image !== "object") {
-          console.error("Format d'image invalide:", image);
-          return null;
-        }
-
-        // Validation et formatage de la date
-        let formattedDate = null;
-
-        // Extraction et formatage de la date
-        try {
-          if (image.date) {
-            const date = new Date(image.date);
-            if (!isNaN(date.getTime())) {
-              formattedDate = date.toISOString().split("T")[0];
-            }
+            // Vérification que image est un objet
+            if (!image || typeof image !== "object") {
+              console.error("Format d'image invalide:", image);
+              return null;
           }
-        } catch (e) {
-          console.error("Erreur de formatage de date:", e);
-        }
 
-        // Si pas de date valide, utiliser la date actuelle
-        if (!formattedDate) {
-          formattedDate = new Date().toISOString().split("T")[0];
-          console.warn("Date invalide détectée pour l'image :", image);
-        }
+          // Validation et formatage de la date
+          let formattedDate = null;
+          try {
+              if (image.date) {
+                  const date = new Date(image.date);
+                  if (!isNaN(date.getTime())) {
+                      formattedDate = date.toISOString().split("T")[0];
+                  }
+              }
+          } catch (e) {
+              console.error("Erreur de formatage de date:", e);
+          }
 
-        // Vérification et extraction de l'URL
-        console.log("Données reçues depuis l'API :", images);
-        const imageUrl = image.imageUrl || image.url;
-        console.log("Vérification URL :", imageUrl, "Objet complet :", image);
-        if (!imageUrl || typeof imageUrl !== "string") {
-          console.error("URL invalide pour l'image:", image);
-          return null;
-        }
+          // Si pas de date valide, utiliser la date actuelle
+          if (!formattedDate) {
+              formattedDate = new Date().toISOString().split("T")[0];
+              console.warn("Date invalide détectée pour l'image :", image);
+          }
 
-        return {
-          imageUrl: image.url,
-          date: formattedDate,
-          pageId: image.id || `image-${Math.random().toString(36).slice(2)}`,
-        };
+          // Utiliser directement imageUrl car c'est déjà le bon format venant du backend
+          const imageUrl = image.imageUrl;
+          if (!imageUrl || typeof imageUrl !== "string") {
+              console.error("URL invalide pour l'image:", image);
+              return null;
+          }
+
+          return {
+              imageUrl: imageUrl, // Utiliser imageUrl au lieu de image.url
+              date: formattedDate,
+              pageId: image.id || `image-${Math.random().toString(36).slice(2)}`,
+          };
       })
       .filter((item) => item && item.imageUrl);
   }
