@@ -118,9 +118,24 @@ body {
   opacity: 0.9;
 }
 
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+/* Style commun pour les deux boutons */
+.refresh-btn,
 .disconnect-btn {
-  margin: 1rem auto;
+  margin: 0.5rem auto;
   display: block;
+  min-width: 120px; /* Assure une largeur minimale uniforme */
+}
+
+.disconnect-btn {
   background-color: var(--accent-color);
 }
 
@@ -128,9 +143,8 @@ body {
   opacity: 0.9;
 }
 
+/* Seulement si vous voulez un espacement spécifique pour le refresh */
 .refresh-btn {
-  margin: 1rem auto;
-  display: block;
   margin-bottom: 0.5rem;
 }
 
@@ -224,8 +238,8 @@ body {
   background-color: #fee2e2;
 }
 
-/* Responsive */
-@media (max-width: 640px) {
+/* Styles spécifiques pour Notion */
+@media screen and (max-width: 800px) {
   body {
       padding: 16px;
   }
@@ -236,5 +250,15 @@ body {
 
   .instagram-grid {
       gap: 8px;
+  }
+
+  .button-container {
+    padding: 0 1rem;
+  }
+  
+  .refresh-btn,
+  .disconnect-btn {
+    width: 100%;
+    max-width: 200px; /* Limite la largeur sur petits écrans */
   }
 }

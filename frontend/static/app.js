@@ -1,5 +1,13 @@
 import NotionClient from "./notionClient.js";
 
+// Au début du fichier DOMContentLoaded
+const isInNotion = window.parent !== window;
+if (isInNotion) {
+  // Force le nettoyage du localStorage au chargement dans Notion
+  localStorage.clear();
+  notionClient.clearCredentials();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const notionClient = new NotionClient();
 
