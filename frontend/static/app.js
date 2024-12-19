@@ -11,6 +11,28 @@ document.addEventListener("DOMContentLoaded", () => {
   const instagramGrid = document.getElementById("instagram-grid");
   const refreshBtn = document.getElementById("refresh-btn");
   const loadingMessage = document.getElementById("loading-message");
+  const darkModeToggle = document.getElementById("dark-mode");
+
+  // Gérer le thème
+  function setTheme(isDark) {
+    document.documentElement.setAttribute(
+      "data-theme",
+      isDark ? "dark" : "light"
+    );
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  }
+
+  // Charger le thème sauvegardé
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme) {
+    darkModeToggle.checked = savedTheme === "dark";
+    setTheme(savedTheme === "dark");
+  }
+
+  // Écouter les changements
+  darkModeToggle.addEventListener("change", (e) => {
+    setTheme(e.target.checked);
+  });
 
   // URL par défaut pour l'image placeholder
   const DEFAULT_IMAGE =
