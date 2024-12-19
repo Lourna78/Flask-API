@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Instagram Feed Preview - Notion Widget</title>
-    <link rel="icon" href="data:,">
+    <link rel="icon" href="data:," />
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
@@ -15,9 +18,10 @@
       <!-- Écran de connexion -->
       <div id="connection-screen">
         <h2>Bienvenue dans le widget Feed Instagram Preview</h2>
-            <p class="instruction-text">
-                Entrez votre clé API Notion et l'ID de votre base de données pour commencer
-            </p>
+        <p class="instruction-text">
+          Entrez votre clé API Notion et l'ID de votre base de données pour
+          commencer
+        </p>
         <form class="connection-form" id="notion-connection-form">
           <div class="form-group">
             <label for="api-key">Clé API Notion</label>
@@ -41,28 +45,25 @@
               autocomplete="off"
             />
           </div>
+          <!-- Ajouter dans le formulaire après les champs existants -->
+          <div class="form-group theme-toggle">
+            <label class="theme-label">
+              <input type="checkbox" id="dark-mode" name="dark-mode" />
+              Mode sombre
+            </label>
+          </div>
           <div class="loading" id="loading-message">Connexion en cours...</div>
           <button type="submit" class="btn">Connecter votre base</button>
           <div id="error-message" class="error-message"></div>
         </form>
       </div>
-       <!-- Écran du feed -->
+      <!-- Écran du feed -->
       <div id="feed-screen" style="display: none">
         <div class="instagram-grid" id="instagram-grid">
           <!-- Les cases du feed seront générées dynamiquement ici -->
         </div>
         <button class="btn refresh-btn" id="refresh-btn">Rafraîchir</button>
       </div>
-      <!-- Ajouter dans le formulaire après les champs existants -->
-      <div class="form-group theme-toggle">
-        <label class="theme-label">
-            <input 
-                type="checkbox" 
-          id="dark-mode" 
-          name="dark-mode"
-        >
-      Mode sombre
-      </label>
     </div>
     <script>
       // Force le rechargement complet lors du rafraîchissement
