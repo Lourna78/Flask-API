@@ -12,6 +12,21 @@
     <title>Instagram Feed Preview - Notion Widget</title>
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="/static/style.css" />
+    <script>
+      // Forcer le rechargement dans Notion
+      const forceReload = () => {
+        if (window.parent !== window) {
+          // Si dans un iframe (Notion)
+          const currentTimestamp = Date.now();
+          const currentUrl = new URL(window.location.href);
+          currentUrl.searchParams.set("t", currentTimestamp);
+          window.location.href = currentUrl.toString();
+        }
+      };
+
+      // Exécuter au chargement et après chaque action importante
+      window.addEventListener("load", forceReload);
+    </script>
   </head>
   <body>
     <div class="container" id="app">

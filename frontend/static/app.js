@@ -6,10 +6,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // Détection de Notion
   const isInNotion = window !== window.parent;
 
-  // Force le nettoyage du localStorage au chargement dans Notion
   if (isInNotion) {
+    // Forcer le nettoyage du cache et du storage
     localStorage.clear();
+    sessionStorage.clear();
     notionClient.clearCredentials();
+
+    // Ajouter des headers anti-cache
+    document
+      .querySelector('meta[http-equiv="Cache-Control"]')
+      .setAttribute(
+        "content",
+        "no-cache, no-store, must-revalidate, max-age=0"
+      );
   }
 
   // Éléments du DOM
@@ -228,8 +237,10 @@ document.addEventListener("DOMContentLoaded", () => {
     notionClient.clearCredentials();
 
     if (isInNotion) {
-      // Dans Notion, forcer le rechargement complet de l'iframe
-      window.location.reload(true);
+      // Forcer un rechargement complet avec un nouveau timestamp
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set("t", Date.now());
+      window.location.href = newUrl.toString();
     } else {
       // Navigation normale hors Notion
       connectionScreen.style.display = "block";
