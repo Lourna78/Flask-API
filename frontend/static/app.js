@@ -1,15 +1,16 @@
 import NotionClient from "./notionClient.js";
 
-// Au début du fichier DOMContentLoaded
-const isInNotion = window.parent !== window;
-if (isInNotion) {
-  // Force le nettoyage du localStorage au chargement dans Notion
-  localStorage.clear();
-  notionClient.clearCredentials();
-}
-
 document.addEventListener("DOMContentLoaded", () => {
   const notionClient = new NotionClient();
+
+  // Détection de Notion
+  const isInNotion = window !== window.parent;
+
+  // Force le nettoyage du localStorage au chargement dans Notion
+  if (isInNotion) {
+    localStorage.clear();
+    notionClient.clearCredentials();
+  }
 
   // Éléments du DOM
   const disconnectBtn = document.getElementById("disconnect-btn");
@@ -221,21 +222,22 @@ document.addEventListener("DOMContentLoaded", () => {
     refreshTimeout = setTimeout(loadInstagramFeed, 300);
   });
 
-  // Ajouter ici la gestion du bouton déconnexion
+  // Gestion du bouton déconnexion
   disconnectBtn.addEventListener("click", () => {
     // Effacer les credentials
     notionClient.clearCredentials();
 
-    // Retourner à l'écran de connexion
-    connectionScreen.style.display = "block";
-    feedScreen.style.display = "none";
-
-    // Vider le formulaire
-    document.getElementById("api-key").value = "";
-    document.getElementById("database-id").value = "";
-
-    // Vider la grille
-    instagramGrid.innerHTML = "";
+    if (isInNotion) {
+      // Dans Notion, forcer le rechargement complet de l'iframe
+      window.location.reload(true);
+    } else {
+      // Navigation normale hors Notion
+      connectionScreen.style.display = "block";
+      feedScreen.style.display = "none";
+      document.getElementById("api-key").value = "";
+      document.getElementById("database-id").value = "";
+      instagramGrid.innerHTML = "";
+    }
   });
 
   // Chargement initial
